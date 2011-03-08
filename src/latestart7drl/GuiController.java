@@ -81,7 +81,7 @@ public class GuiController implements KeyListener {
 
     public void startScreen() {
         panel.clear();
-        panel.writeCenter("late start, a 2007 7DRL", 1);
+        panel.writeCenter("late start, a 2011 7DRL", 1);
         panel.writeCenter("   by Trystan Spangler", 2);
         panel.writeCenter("-- press any key to start --", panel.getHeightInCharacters() - 2);
     }
