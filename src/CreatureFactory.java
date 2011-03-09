@@ -1,6 +1,5 @@
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -8,14 +7,16 @@ public class CreatureFactory {
     World world;
     Random rand;
     PathFinder pf;
+    ItemFactory itemFactory;
 
     String[] sylables;
 
-    public CreatureFactory(World w){
+    public CreatureFactory(World w, ItemFactory factory){
         world = w;
         rand = new Random();
         pf = new PathFinder(w);
-
+        itemFactory = factory;
+        
         String vowels = "aeiouy";
         String consonants = "bcdfghjklmnpqrstvwxz";
 
@@ -32,6 +33,7 @@ public class CreatureFactory {
             if (rand.nextDouble() < 0.25)
                 part = vowels.charAt(rand.nextInt(vowels.length())) + part;
 
+            part = part.replace("q", "qu");
             sylables[i] = part;
         }
     }
@@ -42,6 +44,8 @@ public class CreatureFactory {
         while (name.length() < 4)
             name += sylables[rand.nextInt(sylables.length)];
 
+        name = name.substring(0,1).toUpperCase() + name.substring(1);
+        
         return name;
     }
     
@@ -62,6 +66,8 @@ public class CreatureFactory {
         creature.vision = 11;
         creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;
+        creature.equip(itemFactory.knife());
+        creature.equip(itemFactory.lightArmor());
         return creature;
     }
 
@@ -73,6 +79,8 @@ public class CreatureFactory {
         creature.vision = 11;
         creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;
+        creature.equip(itemFactory.sword());
+        creature.equip(itemFactory.heavyArmor());
         return creature;
     }
 
@@ -84,6 +92,8 @@ public class CreatureFactory {
         creature.vision = 11;
         creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;
+        creature.equip(itemFactory.knife());
+        creature.equip(itemFactory.robes());
         return creature;
     }
 

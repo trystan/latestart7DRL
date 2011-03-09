@@ -29,28 +29,24 @@ public class GuiController implements KeyListener {
     public void reset(){
         Random rand = new Random();
         world = new World();
-        CreatureFactory factory = new CreatureFactory(world);
-
-        target = factory.Player();
+        ItemFactory itemFactory = new ItemFactory();
+        CreatureFactory creatureFactory = new CreatureFactory(world, itemFactory);
+        
+        target = creatureFactory.Player();
         world.placeCreature(target, rand);
 
-        world.placeCreature(factory.HeroFighter(), rand);
-        world.placeCreature(factory.HeroTheif(), rand);
-        world.placeCreature(factory.HeroWizzard(), rand);
+        world.placeCreature(creatureFactory.HeroFighter(), rand);
+        world.placeCreature(creatureFactory.HeroTheif(), rand);
+        world.placeCreature(creatureFactory.HeroWizzard(), rand);
 
         for (int i = 0; i < 100; i++){
-            world.placeCreature(factory.Zombie(), rand);
-            world.placeCreature(factory.Blob(rand), rand);
+            world.placeCreature(creatureFactory.Zombie(), rand);
+            world.placeCreature(creatureFactory.Blob(rand), rand);
         }
 
-        for (int i = 0; i < 100; i++){
-            Item armor = new Item(0,0,"armor",']',AsciiPanel.white);
-            armor.modDefence = 5 + rand.nextInt(15);
-            world.placeItem(armor, rand);
-
-            Item weapon = new Item(0,0,"sword",')',AsciiPanel.white);
-            weapon.modAttack = 5 + rand.nextInt(15);
-            world.placeItem(weapon, rand);
+        for (int i = 0; i < 50; i++){
+            world.placeItem(itemFactory.armor(), rand);
+            world.placeItem(itemFactory.weapon(), rand);
         }
     }
 
