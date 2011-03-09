@@ -32,7 +32,7 @@ public class World {
 
     public void tellAll(Color color, String message){
         for (Creature creature : creatures){
-            creature.tell(color, message);
+            creature.hear(color, message);
         }
     }
 

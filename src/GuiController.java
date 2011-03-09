@@ -102,7 +102,7 @@ public class GuiController implements KeyListener {
                             }
                         }
                         if (!found){
-                            target.tell(AsciiPanel.white, "There's nothing here to pick up.");
+                            target.hear(AsciiPanel.white, "There's nothing here to pick up.");
                             endTurn1 = false;
                         }
                         break;
@@ -182,7 +182,7 @@ public class GuiController implements KeyListener {
         panel.clear();
 
         int viewWidth = 80;
-        int viewHeight = 23;
+        int viewHeight = 24;
         int vx = Math.max(0, Math.min(target.x - viewWidth / 2, world.width - viewWidth));
         int vy = Math.max(0, Math.min(target.y - viewHeight / 2, world.height - viewHeight));
 
@@ -220,9 +220,9 @@ public class GuiController implements KeyListener {
             panel.write(creature.glyph, cx, cy, creature.color);
         }
 
+        infoPanel(target, 1);
 
         if (target.target != null){
-            infoPanel(target, 1);
             infoPanel(target.target, -1);
         } else if (itemHere != null) {
             infoPanel(target, 1);
@@ -230,18 +230,6 @@ public class GuiController implements KeyListener {
         }
 
         writeMessages();
-
-        panel.write(world.getName(target.x, target.y), 71, panel.getHeightInCharacters() - 1);
-
-        String status = " " + target.name + " (" + target.x + "," + target.y + ")";
-
-        if (target.weapon != null)
-            status += " weilding a " + target.weapon.name;
-
-        if (target.armor != null)
-            status += " wearing " + target.armor.name;
-
-        panel.write(status, 0, panel.getHeightInCharacters() - 1);
     }
 
     private ArrayList<String> currentMessages;
@@ -254,7 +242,7 @@ public class GuiController implements KeyListener {
             target.messageColors.clear();
         }
 
-        int startY = panel.getHeightInCharacters() - currentMessages.size() - 1;
+        int startY = panel.getHeightInCharacters() - currentMessages.size();
         for (int i = 0; i < currentMessages.size(); i++){
             panel.writeCenter(currentMessages.get(i), startY+i, currentMessageColors.get(i));
         }
@@ -307,9 +295,14 @@ public class GuiController implements KeyListener {
         String diffDefStr = diffDef == 0 ? "" : (diffDef > 0 ? " " + up + diffDef : " " + down + Math.abs(diffDef));
 
         panel.write(pad(" " + item.name, panelWidth), left, 1);
-        panel.write(pad("  hp:" + item.modHp + diffHpStr, panelWidth), left, 2);
-        panel.write(pad(" atk:" + item.modAttack + diffAtkStr, panelWidth), left, 3);
-        panel.write(pad(" def:" + item.modDefence + diffDefStr, panelWidth), left, 4);
+        panel.write("  hp:" + item.modHp, left, 2);
+        panel.write(pad(diffHpStr, (panelWidth + left) - panel.getCursorX()), diffHp > 0 ? AsciiPanel.green : AsciiPanel.red);
+
+        panel.write(" atk:" + item.modAttack, left, 3);
+        panel.write(pad(diffAtkStr, (panelWidth + left) - panel.getCursorX()), diffAtk > 0 ? AsciiPanel.green : AsciiPanel.red);
+
+        panel.write(" def:" + item.modDefence, left, 4);
+        panel.write(pad(diffDefStr, (panelWidth + left) - panel.getCursorX()), diffDef > 0 ? AsciiPanel.green : AsciiPanel.red);
     }
 
     private String pad(String str, int length){

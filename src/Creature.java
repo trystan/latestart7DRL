@@ -103,10 +103,10 @@ public class Creature {
             return;
         } else if (weapon == item){
             weapon = null;
-            tell(AsciiPanel.white, "You drop your " + item.name);
+            hear(AsciiPanel.white, "You drop your " + item.name);
         } else if (armor == item){
             armor = null;
-            tell(AsciiPanel.white, "You take off your " + item.name);
+            hear(AsciiPanel.white, "You take off your " + item.name);
         } else {
             return;
         }
@@ -118,21 +118,18 @@ public class Creature {
         item.y = y;
         item.equipped = false;
     }
+    
     public void equip(Item item){
         switch(item.glyph){
             case ')':
                 unequip(weapon);
                 weapon = item;
-                hp += item.modHp;
-                attack += item.modAttack;
-                defence += item.modDefence;
-                item.equipped = true;
-                tell(AsciiPanel.white, "You weild a " + item.name);
+                hear(AsciiPanel.white, "You weild a " + item.name);
                 break;
             case ']':
                 unequip(armor);
                 armor = item;
-                tell(AsciiPanel.white, "You put on some " + item.name);
+                hear(AsciiPanel.white, "You put on some " + item.name);
                 break;
             default: return;
         }
@@ -141,6 +138,11 @@ public class Creature {
         attack += item.modAttack;
         defence += item.modDefence;
         item.equipped = true;
+    }
+
+    public void die(){
+        unequip(armor);
+        unequip(weapon);
     }
 
     public void attack(Creature other){
@@ -161,7 +163,7 @@ public class Creature {
             world.tellAll(other.color, other.name + " was killed by " + name);
     }
 
-    void tell(Color color, String message) {
+    void hear(Color color, String message) {
         messageColors.add(color);
         messages.add(message);
     }
