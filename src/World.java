@@ -29,8 +29,9 @@ public class World {
     }
 
     public void update(){
-        for (Creature creature : creatures){
-            creature.update();
+        Object[] creatureArray = creatures.toArray();
+        for (Object creature : creatureArray){
+            ((Creature)creature).update();
         }
 
         ArrayList<Creature> died = new ArrayList<Creature>();
@@ -95,6 +96,20 @@ public class World {
             case rockWall: return AsciiPanel.white;
             default:    return AsciiPanel.black;
         }
+    }
+
+    public void placeCreature(Creature creature, Random rand){
+        do {
+            creature.x = rand.nextInt(width);
+            creature.y = rand.nextInt(height);
+
+            for (Creature other : creatures){
+                if (other.x == creature.x && other.y == creature.y)
+                    continue;
+            }
+        } while (!creature.canMoveBy(0, 0));
+
+        creatures.add(creature);
     }
 
     private void create() {

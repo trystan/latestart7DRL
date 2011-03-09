@@ -9,7 +9,7 @@ public class Creature {
     public Color color;
     public CreatureController controller;
 
-    private World world;
+    public World world;
 
 
     public int hp;
@@ -32,6 +32,27 @@ public class Creature {
     public void update(){
         if (controller != null)
             controller.update();
+    }
+    
+    public boolean canEnter(int tx, int ty){
+        if (tx < 0 || tx >= world.width
+         || ty < 0 || ty >= world.height)
+            return false;
+
+        switch (world.tiles[tx][ty]) {
+            case World.dirtWall:
+            case World.rockWall:
+            case World.water: return false;
+        }
+
+        for (Creature other : world.creatures){
+            if (other == this || other.x != tx || other.y != ty)
+                continue;
+
+            return other.glyph != glyph;
+        }
+
+        return true;
     }
 
     public boolean canMoveBy(int mx, int my) {

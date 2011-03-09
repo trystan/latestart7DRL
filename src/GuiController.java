@@ -1,6 +1,7 @@
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Random;
 
 public class GuiController implements KeyListener {
     private final static int start = 1;
@@ -14,11 +15,24 @@ public class GuiController implements KeyListener {
     private World world;
     private Creature target;
     
-    public GuiController(AsciiPanel p, World w, Creature c) {
+    public GuiController(AsciiPanel p) {
         panel = p;
-        world = w;
-        target = c;
         stage = start;
+        reset();
+    }
+
+    public void reset(){
+        Random rand = new Random();
+        world = new World();
+        target = new Creature(world, 0, 0, "player", '@', AsciiPanel.brightWhite);
+        world.placeCreature(target, rand);
+
+        PathFinder pf = new PathFinder(world);
+        for (int i = 0; i < 100; i++){
+            Creature zombie = new Creature(world, 0, 0, "zombie", 'z', AsciiPanel.brightWhite);
+            zombie.controller = new CreatureController(zombie, pf);
+            world.placeCreature(zombie, rand);
+        }
     }
 
     public void keyTyped(KeyEvent ke) {
@@ -26,9 +40,14 @@ public class GuiController implements KeyListener {
 
     public void keyPressed(KeyEvent ke) {
         switch (stage) {
-            case start: stage = play; break;
-            case win: stage = play; break;
-            case lose: stage = play; break;
+            case start:
+            case win:
+            case lose:
+                if (ke.getKeyChar() == ' '){
+                    stage = play;
+                    reset();
+                }
+            break;
             case play:
                 boolean endTurn1 = true;
                 boolean endTurn2 = true;
@@ -74,6 +93,9 @@ public class GuiController implements KeyListener {
     }
 
     public void currentScreen() {
+        if (target.hp < 1)
+            stage = lose;
+        
         switch (stage) {
             case start: startScreen(); break;
             case win: winScreen(); break;
@@ -88,25 +110,25 @@ public class GuiController implements KeyListener {
         panel.clear();
         panel.writeCenter("late start, a 2011 7DRL", 1);
         panel.writeCenter("   by Trystan Spangler", 2);
-        panel.writeCenter("-- press any key to start --", panel.getHeightInCharacters() - 2);
+        panel.writeCenter("-- press space to start --", panel.getHeightInCharacters() - 2);
     }
 
     public void winScreen() {
         panel.clear();
         panel.writeCenter("win", 1);
-        panel.writeCenter("-- press any key to restart --", panel.getHeightInCharacters() - 2);
+        panel.writeCenter("-- press space to restart --", panel.getHeightInCharacters() - 2);
     }
 
     public void loseScreen() {
         panel.clear();
         panel.writeCenter("lose", 1);
-        panel.writeCenter("-- press any key to restart --", panel.getHeightInCharacters() - 2);
+        panel.writeCenter("-- press space to restart --", panel.getHeightInCharacters() - 2);
     }
 
     public void wtfScreen() {
         panel.clear();
         panel.write("wtf? Invalid game state.", panel.getHeightInCharacters() - 4, 2);
-        panel.writeCenter("-- press any key to restart --", panel.getHeightInCharacters() - 2);
+        panel.writeCenter("-- press space to restart --", panel.getHeightInCharacters() - 2);
     }
 
     public void playScreen() {
@@ -133,7 +155,9 @@ public class GuiController implements KeyListener {
             panel.write(creature.glyph, cx, cy, creature.color);
         }
 
+        String stats = "hp:" + target.hp + "  atk:" + target.attack + "  def:" + target.defence;
         panel.write(world.getName(target.x, target.y), 71, panel.getHeightInCharacters() - 1);
-        panel.write(" player (" + target.x + "," + target.y + ")", 0, panel.getHeightInCharacters() - 1);
+        panel.write(" " + target.name + " (" + target.x + "," + target.y + ")", 0, panel.getHeightInCharacters() - 1);
+        panel.write(stats, 30, panel.getHeightInCharacters() - 1);
     }
 }
