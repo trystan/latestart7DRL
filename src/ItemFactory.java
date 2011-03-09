@@ -18,27 +18,27 @@ public class ItemFactory {
     }
 
     public Item robes(){
-        Item armor = new Item(0,0,"robes",']',AsciiPanel.white);
+        Item armor = new Item(0,0,"robes",']',AsciiPanel.white, "");
         armor.modDefence = 2;
         return armor;
     }
 
     public Item lightArmor(){
-        Item armor = new Item(0,0,"light armor",']',AsciiPanel.white);
+        Item armor = new Item(0,0,"light armor",']',AsciiPanel.white, "");
         armor.modAttack = -1;
         armor.modDefence = 5 + rand.nextInt(5);
         return armor;
     }
 
     public Item mediumArmor(){
-        Item armor = new Item(0,0,"medium armor",']',AsciiPanel.white);
+        Item armor = new Item(0,0,"medium armor",']',AsciiPanel.white, "");
         armor.modAttack = -1;
         armor.modDefence = 10 + rand.nextInt(5);
         return armor;
     }
 
     public Item heavyArmor(){
-        Item armor = new Item(0,0,"heavy armor",']',AsciiPanel.white);
+        Item armor = new Item(0,0,"heavy armor",']',AsciiPanel.white, "");
         armor.modAttack = -3;
         armor.modDefence = 15 + rand.nextInt(5);
         return armor;
@@ -54,37 +54,42 @@ public class ItemFactory {
     }
 
     public Item knife(){
-        Item weapon = new Item(0,0,"knife",')',AsciiPanel.white);
+        Item weapon = new Item(0,0,"knife",')',AsciiPanel.white, "fast");
         weapon.modAttack = 1 + rand.nextInt(4);
         weapon.modDefence = 1 + rand.nextInt(4);
+        weapon.doesDoubleAttack = true;
         return weapon;
     }
 
     public Item sword(){
-        Item weapon = new Item(0,0,"sword",')',AsciiPanel.white);
+        Item weapon = new Item(0,0,"sword",')',AsciiPanel.white, "decapitates");
         weapon.modAttack = 5 + rand.nextInt(5);
         weapon.modDefence = 5 + rand.nextInt(10);
+        weapon.doesDecapitate = true;
         return weapon;
     }
 
     public Item spear(){
-        Item weapon = new Item(0,0,"spear",')',AsciiPanel.white);
+        Item weapon = new Item(0,0,"spear",')',AsciiPanel.white, "defensive");
         weapon.modAttack = 5 + rand.nextInt(10);
         weapon.modDefence = 5 + rand.nextInt(5);
+        weapon.doesDefensiveAttack = true;
         return weapon;
     }
 
     public Item club(){
-        Item weapon = new Item(0,0,"club",')',AsciiPanel.white);
+        Item weapon = new Item(0,0,"club",')',AsciiPanel.white, "heavy");
         weapon.modAttack = 10 + rand.nextInt(10);
         weapon.modDefence = rand.nextInt(5);
+        weapon.doesCritical = true;
         return weapon;
     }
 
     public Item mace(){
-        Item weapon = new Item(0,0,"mace",')',AsciiPanel.white);
+        Item weapon = new Item(0,0,"mace",')',AsciiPanel.white, "heavy");
         weapon.modAttack = 10 + rand.nextInt(10);
         weapon.modDefence = rand.nextInt(5);
+        weapon.doesCritical = true;
         return weapon;
     }
 }

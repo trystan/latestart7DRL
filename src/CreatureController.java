@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class CreatureController {
@@ -7,8 +8,11 @@ public class CreatureController {
     public Creature target;
     private Random rand;
     private int walkCountdown;
+    public int moveWaitTime;
     public PathFinder pathFinder;
     private ArrayList<Point> path;
+    private ArrayList<String> hatedNames;
+    private HashMap<String,Integer> lastSeenNames;
 
     public boolean canPathfind;
 
@@ -18,6 +22,9 @@ public class CreatureController {
         walkCountdown = rand.nextInt(5);
         pathFinder = pf;
         path = null;
+        hatedNames = new ArrayList<String>();
+        lastSeenNames = new HashMap<String,Integer>();
+        moveWaitTime = 3;
     }
 
     public void update() {
@@ -30,7 +37,7 @@ public class CreatureController {
             int closestDist = 1000000;
             
             for (Creature other : target.world.creatures) {
-                if (other == target || other.glyph == target.glyph) {
+                if (other == target) {
                     continue;
                 }
 
@@ -39,8 +46,20 @@ public class CreatureController {
                     continue;
                 }
 
-                if (target.glyph == other.glyph)
-                    continue;
+                if (isAlly(other)){
+                    if (!lastSeenNames.containsKey(other.name))
+                        target.tell(other, "Hi!");
+                    else if (lastSeenNames.get(other.name) > target.age + 50)
+                        target.tell(other, "Hey " + other.name + "! Good to see you again.");
+                    
+                    lastSeenNames.put(other.name, target.age);
+                } else {
+                    if (lastSeenNames.containsKey(other.name)
+                            && lastSeenNames.get(other.name) > target.age + 50)
+                        target.tell(other, "I haven't forgotten about you " + other.name + ".");
+
+                    lastSeenNames.put(other.name, target.age);
+                }
 
                 int dist = Math.min(Math.abs(target.x-other.x), Math.abs(target.y-other.y));
 
@@ -60,7 +79,7 @@ public class CreatureController {
         } else {
             meander();
         }
-        walkCountdown = 3;
+        walkCountdown = moveWaitTime;
     }
 
     public void trimPath(){
@@ -108,5 +127,19 @@ public class CreatureController {
                 target.moveBy(1, 1);
                 break;
         }
+    }
+
+    public void onAttackedBy(Creature other){
+        if (hatedNames.contains(other.name)){
+            if (target.hp + target.defence < target.attack)
+                target.tell(other, ": Have mercy on me!");
+        } else {
+            target.tell(other, "I won't forget that " + other.name + "!");
+            hatedNames.add(other.name);
+        }
+    }
+
+    public boolean isAlly(Creature other){
+        return other.glyph == target.glyph && !hatedNames.contains(other.name);
     }
 }

@@ -261,6 +261,11 @@ public class GuiController implements KeyListener {
         panel.write(pad("  hp:" + creature.hp, panelWidth), left, 2);
         panel.write(pad(" atk:" + creature.attack + weaponName, panelWidth), left, 3);
         panel.write(pad(" def:" + creature.defence + armorName, panelWidth), left, 4);
+
+        if (creature.details != null && creature.details.length() > 0)
+            panel.write(pad(" (" + creature.details + ")", panelWidth), left, 5);
+        else
+            panel.write(pad("", panelWidth), left, 5);
     }
 
     private void infoPanel(Creature creature, Item item, int left){
@@ -303,6 +308,11 @@ public class GuiController implements KeyListener {
 
         panel.write(" def:" + item.modDefence, left, 4);
         panel.write(pad(diffDefStr, (panelWidth + left) - panel.getCursorX()), diffDef > 0 ? AsciiPanel.green : AsciiPanel.red);
+
+        if (item.details != null && item.details.length() > 0)
+            panel.write(pad(" (" + item.details + ")", panelWidth), left, 5);
+        else
+            panel.write(pad("", panelWidth), left, 5);
     }
 
     private String pad(String str, int length){

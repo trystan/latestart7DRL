@@ -149,7 +149,7 @@ public class World {
             }
         }
         
-        for (int zoom : new int[]{2,4,2,2}) {
+        for (int zoom : new int[]{2,4,2}) {
             size *= zoom;
             int[][] tiles2 = new int[size][size];
 

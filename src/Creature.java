@@ -9,14 +9,20 @@ public class Creature {
     public char glyph;
     public Color color;
     public CreatureController controller;
-
+    public String details;
+    public boolean canSpeak;
+    public int age;
+    
     public World world;
 
     public Creature target;
 
+    public int healCountdown;
+
     public Item weapon;
     public Item armor;
 
+    public int maxHp;
     public int hp;
     public int attack;
     public int defence;
@@ -25,24 +31,36 @@ public class Creature {
     public ArrayList<String> messages;
     public ArrayList<Color> messageColors;
 
-    public Creature(World w, int cx, int cy, String n, char g, Color c) {
+    public Creature(World w, int cx, int cy, String n, char g, Color c, String d) {
         world = w;
         x = cx;
         y = cy;
         name = n;
         glyph = g;
         color = c;
+        details = d;
 
-        hp = 60;
+        maxHp = 60;
+        hp = maxHp;
         attack = 10;
         defence = 5;
         vision = 9;
-
+        healCountdown = 20;
+        canSpeak = false;
+        
         messages = new ArrayList<String>();
         messageColors = new ArrayList<Color>();
     }
 
     public void update(){
+        age++;
+        
+        if (--healCountdown < 1){
+            healCountdown = 20;
+            if (hp < maxHp)
+                hp++;
+        }
+        
         if (controller != null)
             controller.update();
     }
@@ -62,7 +80,10 @@ public class Creature {
             if (other == this || other.x != tx || other.y != ty)
                 continue;
 
-            return other.glyph != glyph;
+            if (controller != null)
+                return !controller.isAlly(other);
+            else
+                return glyph == other.glyph;
         }
 
         return true;
@@ -148,14 +169,26 @@ public class Creature {
     public void attack(Creature other){
         other.hp -= Math.max(1, attack - other.defence);
         
-        if (weapon != null){
-            weapon.attack(this, other);
-        }
-
         if (other.hp < 0)
             other.hp = 0;
 
+        if (weapon != null && other.hp > 0){
+            weapon.attack(this, other);
+        }
+
         target = other;
+
+        if (other.hp > 0 && other.controller != null)
+            other.controller.onAttackedBy(this);
+        
+        if (other.hp > 0
+                && other.weapon != null
+                && other.weapon.doesDefensiveAttack
+                && Math.random() < 0.5)
+            other.attack(this);
+
+        if (!canSpeak)
+            return;
 
         if (glyph == '@' && other.hp < 1)
             world.tellAll(color, name + " killed " + other.name);
@@ -163,8 +196,13 @@ public class Creature {
             world.tellAll(other.color, other.name + " was killed by " + name);
     }
 
-    void hear(Color color, String message) {
+    public void hear(Color color, String message) {
         messageColors.add(color);
         messages.add(message);
+    }
+
+    public void tell(Creature other, String message){
+        if (canSpeak)
+            other.hear(color, name + ": " + message);
     }
 }
