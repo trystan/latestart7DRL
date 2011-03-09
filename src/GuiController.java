@@ -162,6 +162,13 @@ public class GuiController implements KeyListener {
             panel.write(creature.glyph, cx, cy, creature.color);
         }
 
+        int startY = panel.getHeightInCharacters() - target.messages.size() - 1;
+        for (int i = 0; i < target.messages.size(); i++){
+            panel.writeCenter(target.messages.get(i), startY+i, target.messageColors.get(i));
+        }
+        target.messages.clear();
+        target.messageColors.clear();
+
         String stats = "hp:" + target.hp + "  atk:" + target.attack + "  def:" + target.defence;
         panel.write(world.getName(target.x, target.y), 71, panel.getHeightInCharacters() - 1);
         panel.write(" " + target.name + " (" + target.x + "," + target.y + ")", 0, panel.getHeightInCharacters() - 1);

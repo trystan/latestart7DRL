@@ -1,5 +1,6 @@
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 public class Creature {
     public int x;
@@ -15,6 +16,10 @@ public class Creature {
     public int hp;
     public int attack;
     public int defence;
+    public int vision;
+
+    public ArrayList<String> messages;
+    public ArrayList<Color> messageColors;
 
     public Creature(World w, int cx, int cy, String n, char g, Color c) {
         world = w;
@@ -27,6 +32,10 @@ public class Creature {
         hp = 60;
         attack = 10;
         defence = 5;
+        vision = 9;
+
+        messages = new ArrayList<String>();
+        messageColors = new ArrayList<Color>();
     }
 
     public void update(){
@@ -85,5 +94,15 @@ public class Creature {
 
     public void attack(Creature other){
         other.hp -= Math.max(1, attack - other.defence);
+
+        if (glyph == '@' && other.hp < 1)
+            world.tellAll(color, name + " killed " + other.name);
+        else if(other.glyph == '@' && other.hp < 1)
+            world.tellAll(other.color, other.name + " was killed by " + name);
+    }
+
+    void tell(Color color, String message) {
+        messageColors.add(color);
+        messages.add(message);
     }
 }

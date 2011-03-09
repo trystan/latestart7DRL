@@ -28,6 +28,12 @@ public class World {
         create();
     }
 
+    public void tellAll(Color color, String message){
+        for (Creature creature : creatures){
+            creature.tell(color, message);
+        }
+    }
+
     public void update(){
         Object[] creatureArray = creatures.toArray();
         for (Object creature : creatureArray){

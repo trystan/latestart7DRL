@@ -30,12 +30,12 @@ public class CreatureController {
             int closestDist = 1000000;
             
             for (Creature other : target.world.creatures) {
-                if (other == target || other.glyph != '@') {
+                if (other == target || other.glyph == target.glyph) {
                     continue;
                 }
 
-                if (Math.abs(target.x - other.x) > 12
-                 || Math.abs(target.y - other.y) > 12) {
+                if (Math.abs(target.x - other.x) > target.vision
+                 || Math.abs(target.y - other.y) > target.vision) {
                     continue;
                 }
 
@@ -48,7 +48,7 @@ public class CreatureController {
                     continue;
                 
                 closestDist = dist;
-                closest = target;
+                closest = other;
             }
 
             if (closest != null)
