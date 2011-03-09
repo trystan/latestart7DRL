@@ -264,7 +264,7 @@ public class GuiController implements KeyListener {
         if (left < 0)
             left = right - panelWidth + left;
         
-        panel.write(pad("     " + creature.name, panelWidth), left, bottom-4);
+        panel.write(pad(" " + creature.name, panelWidth), left, bottom-4);
         panel.write(pad("  hp:" + creature.hp, panelWidth), left, bottom-3);
         panel.write(pad(" atk:" + creature.attack, panelWidth), left, bottom-2);
         panel.write(pad(" def:" + creature.defence, panelWidth), left, bottom-1);
