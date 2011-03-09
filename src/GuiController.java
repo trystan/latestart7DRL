@@ -1,4 +1,5 @@
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
@@ -31,7 +32,19 @@ public class GuiController implements KeyListener {
         for (int i = 0; i < 100; i++){
             Creature zombie = new Creature(world, 0, 0, "zombie", 'z', AsciiPanel.brightWhite);
             zombie.controller = new CreatureController(zombie, pf);
+            zombie.controller.canPathfind = true;
             world.placeCreature(zombie, rand);
+        }
+        
+        Color[] blobColors = new Color[]{ AsciiPanel.red, AsciiPanel.yellow, AsciiPanel.green, AsciiPanel.cyan, AsciiPanel.blue, AsciiPanel.magenta };
+        for (int i = 0; i < 100; i++){
+            Color c = blobColors[i % blobColors.length];
+            Creature blob = new Creature(world, 0, 0, "blob", 'b', c);
+            blob.hp = 5 + rand.nextInt(6);
+            blob.attack = 2 + rand.nextInt(5);
+            blob.defence = rand.nextInt(3);
+            blob.controller = new CreatureController(blob, pf);
+            world.placeCreature(blob, rand);
         }
     }
 

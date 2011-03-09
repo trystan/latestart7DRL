@@ -10,6 +10,8 @@ public class CreatureController {
     public PathFinder pathFinder;
     private ArrayList<Point> path;
 
+    public boolean canPathfind;
+
     public CreatureController(Creature t, PathFinder pf) {
         target = t;
         rand = new Random();
@@ -23,20 +25,22 @@ public class CreatureController {
             return;
         }
 
-        for (Creature other : target.world.creatures) {
-            if (other == target || other.glyph != '@') {
-                continue;
-            }
+        if (canPathfind) {
+            for (Creature other : target.world.creatures) {
+                if (other == target || other.glyph != '@') {
+                    continue;
+                }
 
-            if (Math.abs(target.x - other.x) > 12
-             || Math.abs(target.y - other.y) > 12) {
-                continue;
-            }
+                if (Math.abs(target.x - other.x) > 12
+                 || Math.abs(target.y - other.y) > 12) {
+                    continue;
+                }
 
-            path = pathFinder.findPath(target, target.x, target.y, other.x, other.y);
-            break;
+                path = pathFinder.findPath(target, target.x, target.y, other.x, other.y);
+                break;
+            }
         }
-
+        
         if (path != null && path.size() > 0) {
             followPath();
         } else {
