@@ -89,6 +89,27 @@ public class Creature {
         return true;
     }
 
+    public boolean canBeAt(int tx, int ty){
+        if (tx < 0 || tx >= world.width
+         || ty < 0 || ty >= world.height)
+            return false;
+
+        switch (world.tiles[tx][ty]) {
+            case World.dirtWall:
+            case World.rockWall:
+            case World.water: return false;
+        }
+
+        for (Creature other : world.creatures){
+            if (other == this || other.x != tx || other.y != ty)
+                continue;
+
+            return false;
+        }
+
+        return true;
+    }
+
     public boolean canMoveBy(int mx, int my) {
         if (x+mx < 0 || x+mx >= world.width
          || y+my < 0 || y+my >= world.height)
@@ -190,9 +211,7 @@ public class Creature {
         if (!canSpeak)
             return;
 
-        if (glyph == '@' && other.hp < 1)
-            world.tellAll(color, name + " killed " + other.name);
-        else if(other.glyph == '@' && other.hp < 1)
+        if(other.glyph == '@' && other.hp < 1)
             world.tellAll(other.color, other.name + " was killed by " + name);
     }
 

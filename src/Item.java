@@ -35,7 +35,7 @@ public class Item {
                 && Math.random() < 0.1){
             target.hp -= 5;
             target.maxHp -= 5;
-            user.hear(user.color, user.name + " critically damaged " + target.name);
+            user.hear(user.color, "You critically damaged " + target.name);
         } else if (doesDecapitate 
                 && target.hp <= user.attack - target.defence
                 && Math.random() < 0.5){
@@ -44,11 +44,11 @@ public class Item {
             if (user.glyph == '@')
                 user.world.tellAll(user.color, user.name + " decapitated " + target.name);
             else
-                user.hear(user.color, user.name + " decapitated " + target.name);
+                user.hear(user.color, "You decapitated " + target.name);
         } else if (doesDoubleAttack
                 && target.hp > 0
                 && Math.random() < 0.125){
-            user.world.tellAll(user.color, user.name + " quickly hit " + target.name);
+            user.hear(user.color, "You quickly hit " + target.name);
             user.attack(target);
         }
     }

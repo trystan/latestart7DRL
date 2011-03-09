@@ -22,11 +22,13 @@ public class World {
     public int width;
     public int height;
     private Random rand;
-    
+    public int age;
+
     public World(){
         creatures = new ArrayList<Creature>();
         items = new ArrayList<Item>();
         rand = new Random();
+        age = 0;
         create();
     }
 
@@ -37,6 +39,7 @@ public class World {
     }
 
     public void update(){
+        age++;
         Object[] creatureArray = creatures.toArray();
         for (Object creature : creatureArray){
             ((Creature)creature).update();
@@ -48,6 +51,55 @@ public class World {
                 died.add(creature);
         }
         creatures.removeAll(died);
+
+        if (age % 200 == 0)
+            spawnEnemies();
+    }
+
+    public void spawnEnemies(){
+        String message = " are attacking from the ";
+        int x = 0;
+        int y = 0;
+
+        CreatureFactory factory = new CreatureFactory(this, new ItemFactory());
+
+        switch (rand.nextInt(4)){
+            case 0: x = rand.nextInt(width); message += "north"; break;
+            case 1: x = rand.nextInt(width); message += "south"; y=height; break;
+            case 2: y = rand.nextInt(height); message += "west"; break;
+            case 3: y = rand.nextInt(height); message += "east"; x=width; break;
+        }
+
+        ArrayList<Creature> group = new ArrayList();
+        switch (rand.nextInt(2)){
+            case 0:
+                message = "Zombies " + message;
+                for (int i = 0; i < rand.nextInt(10) + rand.nextInt(10); i++) {
+                    group.add(factory.Zombie());
+                }
+                break;
+            case 1:
+                message = "Blobs " + message;
+                for (int i = 0; i < 10 + rand.nextInt(20); i++) {
+                    group.add(factory.Blob(rand));
+                }
+                break;
+        }
+
+        if (group.isEmpty())
+            return;
+
+         int tries = 0;
+         while (!group.isEmpty() && tries++ < 1000){
+            Creature c = group.get(0);
+            c.x = x + rand.nextInt(20) - 10;
+            c.y = y + rand.nextInt(20) - 10;
+            if (c.canBeAt(c.x, c.y)){
+                creatures.add(group.remove(0));
+            }
+         }
+
+         tellAll(AsciiPanel.brightWhite, "!!" + message + "!!");
     }
 
     public String getName(int x, int y){
