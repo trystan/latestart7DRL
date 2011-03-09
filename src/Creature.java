@@ -14,6 +14,9 @@ public class Creature {
 
     public Creature target;
 
+    public Item weapon;
+    public Item armor;
+
     public int hp;
     public int attack;
     public int defence;
@@ -95,8 +98,57 @@ public class Creature {
         target = null;
     }
 
+    public void unequip(Item item){
+        if (item == null){
+            return;
+        } else if (weapon == item){
+            weapon = null;
+            tell(AsciiPanel.white, "You drop your " + item.name);
+        } else if (armor == item){
+            armor = null;
+            tell(AsciiPanel.white, "You take off your " + item.name);
+        } else {
+            return;
+        }
+
+        hp -= item.modHp;
+        attack -= item.modAttack;
+        defence -= item.modDefence;
+        item.x = x;
+        item.y = y;
+        item.equipped = false;
+    }
+    public void equip(Item item){
+        switch(item.glyph){
+            case ')':
+                unequip(weapon);
+                weapon = item;
+                hp += item.modHp;
+                attack += item.modAttack;
+                defence += item.modDefence;
+                item.equipped = true;
+                tell(AsciiPanel.white, "You weild a " + item.name);
+                break;
+            case ']':
+                unequip(armor);
+                armor = item;
+                tell(AsciiPanel.white, "You put on some " + item.name);
+                break;
+            default: return;
+        }
+        
+        hp += item.modHp;
+        attack += item.modAttack;
+        defence += item.modDefence;
+        item.equipped = true;
+    }
+
     public void attack(Creature other){
         other.hp -= Math.max(1, attack - other.defence);
+        
+        if (weapon != null){
+            weapon.attack(this, other);
+        }
 
         if (other.hp < 0)
             other.hp = 0;

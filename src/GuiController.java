@@ -40,10 +40,17 @@ public class GuiController implements KeyListener {
 
         for (int i = 0; i < 100; i++){
             world.placeCreature(factory.Zombie(), rand);
-        }
-        
-        for (int i = 0; i < 100; i++){
             world.placeCreature(factory.Blob(rand), rand);
+        }
+
+        for (int i = 0; i < 100; i++){
+            Item armor = new Item(0,0,"armor",']',AsciiPanel.white);
+            armor.modDefence = 5 + rand.nextInt(15);
+            world.placeItem(armor, rand);
+
+            Item weapon = new Item(0,0,"sword",')',AsciiPanel.white);
+            weapon.modAttack = 5 + rand.nextInt(15);
+            world.placeItem(weapon, rand);
         }
     }
 
@@ -88,6 +95,21 @@ public class GuiController implements KeyListener {
                     case 'n': target.moveBy(1, 1); break;
                     case '5':
                     case '.': target.moveBy(0, 0); break;
+                    case 'g':
+                    case ',':
+                        boolean found = false;
+                        for (Item item : world.items){
+                            if (item.x == target.x && item.y == target.y && !item.equipped){
+                                target.equip(item);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found){
+                            target.tell(AsciiPanel.white, "There's nothing here to pick up.");
+                            endTurn1 = false;
+                        }
+                        break;
                     default: endTurn1 = false;
                 }
                 switch (ke.getKeyCode()) {
@@ -174,6 +196,19 @@ public class GuiController implements KeyListener {
             }
         }
 
+        for (Item item : world.items){
+            int cx = item.x - vx;
+            int cy = item.y - vy;
+
+            if (cx < 0 || cx >= viewWidth || cy < 0 || cy >= viewHeight)
+                continue;
+
+            if (item.equipped)
+                continue;
+
+            panel.write(item.glyph, cx, cy, item.color);
+        }
+
         for (Creature creature : world.creatures){
             int cx = creature.x - vx;
             int cy = creature.y - vy;
@@ -193,7 +228,16 @@ public class GuiController implements KeyListener {
         writeMessages();
 
         panel.write(world.getName(target.x, target.y), 71, panel.getHeightInCharacters() - 1);
-        panel.write(" " + target.name + " (" + target.x + "," + target.y + ")", 0, panel.getHeightInCharacters() - 1);
+
+        String status = " " + target.name + " (" + target.x + "," + target.y + ")";
+
+        if (target.weapon != null)
+            status += " weilding a " + target.weapon.name;
+
+        if (target.armor != null)
+            status += " wearing " + target.armor.name;
+
+        panel.write(status, 0, panel.getHeightInCharacters() - 1);
     }
 
     private ArrayList<String> currentMessages;
@@ -220,7 +264,7 @@ public class GuiController implements KeyListener {
         if (left < 0)
             left = right - panelWidth + left;
         
-        panel.write(pad("   " + creature.name, panelWidth), left, bottom-4);
+        panel.write(pad("     " + creature.name, panelWidth), left, bottom-4);
         panel.write(pad("  hp:" + creature.hp, panelWidth), left, bottom-3);
         panel.write(pad(" atk:" + creature.attack, panelWidth), left, bottom-2);
         panel.write(pad(" def:" + creature.defence, panelWidth), left, bottom-1);
@@ -230,6 +274,6 @@ public class GuiController implements KeyListener {
         while (str.length() < length){
             str += " ";
         }
-        return str;
+        return str.substring(0, length);
     }
 }

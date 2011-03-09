@@ -17,6 +17,7 @@ public class World {
     public static final int unknown = 8;
 
     public List<Creature> creatures;
+    public List<Item> items;
     public int[][] tiles;
     public int width;
     public int height;
@@ -24,6 +25,7 @@ public class World {
     
     public World(){
         creatures = new ArrayList<Creature>();
+        items = new ArrayList<Item>();
         rand = new Random();
         create();
     }
@@ -116,6 +118,23 @@ public class World {
         } while (!creature.canMoveBy(0, 0));
 
         creatures.add(creature);
+    }
+
+    public void placeItem(Item item, Random rand){
+        int tile;
+        do {
+            item.x = rand.nextInt(width);
+            item.y = rand.nextInt(height);
+
+            for (Item other : items){
+                if (other.x == item.x && other.y == item.y)
+                    continue;
+            }
+
+            tile = tiles[item.x][item.y];
+        } while (tile == water || tile == rockWall || tile == dirtWall);
+
+        items.add(item);
     }
 
     private void create() {
