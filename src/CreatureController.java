@@ -26,6 +26,9 @@ public class CreatureController {
         }
 
         if (canPathfind) {
+            Creature closest = null;
+            int closestDist = 1000000;
+            
             for (Creature other : target.world.creatures) {
                 if (other == target || other.glyph != '@') {
                     continue;
@@ -36,9 +39,20 @@ public class CreatureController {
                     continue;
                 }
 
-                path = pathFinder.findPath(target, target.x, target.y, other.x, other.y);
-                break;
+                if (target.glyph == other.glyph)
+                    continue;
+
+                int dist = Math.min(Math.abs(target.x-other.x), Math.abs(target.y-other.y));
+
+                if (dist >= closestDist)
+                    continue;
+                
+                closestDist = dist;
+                closest = target;
             }
+
+            if (closest != null)
+                path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y);
         }
         
         if (path != null && path.size() > 0) {
