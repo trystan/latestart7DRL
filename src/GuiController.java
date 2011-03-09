@@ -1,6 +1,8 @@
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class GuiController implements KeyListener {
@@ -8,6 +10,7 @@ public class GuiController implements KeyListener {
     private final static int win = 2;
     private final static int lose = 3;
     private final static int play = 4;
+    private final static int help = 5;
 
     private int stage;
 
@@ -18,6 +21,8 @@ public class GuiController implements KeyListener {
     public GuiController(AsciiPanel p) {
         panel = p;
         stage = start;
+        currentMessages = new ArrayList<String>();
+        currentMessageColors = new ArrayList<Color>();
         reset();
     }
 
@@ -55,10 +60,16 @@ public class GuiController implements KeyListener {
                     reset();
                 }
             break;
+            case help:
+                if (ke.getKeyChar() == ' '){
+                    stage = play;
+                }
+                break;
             case play:
                 boolean endTurn1 = true;
                 boolean endTurn2 = true;
                 switch (ke.getKeyChar()) {
+                    case '?': stage = help; endTurn1 = false; break;
                     case '8':
                     case 'k': target.moveBy(0, -1); break;
                     case '2':
@@ -108,6 +119,7 @@ public class GuiController implements KeyListener {
             case win: winScreen(); break;
             case lose: loseScreen(); break;
             case play: playScreen(); break;
+            case help: helpScreen(); break;
             default: wtfScreen(); break;
         }
         panel.repaint();
@@ -136,6 +148,16 @@ public class GuiController implements KeyListener {
         panel.clear();
         panel.write("wtf? Invalid game state.", panel.getHeightInCharacters() - 4, 2);
         panel.writeCenter("-- press space to restart --", panel.getHeightInCharacters() - 2);
+    }
+
+    public void helpScreen() {
+        panel.clear();
+        panel.writeCenter("help", 1);
+        panel.write("@ = you or other heros", 3, 3);
+        panel.write("z = zombie", 3, 4);
+        panel.write("b = blob", 3, 5);
+        panel.write("hjklyubn or arrow keys or numpad to move", 3, 7);
+        panel.writeCenter("-- press space to continue --", panel.getHeightInCharacters() - 2);
     }
 
     public void playScreen() {
@@ -174,13 +196,20 @@ public class GuiController implements KeyListener {
         panel.write(" " + target.name + " (" + target.x + "," + target.y + ")", 0, panel.getHeightInCharacters() - 1);
     }
 
+    private ArrayList<String> currentMessages;
+    private ArrayList<Color> currentMessageColors;
     private void writeMessages(){
-        int startY = panel.getHeightInCharacters() - target.messages.size() - 1;
-        for (int i = 0; i < target.messages.size(); i++){
-            panel.writeCenter(target.messages.get(i), startY+i, target.messageColors.get(i));
+        if (!target.messages.isEmpty()){
+            currentMessages = (ArrayList<String>)target.messages.clone();
+            currentMessageColors = (ArrayList<Color>)target.messageColors.clone();
+            target.messages.clear();
+            target.messageColors.clear();
         }
-        target.messages.clear();
-        target.messageColors.clear();
+
+        int startY = panel.getHeightInCharacters() - currentMessages.size() - 1;
+        for (int i = 0; i < currentMessages.size(); i++){
+            panel.writeCenter(currentMessages.get(i), startY+i, currentMessageColors.get(i));
+        }
     }
 
     private void infoPanel(Creature creature, int left){

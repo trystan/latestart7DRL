@@ -98,6 +98,9 @@ public class Creature {
     public void attack(Creature other){
         other.hp -= Math.max(1, attack - other.defence);
 
+        if (other.hp < 0)
+            other.hp = 0;
+
         target = other;
 
         if (glyph == '@' && other.hp < 1)
