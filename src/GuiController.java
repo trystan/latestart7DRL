@@ -162,16 +162,45 @@ public class GuiController implements KeyListener {
             panel.write(creature.glyph, cx, cy, creature.color);
         }
 
+
+        if (target.target != null){
+            infoPanel(target, 1);
+            infoPanel(target.target, -1);
+        }
+
+        writeMessages();
+
+        panel.write(world.getName(target.x, target.y), 71, panel.getHeightInCharacters() - 1);
+        panel.write(" " + target.name + " (" + target.x + "," + target.y + ")", 0, panel.getHeightInCharacters() - 1);
+    }
+
+    private void writeMessages(){
         int startY = panel.getHeightInCharacters() - target.messages.size() - 1;
         for (int i = 0; i < target.messages.size(); i++){
             panel.writeCenter(target.messages.get(i), startY+i, target.messageColors.get(i));
         }
         target.messages.clear();
         target.messageColors.clear();
+    }
 
-        String stats = "hp:" + target.hp + "  atk:" + target.attack + "  def:" + target.defence;
-        panel.write(world.getName(target.x, target.y), 71, panel.getHeightInCharacters() - 1);
-        panel.write(" " + target.name + " (" + target.x + "," + target.y + ")", 0, panel.getHeightInCharacters() - 1);
-        panel.write(stats, 30, panel.getHeightInCharacters() - 1);
+    private void infoPanel(Creature creature, int left){
+        int bottom = panel.getHeightInCharacters() - 1;
+        int right = panel.getWidthInCharacters();
+        int panelWidth = 20;
+
+        if (left < 0)
+            left = right - panelWidth + left;
+        
+        panel.write(pad("   " + creature.name, panelWidth), left, bottom-4);
+        panel.write(pad("  hp:" + creature.hp, panelWidth), left, bottom-3);
+        panel.write(pad(" atk:" + creature.attack, panelWidth), left, bottom-2);
+        panel.write(pad(" def:" + creature.defence, panelWidth), left, bottom-1);
+    }
+
+    private String pad(String str, int length){
+        while (str.length() < length){
+            str += " ";
+        }
+        return str;
     }
 }

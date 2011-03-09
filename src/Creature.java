@@ -12,6 +12,7 @@ public class Creature {
 
     public World world;
 
+    public Creature target;
 
     public int hp;
     public int attack;
@@ -90,10 +91,14 @@ public class Creature {
             x += mx;
             y += my;
         }
+
+        target = null;
     }
 
     public void attack(Creature other){
         other.hp -= Math.max(1, attack - other.defence);
+
+        target = other;
 
         if (glyph == '@' && other.hp < 1)
             world.tellAll(color, name + " killed " + other.name);
