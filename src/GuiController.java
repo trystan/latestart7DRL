@@ -192,6 +192,8 @@ public class GuiController implements KeyListener {
             }
         }
 
+        Item itemHere = null;
+
         for (Item item : world.items){
             int cx = item.x - vx;
             int cy = item.y - vy;
@@ -201,6 +203,9 @@ public class GuiController implements KeyListener {
 
             if (item.equipped)
                 continue;
+
+            if (item.x == target.x && item.y == target.y)
+                itemHere = item;
 
             panel.write(item.glyph, cx, cy, item.color);
         }
@@ -219,6 +224,9 @@ public class GuiController implements KeyListener {
         if (target.target != null){
             infoPanel(target, 1);
             infoPanel(target.target, -1);
+        } else if (itemHere != null) {
+            infoPanel(target, 1);
+            infoPanel(target, itemHere, 22);
         }
 
         writeMessages();
@@ -253,17 +261,55 @@ public class GuiController implements KeyListener {
     }
 
     private void infoPanel(Creature creature, int left){
-        int bottom = panel.getHeightInCharacters() - 1;
-        int right = panel.getWidthInCharacters();
         int panelWidth = 20;
 
         if (left < 0)
-            left = right - panelWidth + left;
-        
-        panel.write(pad(" " + creature.name, panelWidth), left, bottom-4);
-        panel.write(pad("  hp:" + creature.hp, panelWidth), left, bottom-3);
-        panel.write(pad(" atk:" + creature.attack, panelWidth), left, bottom-2);
-        panel.write(pad(" def:" + creature.defence, panelWidth), left, bottom-1);
+            left = panel.getWidthInCharacters() - panelWidth + left;
+
+        String weaponName = creature.weapon != null ? " " + creature.weapon.name : "";
+        String armorName = creature.armor != null ? " " + creature.armor.name : "";
+
+        panel.write(pad(" " + creature.name, panelWidth), left, 1);
+        panel.write(pad("  hp:" + creature.hp, panelWidth), left, 2);
+        panel.write(pad(" atk:" + creature.attack + weaponName, panelWidth), left, 3);
+        panel.write(pad(" def:" + creature.defence + armorName, panelWidth), left, 4);
+    }
+
+    private void infoPanel(Creature creature, Item item, int left){
+        int panelWidth = 20;
+
+        if (left < 0)
+            left = panel.getWidthInCharacters() - panelWidth + left;
+
+        int diffHp = 0;
+        int diffAtk = 0;
+        int diffDef = 0;
+        if (creature != null){
+            if (item.glyph == ')' && creature.weapon != null){
+                diffHp = item.modHp - creature.weapon.modHp;
+                diffAtk = item.modAttack - creature.weapon.modAttack;
+                diffDef = item.modDefence - creature.weapon.modDefence;
+            } else if (item.glyph == ']' && creature.armor != null){
+                diffHp = item.modHp - creature.armor.modHp;
+                diffAtk = item.modAttack - creature.armor.modAttack;
+                diffDef = item.modDefence - creature.armor.modDefence;
+            } else {
+                diffHp = item.modHp;
+                diffAtk = item.modAttack;
+                diffDef = item.modDefence;
+            }
+        }
+
+        char up = (char)24;
+        char down = (char)25;
+        String diffHpStr = diffHp == 0 ? "" : (diffHp > 0 ? " " + up + diffHp : " " + down + Math.abs(diffHp));
+        String diffAtkStr = diffAtk == 0 ? "" : (diffAtk > 0 ? " " + up + diffAtk : " " + down + Math.abs(diffAtk));
+        String diffDefStr = diffDef == 0 ? "" : (diffDef > 0 ? " " + up + diffDef : " " + down + Math.abs(diffDef));
+
+        panel.write(pad(" " + item.name, panelWidth), left, 1);
+        panel.write(pad("  hp:" + item.modHp + diffHpStr, panelWidth), left, 2);
+        panel.write(pad(" atk:" + item.modAttack + diffAtkStr, panelWidth), left, 3);
+        panel.write(pad(" def:" + item.modDefence + diffDefStr, panelWidth), left, 4);
     }
 
     private String pad(String str, int length){
