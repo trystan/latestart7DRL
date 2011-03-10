@@ -21,13 +21,14 @@ public class GuiController implements KeyListener {
     public GuiController(AsciiPanel p) {
         panel = p;
         stage = start;
-        currentMessages = new ArrayList<String>();
-        currentMessageColors = new ArrayList<Color>();
         reset();
     }
 
     public void reset(){
         Random rand = new Random();
+        currentMessages = new ArrayList<String>();
+        currentMessageColors = new ArrayList<Color>();
+
         world = new World();
         ItemFactory itemFactory = new ItemFactory();
         CreatureFactory creatureFactory = new CreatureFactory(world, itemFactory);
@@ -38,13 +39,14 @@ public class GuiController implements KeyListener {
         world.placeCreature(creatureFactory.HeroFighter(), rand);
         world.placeCreature(creatureFactory.HeroTheif(), rand);
         world.placeCreature(creatureFactory.HeroWizzard(), rand);
+        world.placeCreature(creatureFactory.HeroMonk(), rand);
 
         for (int i = 0; i < 100; i++){
             world.placeCreature(creatureFactory.Zombie(), rand);
             world.placeCreature(creatureFactory.Blob(rand), rand);
         }
 
-        for (int i = 0; i < 50; i++){
+        for (int i = 0; i < 25; i++){
             world.placeItem(itemFactory.armor(), rand);
             world.placeItem(itemFactory.weapon(), rand);
         }
@@ -129,7 +131,7 @@ public class GuiController implements KeyListener {
     }
 
     public void currentScreen() {
-        if (target.hp < 1)
+        if (target.hp < 1 || target.isZombie())
             stage = lose;
         
         switch (stage) {

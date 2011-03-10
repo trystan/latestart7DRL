@@ -52,12 +52,28 @@ public class Creature {
         messageColors = new ArrayList<Color>();
     }
 
+    public void becomeZombie(){
+        world.tellAll(color, name + " has risen as a zombie!");
+        
+        name = "zobmie " + name;
+        glyph = 'Z';
+        maxHp = (int)(maxHp * 0.8);
+        hp = maxHp;
+    }
+
+    public boolean isZombie(){
+        return glyph == 'z' || glyph == 'Z';
+    }
+    
     public boolean isHero(){
         return glyph == '@';
     }
 
     public void update(){
         age++;
+
+        if (isZombie() && Math.random() < 0.01)
+            tellNearby("brains....");
         
         if (--healCountdown < 1){
             healCountdown = 20;
@@ -102,13 +118,6 @@ public class Creature {
             case World.dirtWall:
             case World.rockWall:
             case World.water: return false;
-        }
-
-        for (Creature other : world.creatures){
-            if (other == this || other.x != tx || other.y != ty)
-                continue;
-
-            return false;
         }
 
         return true;
@@ -198,7 +207,7 @@ public class Creature {
 
         hp -= amount;
 
-        if (hp < 0){
+        if (hp < 1){
             if (isHero())
                 tellNearby("Arhhh!");
             die();
@@ -206,7 +215,11 @@ public class Creature {
     }
     
     public void attack(Creature other){
-        other.takeDamage(Math.max(1, attack - other.defence));
+        int damage = Math.max(1, attack - other.defence);
+        other.takeDamage(damage);
+
+        if (isHero() && Math.random() * 100 < damage)
+            tellNearby("Take that!");
 
         if (weapon != null && other.hp > 0){
             weapon.attack(this, other);
@@ -223,6 +236,9 @@ public class Creature {
                 && Math.random() < 0.5)
             other.attack(this);
 
+        if (other.hp == 0 && other.isHero() && isZombie())
+            other.becomeZombie();
+        
         if (!canSpeak)
             return;
 

@@ -34,7 +34,7 @@ public class CreatureController {
         if (path != null && path.size() > 20)
             return false;
 
-        path = pathFinder.findPath(target, target.x, target.y, x, y);
+        path = pathFinder.findPath(target, target.x, target.y, x, y, target.distanceTo(x,y) * 4);
 
         return path != null && path.size() > 0;
     }
@@ -62,7 +62,7 @@ public class CreatureController {
                 if (isAlly(other)){
                     if (!lastSeenNames.containsKey(other.name))
                         target.tell(other, "Hi " + other.name + "!");
-                    else if (lastSeenNames.get(other.name) > target.age + 50)
+                    else if (lastSeenNames.get(other.name) < target.age - 100)
                         target.tell(other, "Hey " + other.name + "! Good to see you again.");
                     
                     lastSeenNames.put(other.name, target.age);
@@ -78,7 +78,8 @@ public class CreatureController {
                             && lastSeenNames.get(other.name) > target.age + 50)
                         target.tell(other, "I haven't forgotten about you " + other.name + "....");
 
-                    lastSeenNames.put(other.name, target.age);
+                    if (other.isHero())
+                        lastSeenNames.put(other.name, target.age);
 
                     if (dist >= closestDist)
                         continue;
@@ -89,9 +90,9 @@ public class CreatureController {
             }
 
             if (closest != null)
-                path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y);
+                path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y, 50);
             else if (closestAlly != null && closestAllyDist > 4)
-                path = pathFinder.findPath(target, target.x, target.y, closestAlly.x, closestAlly.y);
+                path = pathFinder.findPath(target, target.x, target.y, closestAlly.x, closestAlly.y, 50);
         }
 
         trimPath();
@@ -152,6 +153,9 @@ public class CreatureController {
     }
 
     public void onAttackedBy(Creature other){
+        if (!target.canSpeak)
+            return;
+        
         if (!hatedNames.contains(other.name)){
             if (isAlly(other))
                 target.tellNearby("Hey, " + other.name + " just attacked me!");
@@ -161,6 +165,7 @@ public class CreatureController {
     }
 
     public boolean isAlly(Creature other){
-        return other.glyph == target.glyph && !hatedNames.contains(other.name);
+        return (""+other.glyph).toLowerCase().equals((""+target.glyph).toLowerCase())
+                && !hatedNames.contains(other.name);
     }
 }

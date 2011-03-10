@@ -64,8 +64,8 @@ public class CreatureFactory {
         Creature creature = new Creature(world, 0, 0, name() + " the theif", '@', AsciiPanel.brightBlack, "sneaky");
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
-        creature.attack = 10;
-        creature.defence = 5;
+        creature.attack = 10 + rand.nextInt(5);
+        creature.defence =10 + rand.nextInt(5);
         creature.vision = 11;
         creature.canSpeak = true;
         creature.controller = new CreatureController(creature, pf);
@@ -80,8 +80,8 @@ public class CreatureFactory {
         Creature creature = new Creature(world, 0, 0, name() + " the fighter", '@', AsciiPanel.brightRed, "strong");
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
-        creature.attack = 10;
-        creature.defence = 5;
+        creature.attack = 15 + rand.nextInt(5);
+        creature.defence = 5 + rand.nextInt(5);
         creature.vision = 11;
         creature.canSpeak = true;
         creature.controller = new CreatureController(creature, pf);
@@ -92,13 +92,27 @@ public class CreatureFactory {
         return creature;
     }
 
+    public Creature HeroMonk(){
+        Creature creature = new Creature(world, 0, 0, name() + " the monk", '@', AsciiPanel.cyan, "balanced");
+        creature.maxHp = 60;
+        creature.hp = creature.maxHp;
+        creature.attack = 12 + rand.nextInt(5) + rand.nextInt(5);
+        creature.defence =12 + rand.nextInt(5) + rand.nextInt(5);
+        creature.vision = 11 + rand.nextInt(5);
+        creature.canSpeak = true;
+        creature.controller = new CreatureController(creature, pf);
+        creature.controller.canPathfind = true;
+        creature.controller.moveWaitTime = 0;
+        return creature;
+    }
+
     public Creature HeroWizzard(){
         Creature creature = new Creature(world, 0, 0, name() + " the wizzard", '@', AsciiPanel.brightMagenta, "magical");
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
-        creature.attack = 10;
-        creature.defence = 5;
-        creature.vision = 11;
+        creature.attack = 10 + rand.nextInt(5);
+        creature.defence = 5 + rand.nextInt(5);
+        creature.vision = 15;
         creature.canSpeak = true;
         creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;
@@ -110,10 +124,10 @@ public class CreatureFactory {
 
     public Creature Zombie(){
         Creature creature = new Creature(world, 0, 0, name() + " the zombie", 'z', AsciiPanel.brightWhite, "undead");
-        creature.maxHp = 40;
+        creature.maxHp = 40 + rand.nextInt(10);
         creature.hp = creature.maxHp;
-        creature.attack = 10;
-        creature.defence = 5;
+        creature.attack = 10 + rand.nextInt(5);
+        creature.defence = 5 + rand.nextInt(5);
         creature.vision = 10;
         creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;

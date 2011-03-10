@@ -52,7 +52,7 @@ public class World {
         }
         creatures.removeAll(died);
 
-        if (age % 200 == 0)
+        if (age % 100 == 0)
             spawnEnemies();
     }
 
