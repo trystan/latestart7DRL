@@ -61,7 +61,6 @@ public class PathFinder {
     private boolean passable(Point p){
         switch (world.tiles[p.x][p.y]) {
             case World.dirtWall:
-            case World.rockWall:
             case World.water: return false;
             default: return true;
         }

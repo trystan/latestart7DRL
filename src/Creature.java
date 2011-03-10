@@ -57,8 +57,11 @@ public class Creature {
         
         name = "zobmie " + name;
         glyph = 'Z';
+        color = AsciiPanel.white;
         maxHp = (int)(maxHp * 0.8);
         hp = maxHp;
+        controller.moveWaitTime++;
+        canSpeak = false;
     }
 
     public boolean isZombie(){
@@ -92,7 +95,6 @@ public class Creature {
 
         switch (world.tiles[tx][ty]) {
             case World.dirtWall:
-            case World.rockWall:
             case World.water: return false;
         }
 
@@ -116,7 +118,6 @@ public class Creature {
 
         switch (world.tiles[tx][ty]) {
             case World.dirtWall:
-            case World.rockWall:
             case World.water: return false;
         }
 
@@ -130,7 +131,6 @@ public class Creature {
         
         switch (world.tiles[x+mx][y+my]) {
             case World.dirtWall:
-            case World.rockWall:
             case World.water: return false;
         }
 
@@ -236,17 +236,14 @@ public class Creature {
                 && Math.random() < 0.5)
             other.attack(this);
 
-        if (other.hp == 0 && other.isHero() && isZombie())
-            other.becomeZombie();
-        
-        if (!canSpeak)
-            return;
-
-        if (isHero() && hp > 0 && hp + defence < other.attack)
+        if (canSpeak && isHero() && hp > 0 && hp + defence < other.attack)
             tell(other, ": Please! Have mercy on me " + other.name + "!");
 
-        if(other.isHero() && other.hp == 0)
+        if(canSpeak && other.isHero() && other.hp == 0)
             world.tellAll(other.color, other.name + " was killed by " + name);
+
+        if (other.hp == 0 && other.isHero() && isZombie())
+            other.becomeZombie();
     }
 
     public void hear(Color color, String message) {

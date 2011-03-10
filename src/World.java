@@ -12,9 +12,7 @@ public class World {
     public static final int grass = 3;
     public static final int shrub = 4;
     public static final int tree  = 5;
-    public static final int rockFloor = 6;
-    public static final int rockWall  = 7;
-    public static final int unknown = 8;
+    public static final int unknown = 6;
 
     public List<Creature> creatures;
     public List<Item> items;
@@ -119,8 +117,6 @@ public class World {
             case grass: return "grass";
             case shrub: return "bushes";
             case tree:  return "tree";
-            case rockFloor: return "rock";
-            case rockWall:  return "rock";
             default:    return "(unknown)";
         }
     }
@@ -133,8 +129,6 @@ public class World {
             case grass: return 0.0;
             case shrub: return 0.2;
             case tree:  return 0.4;
-            case rockFloor: return 0.0;
-            case rockWall:  return 0.9;
             default:    return 0.5;
         }
     }
@@ -147,8 +141,6 @@ public class World {
             case grass: return 249;
             case shrub: return '*';
             case tree:  return 6;
-            case rockFloor: return 249;
-            case rockWall:  return 177;
             default:    return ' ';
         }
     }
@@ -161,8 +153,6 @@ public class World {
             case grass: return AsciiPanel.green;
             case shrub: return AsciiPanel.green;
             case tree:  return AsciiPanel.green;
-            case rockFloor: return AsciiPanel.white;
-            case rockWall: return AsciiPanel.white;
             default:    return AsciiPanel.black;
         }
     }
@@ -193,7 +183,7 @@ public class World {
             }
 
             tile = tiles[item.x][item.y];
-        } while (tile == water || tile == rockWall || tile == dirtWall);
+        } while (tile == water || tile == dirtWall);
 
         items.add(item);
     }
@@ -266,15 +256,13 @@ public class World {
                         else if(rand.nextDouble() < 0.1) tiles[x][y] = shrub;
                         break;
                     case dirtWall:
-                        if (rand.nextDouble() < 0.1) tiles[x][y] = dirtFloor;
+                        if (rand.nextDouble() < 0.01) tiles[x][y] = dirtFloor;
                         break;
                     case dirtFloor:
                         if (rand.nextDouble() < 0.1) tiles[x][y] = grass;
                         else if(rand.nextDouble() < 0.01) tiles[x][y] = shrub;
                         else if(rand.nextDouble() < 0.01) tiles[x][y] = tree;
                         break;
-                    case rockFloor:
-                        tiles[x][y] = grass;
                 }
             }
         }
