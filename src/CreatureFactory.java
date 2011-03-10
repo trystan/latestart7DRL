@@ -114,7 +114,7 @@ public class CreatureFactory {
         creature.hp = creature.maxHp;
         creature.attack = 10;
         creature.defence = 5;
-        creature.vision = 6;
+        creature.vision = 10;
         creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;
         creature.controller.moveWaitTime = 2;

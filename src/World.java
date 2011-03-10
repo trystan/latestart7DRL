@@ -80,7 +80,7 @@ public class World {
                 break;
             case 1:
                 message = "Blobs " + message;
-                for (int i = 0; i < 10 + rand.nextInt(20); i++) {
+                for (int i = 0; i < 20 + rand.nextInt(20); i++) {
                     group.add(factory.Blob(rand));
                 }
                 break;
@@ -100,6 +100,15 @@ public class World {
          }
 
          tellAll(AsciiPanel.brightWhite, "!!" + message + "!!");
+         
+         for (Creature c : creatures){
+             if (!c.isHero() || c.controller == null)
+                 continue;
+
+             if (c.controller.goTo(x, y)){
+                 c.tellNearby("I'll take 'em!");
+             }
+         }
     }
 
     public String getName(int x, int y){

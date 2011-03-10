@@ -7,7 +7,6 @@ public class PathFinder {
 
     private World world;
     
-    double[][] cost;
     ArrayList<Point> opened;
     ArrayList<Point> closed;
     HashMap<Point, Point> parents;
@@ -22,7 +21,6 @@ public class PathFinder {
     }
 
     private void reset(){
-        cost = new double[world.width][world.height];
         opened.clear();
         closed.clear();
         parents.clear();
@@ -44,12 +42,12 @@ public class PathFinder {
         return points;
     }
 
-    private double gotToGetToEnd(Point p1) {
-        if (p1 == start) {
+    private double costToGetToEnd(Point p) {
+        if (p == start) {
             return 0;
         }
 
-        return Math.abs(end.x - p1.x) + Math.abs(end.y - p1.y);
+        return Math.abs(end.x - p.x) + Math.abs(end.y - p.y);
     }
 
     private double costToGetHere(Point p) {
@@ -57,14 +55,11 @@ public class PathFinder {
             return 0;
         }
 
-        return costToGetHere(parents.get(p));
+        return 1 + 0.5 * costToGetHere(parents.get(p));
     }
 
     private double totalCost(Point p) {
-        if (cost[p.x][p.y] == 0)
-            cost[p.x][p.y] = costToGetHere(p) + gotToGetToEnd(p);
-
-        return cost[p.x][p.y];
+        return costToGetHere(p) + costToGetToEnd(p);
     }
 
     public ArrayList<Point> findPath(Creature creature, int sx, int sy, int tx, int ty) {
@@ -88,11 +83,12 @@ public class PathFinder {
                 if (totalCost(other) < totalCost(best))
                     best = other;
             }
-            
+            System.out.println(totalCost(best));
             opened.remove(best);
             closed.add(best);
 
             if (best.x == tx && best.y == ty) {
+                System.out.println("!");
                 ArrayList<Point> path = new ArrayList<Point>();
                 Point current = best;
 
@@ -106,8 +102,6 @@ public class PathFinder {
 
             } else {
                 for (Point neighbor : getNeighbors(best.x, best.y)) {
-                    if (!creature.canEnter(neighbor.x, neighbor.y))
-                        continue;
 
                     if (opened.contains(neighbor)) {
                         Point bestPathToNeighbor = new Point(neighbor.x, neighbor.y);
@@ -133,6 +127,8 @@ public class PathFinder {
                 }
             }
         }
+        
+        System.out.println("?");
         return null;
     }
 }

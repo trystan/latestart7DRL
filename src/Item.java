@@ -31,20 +31,24 @@ public class Item {
     }
 
     public void attack(Creature user, Creature target){
+        boolean shout = user.isHero() && Math.random() < 0.1;
+        
         if (doesCritical
                 && Math.random() < 0.1){
             target.hp -= 5;
             target.maxHp -= 5;
             user.hear(user.color, "You critically damaged " + target.name);
+            if (shout) user.tellNearby("Take that " + target.name);
         } else if (doesDecapitate 
                 && target.hp <= user.attack - target.defence
                 && Math.random() < 0.5){
             target.hp = 0;
 
-            if (user.glyph == '@')
+            if (user.isHero())
                 user.world.tellAll(user.color, user.name + " decapitated " + target.name);
             else
                 user.hear(user.color, "You decapitated " + target.name);
+            if (shout) user.tellNearby("Did you guys see that!");
         } else if (doesDoubleAttack
                 && target.hp > 0
                 && Math.random() < 0.125){

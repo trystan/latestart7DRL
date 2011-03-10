@@ -52,6 +52,10 @@ public class Creature {
         messageColors = new ArrayList<Color>();
     }
 
+    public boolean isHero(){
+        return glyph == '@';
+    }
+
     public void update(){
         age++;
         
@@ -183,15 +187,26 @@ public class Creature {
     }
 
     public void die(){
+        hp = 0;
         unequip(armor);
         unequip(weapon);
     }
 
+    public void takeDamage(int amount){
+        if (isHero() && hp > maxHp * 0.25 && hp-amount < maxHp * 0.25)
+            tellNearby("I'm hurt! I need help!");
+
+        hp -= amount;
+
+        if (hp < 0){
+            if (isHero())
+                tellNearby("Arhhh!");
+            die();
+        }
+    }
+    
     public void attack(Creature other){
-        other.hp -= Math.max(1, attack - other.defence);
-        
-        if (other.hp < 0)
-            other.hp = 0;
+        other.takeDamage(Math.max(1, attack - other.defence));
 
         if (weapon != null && other.hp > 0){
             weapon.attack(this, other);
@@ -211,7 +226,10 @@ public class Creature {
         if (!canSpeak)
             return;
 
-        if(other.glyph == '@' && other.hp < 1)
+        if (isHero() && hp > 0 && hp + defence < other.attack)
+            tell(other, ": Please! Have mercy on me " + other.name + "!");
+
+        if(other.isHero() && other.hp == 0)
             world.tellAll(other.color, other.name + " was killed by " + name);
     }
 
@@ -222,6 +240,23 @@ public class Creature {
 
     public void tell(Creature other, String message){
         if (canSpeak)
-            other.hear(color, name + ": " + message);
+            other.hear(color, name + " says: " + message);
+    }
+
+    public void tellNearby(String message){
+        if (!canSpeak)
+            return;
+        
+        for (Creature other : world.creatures){
+
+            if (distanceTo(other.x, other.y) > vision)
+                continue;
+
+            other.hear(color, name + " shouts: " + message);
+        }
+    }
+
+    public int distanceTo(int ox, int oy){
+        return Math.max(Math.abs(x-ox), Math.abs(y-oy));
     }
 }

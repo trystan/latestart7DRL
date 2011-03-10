@@ -27,12 +27,26 @@ public class CreatureController {
         moveWaitTime = 3;
     }
 
+    public boolean goTo(int x, int y){
+        if (!canPathfind)
+            return false;
+
+        if (path != null && path.size() > 20)
+            return false;
+
+        path = pathFinder.findPath(target, target.x, target.y, x, y);
+
+        return path != null && path.size() > 0;
+    }
+    
     public void update() {
         if (--walkCountdown > 0) {
             return;
         }
 
         if (canPathfind) {
+            Creature closestAlly = null;
+            int closestAllyDist = 1000000;
             Creature closest = null;
             int closestDist = 1000000;
             
@@ -41,38 +55,46 @@ public class CreatureController {
                     continue;
                 }
 
-                if (Math.abs(target.x - other.x) > target.vision
-                 || Math.abs(target.y - other.y) > target.vision) {
+                int dist = target.distanceTo(other.x, other.y);
+                if (dist > target.vision)
                     continue;
-                }
 
                 if (isAlly(other)){
                     if (!lastSeenNames.containsKey(other.name))
-                        target.tell(other, "Hi!");
+                        target.tell(other, "Hi " + other.name + "!");
                     else if (lastSeenNames.get(other.name) > target.age + 50)
                         target.tell(other, "Hey " + other.name + "! Good to see you again.");
                     
                     lastSeenNames.put(other.name, target.age);
+
+                    if (dist >= closestAllyDist)
+                        continue;
+
+                    closestAllyDist = dist;
+                    closestAlly = other;
+                    
                 } else {
                     if (lastSeenNames.containsKey(other.name)
                             && lastSeenNames.get(other.name) > target.age + 50)
-                        target.tell(other, "I haven't forgotten about you " + other.name + ".");
+                        target.tell(other, "I haven't forgotten about you " + other.name + "....");
 
                     lastSeenNames.put(other.name, target.age);
+
+                    if (dist >= closestDist)
+                        continue;
+
+                    closestDist = dist;
+                    closest = other;
                 }
-
-                int dist = Math.min(Math.abs(target.x-other.x), Math.abs(target.y-other.y));
-
-                if (dist >= closestDist)
-                    continue;
-                
-                closestDist = dist;
-                closest = other;
             }
 
             if (closest != null)
                 path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y);
+            else if (closestAlly != null && closestAllyDist > 4)
+                path = pathFinder.findPath(target, target.x, target.y, closestAlly.x, closestAlly.y);
         }
+
+        trimPath();
         
         if (path != null && path.size() > 0) {
             followPath();
@@ -130,11 +152,10 @@ public class CreatureController {
     }
 
     public void onAttackedBy(Creature other){
-        if (hatedNames.contains(other.name)){
-            if (target.hp + target.defence < target.attack)
-                target.tell(other, ": Have mercy on me!");
-        } else {
-            target.tell(other, "I won't forget that " + other.name + "!");
+        if (!hatedNames.contains(other.name)){
+            if (isAlly(other))
+                target.tellNearby("Hey, " + other.name + " just attacked me!");
+            target.tell(other, "You've made a new enemy today " + other.name + "...");
             hatedNames.add(other.name);
         }
     }
