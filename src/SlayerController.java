@@ -11,6 +11,7 @@ public class SlayerController extends HeroController {
 
     @Override
     public void regreet(Creature other){
+        target.tell(other, "Let's go " + other.personalName + ".");
     }
 
     @Override

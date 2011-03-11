@@ -29,34 +29,31 @@ public class World {
     public int ticks;
     public int ticksPerMinute;
 
+    public CreatureFactory factory;
+
     public int heroCount;
     public int villagerCount;
     public int undeadCount;
 
     public boolean didDoOnlyTwoMessage;
 
-    public World(){
+    public World(CreatureFactory cf){
         creaturesToAdd = new ArrayList<Creature>();
         creatures = new ArrayList<Creature>();
         items = new ArrayList<Item>();
         rand = new Random();
         ticks = 0;
         ticksPerMinute = 1;
+        factory = cf;
         create();
     }
-
-    public boolean isImpassable(int tile, boolean canWalkThroughWalls, boolean canNotGoIndoors){
-        return tile == water 
+    
+    public boolean isImpassable(int tile, boolean canFly, boolean canWalkThroughWalls, boolean canNotGoIndoors){
+        return tile == water && !canFly
                 || tile == wall && !canWalkThroughWalls
                 || tile == openDoor && canNotGoIndoors
                 || tile == closedDoor && canNotGoIndoors
                 || tile == insideFloor && canNotGoIndoors;
-    }
-
-    public void tellAll(Color color, String message){
-        for (Creature creature : creatures){
-            creature.hear(color, message);
-        }
     }
 
     public void update(){
@@ -90,6 +87,18 @@ public class World {
 
         if (ticks % 60 == 0)
             spawnEnemies();
+
+        if (undeadCount < 10 && rand.nextDouble() < 0.1) {
+            Creature badGuy = factory.Zombie();
+            badGuy.doAction("crawls up from the ground");
+            placeAnywhere(badGuy, factory.rand);
+        }
+        
+        if (undeadCount < 50 && rand.nextDouble() < 0.05){
+            Creature badGuy = factory.Skeleton();
+            badGuy.doAction("crawls up from the ground");
+            placeAnywhere(badGuy, factory.rand);
+        }
     }
 
     public void onlyTwoMessage(){
@@ -116,8 +125,6 @@ public class World {
         int x = 0;
         int y = 0;
 
-        CreatureFactory factory = new CreatureFactory(this, new ItemFactory());
-
         switch (rand.nextInt(4)){
             case 0: x = rand.nextInt(width); message += "north"; break;
             case 1: x = rand.nextInt(width); message += "south"; y=height; break;
@@ -128,22 +135,22 @@ public class World {
         ArrayList<Creature> group = new ArrayList();
         switch (rand.nextInt(5)){
             case 0: message = "Skeletons" + message;
-                for (int i = 0; i < 20; i++) {
+                for (int i = 0; i < 30; i++) {
                     group.add(factory.Skeleton());
                 }
             break;
             case 1: message = "Zombies" + message;
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < 20; i++) {
                     group.add(factory.Zombie());
                 }
             break;
             case 2: message = "Ghosts" + message;
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < 4; i++) {
                     group.add(factory.Ghost());
                 }
             break;
             case 3: message = "Vampires" + message;
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 3; i++) {
                     group.add(factory.Vampire());
                 }
             break;
@@ -158,6 +165,8 @@ public class World {
         if (group.isEmpty())
             return;
 
+        group.get(0).tellAll(AsciiPanel.brightWhite, "!! " + message + " !!");
+
          int tries = 0;
          while (!group.isEmpty() && tries++ < 1000){
             Creature c = group.get(0);
@@ -167,8 +176,6 @@ public class World {
                 creatures.add(group.remove(0));
             }
          }
-
-         tellAll(AsciiPanel.brightWhite, "!! " + message + " !!");
     }
 
     public char getGlyph(int x, int y) {
@@ -228,12 +235,9 @@ public class World {
         do {
             creature.x = rand.nextInt(width);
             creature.y = rand.nextInt(height);
-
-            for (Creature other : creatures){
-                if (other.x == creature.x && other.y == creature.y)
-                    continue;
-            }
-        } while (tiles[creature.x][creature.y] != insideFloor);
+        } while (tiles[creature.x][creature.y] != floor
+              && tiles[creature.x][creature.y] != insideFloor
+                || !creature.canEnter(creature.x, creature.y));
 
         creatures.add(creature);
     }
@@ -248,7 +252,7 @@ public class World {
                     continue;
             }
 
-        } while (isImpassable(tiles[item.x][item.y], false, false));
+        } while (isImpassable(tiles[item.x][item.y], false, false, false));
 
         items.add(item);
     }
@@ -350,7 +354,7 @@ public class World {
 
     private void addCity(int cx, int cy){
         int dist = 5;
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 40; i++) {
             addHouse(cx + rand.nextInt(dist) + rand.nextInt(dist) - dist,
                      cy + rand.nextInt(dist) - dist / 2,
                      2 + rand.nextInt(3));
@@ -363,7 +367,7 @@ public class World {
             for (int y = 0; y < s*2+1; y++){
                 int tile = tiles[cx+x-s][cy+y-s];
 
-                if (tile == openDoor || tile == closedDoor)
+                if (tile == openDoor || tile == closedDoor || tile == floor)
                     return false;
                 
                 if (x==0 || y==0 || x==s*2 || y==s*2) {

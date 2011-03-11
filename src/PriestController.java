@@ -24,24 +24,30 @@ public class PriestController extends HeroController {
                 && other.hp < other.maxHp
                 && rand.nextDouble() < 0.05)
             healOther(other);
-        else if (!other.isHuman())
+        else if (!other.isHuman()) {
             visibleUndead++;
+            
+            if (other.weapon != null && rand.nextDouble() < 0.1)
+                target.tellNearby("The " + other.personalTitle + " has a " + other.weapon.name + "!");
+            else if(other.armor != null && rand.nextDouble() < 0.1)
+                target.tellNearby("The " + other.personalTitle + " is wearing " + other.armor.name + "!");
+        }
     }
-
+    
     @Override
     public void greet(Creature other){
         target.tell(other, "How can I help you " + other.personalName + "?");
     }
-
+    
     @Override
     public void regreet(Creature other){
-        target.tell(other, "How can I help you " + other.personalName + "?");
+        target.tell(other, "Protect the village " + other.personalName + ".");
     }
 
     @Override
     public void onTakeDamage(Creature other, int amount){
         if (rand.nextDouble() < 0.1)
-            target.tellNearby("Ouch!");
+            target.tellNearby("I could use some help with this " + other.personalTitle + ".");
     }
 
     @Override
@@ -81,6 +87,25 @@ public class PriestController extends HeroController {
 
     }
 
+    @Override
+    public void onRandomShoutout(){
+        switch (rand.nextInt(4)){
+            case 0:
+                if (target.world.villagerCount > 0)
+                    target.tellNearby("Protect the villagers!");
+                else
+                    target.tellNearby("Protect the village!");
+                break;
+            case 1: target.tellNearby("Stay together now!"); break;
+            case 2: target.tellNearby("Who needs healing?"); break;
+            case 3:
+                if (target.world.villagerCount > 0)
+                    target.doAction("prays for the villagers");
+                else
+                    target.doAction("prays for the village");
+                break;
+        }
+    }
 
 
     private void turnUndead(){

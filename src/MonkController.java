@@ -1,10 +1,17 @@
 
 public class MonkController extends HeroController {
 
+    int comboCounter;
+
     public MonkController(Creature c, PathFinder pf) {
         super(c, pf);
     }
 
+    @Override
+    public void update(){
+        comboCounter = 1;
+    }
+    
     @Override
     public void greet(Creature other){
         target.tell(other, "Hello.");
@@ -18,8 +25,8 @@ public class MonkController extends HeroController {
     @Override
     public void onTakeDamage(Creature other, int amount){
         if (rand.nextDouble() < 0.1)
-            target.tellNearby("Ow!");
-
+            target.tellNearby(other.personalTitle + "! Over here!");
+        
         if (target.hp < target.maxHp / 2
                 && rand.nextDouble() < 0.1)
             healSelf();
@@ -55,7 +62,7 @@ public class MonkController extends HeroController {
             target.tellNearby("Iron Foot!");
         else if (r < 0.25)
             target.tellNearby("Flying armbar!");
-        else if (rand.nextDouble() < 0.1)
+        else if (r > 0.5)
             quickAttack(other);
     }
 
@@ -76,7 +83,21 @@ public class MonkController extends HeroController {
     @Override
     public void onKnockback(int distance){
     }
-    
+
+    @Override
+    public void onRandomShoutout(){
+        switch (rand.nextInt(4)){
+            case 0: 
+                if (target.world.villagerCount > 0)
+                    target.tellNearby("Protect the villagers!");
+                else
+                    target.tellNearby("Protect the village!");
+                break;
+            case 1: target.tellNearby("One knuckle sandwich comming up!"); break;
+            case 2: target.tellNearby("Is this night over yet?"); break;
+            case 3: target.doAction("looks around"); break;
+        }
+    }
 
 
     private void healSelf(){
@@ -86,7 +107,13 @@ public class MonkController extends HeroController {
     }
 
     private void quickAttack(Creature other){
-        target.doAction("quickly attacks");
+        switch (++comboCounter){
+            case 2: target.doAction("double hits"); break;
+            case 3: target.doAction("triple hits"); break;
+            case 4: target.doAction("quadruple hits"); break;
+            default: target.doAction("x" + comboCounter+ " hits"); break;
+        }
+        
         target.attack(other);
     }
 }

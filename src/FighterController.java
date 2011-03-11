@@ -25,6 +25,9 @@ public class FighterController extends HeroController {
     public void onTakeDamage(Creature other, int amount){
         if (rand.nextDouble() < 0.1)
             target.doAction("grunts");
+
+        if (rageCounter == 0 && rand.nextDouble() < 0.05)
+            startRage();
     }
 
     @Override
@@ -76,6 +79,16 @@ public class FighterController extends HeroController {
             target.tellNearby("Ha! Look at em fly!");
     }
 
+    @Override
+    public void onRandomShoutout(){
+        switch (rand.nextInt(4)){
+            case 0: target.tellNearby("Bring it on!"); break;
+            case 1: target.tellNearby("Don't make me mad!"); break;
+            case 2: target.tellNearby("Let's smash some skulls!"); break;
+            case 3: target.tellNearby("Come on!"); break;
+        }
+    }
+
 
     
 
@@ -85,7 +98,7 @@ public class FighterController extends HeroController {
         target.tellNearby("RAHHHHH!!!");
         target.doAction("looks crazy");
         target.maxHp += 15;
-        target.healDamage(-15);
+        target.healDamage(15);
         target.attack += 15;
         target.defence += 15;
     }

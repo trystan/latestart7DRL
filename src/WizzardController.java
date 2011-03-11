@@ -20,17 +20,12 @@ public class WizzardController extends HeroController {
 
     @Override
     public void regreet(Creature other){
-        target.tell(other, "We meet again....");
+        target.doAction("examines " + other.getName());
     }
 
     @Override
     public void onTakeDamage(Creature other, int amount){
-        double r = rand.nextDouble();
-
-        if (r < 0.1)
-            target.tellNearby("Oof!");
-
-        if (r < 0.25)
+        if (rand.nextDouble() < 0.25)
             teleportSelf();
     }
 
@@ -68,6 +63,15 @@ public class WizzardController extends HeroController {
     @Override
     public void onKnockback(int distance){
 
+    }
+    
+    @Override
+    public void onRandomShoutout(){
+        switch (rand.nextInt(3)){
+            case 0: target.doAction("looks annoyed"); break;
+            case 1: target.doAction("looks unhappy"); break;
+            case 2: target.doAction("looks sad"); break;
+        }
     }
 
 

@@ -23,6 +23,22 @@ public class ItemFactory {
         return armor;
     }
 
+    public Item unholyArmor(){
+        Item armor = new Item(0,0,"unholy armor",']',AsciiPanel.brightBlack);
+        armor.modHp = 10;
+        armor.modAttack = 5;
+        armor.modDefence = 5;
+        return armor;
+    }
+
+    public Item holyArmor(){
+        Item armor = new Item(0,0,"unholy armor",']',AsciiPanel.brightBlack);
+        armor.modHp = 10;
+        armor.modAttack = 0;
+        armor.modDefence = 10;
+        return armor;
+    }
+
     public Item lightArmor(){
         Item armor = new Item(0,0,"light armor",']',AsciiPanel.white);
         armor.modAttack = -1;
@@ -62,6 +78,7 @@ public class ItemFactory {
 
     public Item lichStaff(){
         Item weapon = new Item(0,0,"skull staff",')',AsciiPanel.white);
+        weapon.modHp = + 10;
         weapon.modAttack = 5 + rand.nextInt(5);
         weapon.modDefence = 5 + rand.nextInt(5);
         return weapon;

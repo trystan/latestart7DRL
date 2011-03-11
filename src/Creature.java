@@ -5,6 +5,8 @@ import java.util.ArrayList;
 public class Creature {
     public int x;
     public int y;
+    public int level;
+    public int exp;
     public String personalName;
     public String personalTitle;
     public char glyph;
@@ -34,6 +36,7 @@ public class Creature {
     public boolean canBeDecapitated;
     public boolean canNotGoIndoors;
     public boolean hasBlood;
+    public boolean canFly;
 
     public Item weapon;
     public Item armor;
@@ -74,7 +77,7 @@ public class Creature {
     }
 
     public void becomeZombie(){
-        world.tellAll(color, getName() + " has risen as a zombie!");
+        tellAll(color, getName() + " has risen as a zombie!");
         
         personalTitle = "zobmie";
         glyph = 'z';
@@ -108,6 +111,9 @@ public class Creature {
             healDamage(1);
         
         controller.update();
+
+        if (exp > level * 5)
+            gainLevel();
     }
     
     public boolean canEnter(int tx, int ty){
@@ -129,7 +135,7 @@ public class Creature {
          || ty < 0 || ty >= world.height)
             return false;
 
-        if (world.isImpassable(world.tiles[tx][ty], canWalkThroughWalls, canNotGoIndoors))
+        if (world.isImpassable(world.tiles[tx][ty], canFly, canWalkThroughWalls, canNotGoIndoors))
             return false;
 
         return true;
@@ -197,6 +203,9 @@ public class Creature {
     }
 
     public void swapPlaces(Creature other){
+        if (other.isHero() && !isHero())
+            return;
+
         int tempx = other.x;
         int tempy = other.y;
 
@@ -220,12 +229,39 @@ public class Creature {
             return;
         }
 
-        hp -= item.modHp;
+        maxHp -= item.modHp;
+        if (hp > maxHp)
+            hp = maxHp;
         attack -= item.modAttack;
         defence -= item.modDefence;
-        item.x = x;
-        item.y = y;
-        item.equipped = false;
+        drop(item);
+    }
+
+    private void drop(Item item){
+        ArrayList<Point> candidates = new ArrayList<Point>();
+        candidates.add(new Point(x,y));
+
+        int tries = 0;
+        while (candidates.size() > 0 && tries++ < 25){
+            Point dest = candidates.remove(0);
+
+            boolean occupied = false;
+            for (Item other : world.items){
+                if (other.x == dest.x && other.y == dest.y && !other.equipped) {
+                    occupied = true;
+                    break;
+                }
+            }
+
+            if (!occupied && canBeAt(dest.x, dest.y)){
+                item.x = dest.x;
+                item.y = dest.y;
+                item.equipped = false;
+                break;
+            } else {
+                candidates.addAll(dest.getNeighbors(world));
+            }
+        }
     }
     
     public void equip(Item item){
@@ -242,11 +278,24 @@ public class Creature {
                 break;
             default: return;
         }
-        
-        hp += item.modHp;
+
+        maxHp += item.modHp;
         attack += item.modAttack;
         defence += item.modDefence;
         item.equipped = true;
+    }
+
+    public void gainLevel(){
+        exp -= level * 5;
+        level++;
+        maxHp += 1;
+        attack += 1;
+        defence += 1;
+
+        healDamage(level);
+        
+        if (isHero())
+            tellAll(color, getName() + " is now level " + level + "!");
     }
 
     public void die(){
@@ -280,6 +329,9 @@ public class Creature {
     }
     
     public void attack(Creature other){
+        if (other.hp == 0)
+            return;
+
         int damage = Math.max(1, attack - other.defence);
         other.takeDamage(damage);
         controller.onTakeDamage(other, damage);
@@ -308,8 +360,11 @@ public class Creature {
             other.controller.onCounterAttacked(this);
         }
 
+        if (other.hp == 0)
+            exp += level;
+
         if(other.isHuman() && other.hp == 0)
-            world.tellAll(other.color, other.getName() + " was killed by " + getName());
+            tellAll(other.color, other.getName() + " was killed by " + getName());
 
         if (other.hp == 0 && other.isHuman() && isZombie() && other.controller.beforeBittenByZombie())
             other.becomeZombie();
@@ -320,11 +375,16 @@ public class Creature {
         messages.add(message);
     }
 
+    public void tellAll(Color color, String message){
+        for (Creature creature : world.creatures){
+            creature.hear(color, message);
+        }
+    }
+
     public void tell(Creature other, String message){
         if (canSpeak)
             other.hear(color, getName() + " says: " + message);
     }
-
 
     public void tellNearby(String message){
         tellNearby("shouts", message);
@@ -352,10 +412,7 @@ public class Creature {
             if (distanceTo(other.x, other.y) > other.vision)
                 continue;
 
-            if (other == this)
-                other.hear(color, "you " + message);
-            else
-                other.hear(color, getName() + " " + message);
+            other.hear(color, getName() + " " + message);
         }
     }
 

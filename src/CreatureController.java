@@ -58,4 +58,8 @@ public abstract class CreatureController {
     public boolean beforeBittenByZombie(){
         return true;
     }
+
+    public void onPickupItem(Item item){
+        
+    }
 }

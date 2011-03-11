@@ -15,6 +15,8 @@ public class GuiController implements KeyListener {
     private String input;
     private int stage;
 
+    private boolean displayHUD;
+
     private AsciiPanel panel;
     private World world;
     private PlayerController controller;
@@ -27,6 +29,7 @@ public class GuiController implements KeyListener {
         stage = start;
         controller = c;
         input = "";
+        displayHUD = true;
     }
 
     public void reset(){
@@ -34,10 +37,11 @@ public class GuiController implements KeyListener {
         currentMessages = new ArrayList<String>();
         currentMessageColors = new ArrayList<Color>();
 
-        world = new World();
+        world = new World(null);
         ItemFactory itemFactory = new ItemFactory();
         CreatureFactory creatureFactory = new CreatureFactory(world, itemFactory);
-        
+        world.factory = creatureFactory;
+
         controller.target = creatureFactory.Player();
         controller.target.personalName = input;
         world.placeInVillage(controller.target, rand);
@@ -47,6 +51,7 @@ public class GuiController implements KeyListener {
         world.placeInVillage(creatureFactory.HeroMonk(), rand);
         world.placeInVillage(creatureFactory.HeroPreist(), rand);
         world.placeInVillage(creatureFactory.HeroSamuri(), rand);
+        world.placeInVillage(creatureFactory.HeroSlayer(), rand);
 
         for (int i = 0; i < 12; i++){
             world.placeInVillage(creatureFactory.Villager(), rand);
@@ -55,13 +60,13 @@ public class GuiController implements KeyListener {
         for (int i = 0; i < 4; i++){
             world.placeAnywhere(creatureFactory.Vampire(), rand);
         }
-        for (int i = 0; i < 4; i++){
+        for (int i = 0; i < 2; i++){
             world.placeAnywhere(creatureFactory.Ghost(), rand);
         }
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < 20; i++){
             world.placeAnywhere(creatureFactory.Zombie(), rand);
         }
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < 20; i++){
             world.placeAnywhere(creatureFactory.Skeleton(), rand);
         }
 
@@ -105,6 +110,8 @@ public class GuiController implements KeyListener {
             case play:
                 if (ke.getKeyChar() == '?')
                     stage = help;
+                else if (ke.getKeyChar() == ' ')
+                    displayHUD = !displayHUD;
                 else if(controller.keyPressed(ke))
                     world.update();
                 break;
@@ -150,13 +157,33 @@ public class GuiController implements KeyListener {
     public void winScreen() {
         panel.clear();
         panel.writeCenter("win", 1);
+        showScore();
         panel.writeCenter("-- press enter to restart --", panel.getHeightInCharacters() - 2);
     }
 
     public void loseScreen() {
         panel.clear();
         panel.writeCenter("lose", 1);
+        showScore();
         panel.writeCenter("-- press enter to restart --", panel.getHeightInCharacters() - 2);
+    }
+
+    private void showScore(){
+        int time = world.ticks / world.ticksPerMinute;
+        int timeScore = time * 2;
+        int levelScore = controller.target.level * 10;
+        int heroScore = world.heroCount * 20;
+        int villagerScore = world.villagerCount * 20;
+        int undeadScore = world.undeadCount * -2;
+        int total = timeScore + levelScore + heroScore + villagerScore + undeadScore;
+
+        panel.write(time + " minutes = " + timeScore, 20, 5);
+        panel.write("level " + controller.target.level + " = " + levelScore, 20, 6);
+        panel.write(world.heroCount + " heroes = " + heroScore, 20, 7);
+        panel.write(world.villagerCount + " villagers = " + villagerScore, 20, 8);
+        panel.write(world.undeadCount + " undead = " + undeadScore, 20, 9);
+        panel.write("Total score = " + total, 20, 10);
+
     }
 
     public void wtfScreen() {
@@ -187,6 +214,7 @@ public class GuiController implements KeyListener {
 
         panel.write("[hjklyubn] or arrow keys or numpad to move", 3, 19);
         panel.write("[g] or [,] to pickup or swap weapon or armor", 3, 20);
+        panel.write("[space] to hide or show messages and other info", 3, 21);
 
         panel.writeCenter("-- press enter to continue --", panel.getHeightInCharacters() - 2);
     }
@@ -232,16 +260,21 @@ public class GuiController implements KeyListener {
             panel.write(creature.glyph, cx, cy, creature.color);
         }
 
-        infoPanel(controller.target, 1);
+        if (displayHUD){
+            infoPanel(controller.target, 1);
 
-        if (controller.target.attacking != null){    
-            infoPanel(controller.target.attacking, 22);
-        } else if (itemHere != null) {
-            infoPanel(controller.target, itemHere, 22);
+            if (controller.target.attacking != null){
+                infoPanel(controller.target.attacking, 22);
+            } else if (itemHere != null) {
+                infoPanel(controller.target, itemHere, 22);
+            }
+
+            scoreboard();
+            
+            writeMessages();
+        } else {
+            panel.writeCenter(" ([space] to show messages and info) ", panel.getHeightInCharacters()-1, AsciiPanel.white);
         }
-
-        scoreboard();
-        writeMessages();
     }
 
     private void writeMessages(){

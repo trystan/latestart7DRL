@@ -10,11 +10,23 @@ public class UndeadController extends NonPlayerController {
     }
 
     @Override
+    public void update(){
+        super.update();
+
+        if (target.personalTitle.equals("skeleton")
+                && target.age > 120
+                && rand.nextDouble() < 0.02){
+            target.doAction("crumbles to dust");
+            target.die();
+        }
+    }
+
+    @Override
     public void see(Creature other){
         if (isAlly(other))
             return;
         
-        if (target.personalTitle == "lich" && rand.nextDouble() < 0.05)
+        if (target.personalTitle.equals("lich") && rand.nextDouble() < 0.05)
             lichMagic(other);
     }
     
@@ -59,7 +71,7 @@ public class UndeadController extends NonPlayerController {
 
 
     private void lichMagic(Creature other){
-        switch (rand.nextInt(3)){
+        switch (rand.nextInt(4)){
             case 0:
                 target.doAction("points at " + other.getName());
                 other.doAction("screams in pain");
@@ -99,6 +111,17 @@ public class UndeadController extends NonPlayerController {
                     }
                 }
                 
+                break;
+            case 3:
+                target.doAction("says an ancient chant");
+                if (!target.canFly && rand.nextDouble() < 0.25){
+                    target.canFly = true;
+                    target.doAction("begins to levitate");
+                } else {
+                    target.attack += 1;
+                    target.defence += 1;
+                    target.doAction("glows for a second");
+                }
                 break;
         }
     }

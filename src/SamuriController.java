@@ -27,16 +27,25 @@ public class SamuriController extends HeroController {
     
     @Override
     public void greet(Creature other){
-        target.tell(other, other.personalName);
     }
 
     @Override
     public void regreet(Creature other){
-        
+        target.tell(other, "Haven't been hiding, have you " + other.personalName + "?");
     }
 
     @Override
     public void onTakeDamage(Creature other, int amount){
+        if (rand.nextDouble() < 0.1)
+            target.tellNearby("I've got a " + other.personalTitle + " over here!");
+        else {
+
+            if (other.weapon != null && rand.nextDouble() < 0.1)
+                target.tellNearby("Careful! It's using a " + other.weapon.name + ".");
+
+            else if(other.armor != null && rand.nextDouble() < 0.1)
+                target.tellNearby("Careful! It's wearing " + other.armor.name + ".");
+        }
     }
 
     @Override
@@ -51,8 +60,8 @@ public class SamuriController extends HeroController {
 
     @Override
     public void onInflictDamage(Creature other, int damage){
-        if (rand.nextDouble() < 0.33)
-            target.tellNearby("yells", "hiyah");
+        if(other.armor != null && rand.nextDouble() < 0.1)
+            target.tellNearby("Your " + other.armor.name + " is no match for my " + target.weapon.name + ".");
     }
 
     @Override
@@ -83,13 +92,26 @@ public class SamuriController extends HeroController {
         return false;
     }
 
+    @Override
+    public void onRandomShoutout(){
+        switch (rand.nextInt(4)){
+            case 0: target.tellNearby("Protect the villagers!"); break;
+            case 1: target.tellNearby("Spread out!"); break;
+            case 2: target.tellNearby("Stay together!"); break;
+            case 4: target.tellNearby("Over here!"); break;
+            case 5: target.tellNearby("Who needs the aid of my " + target.weapon.name + "!"); break;
+            case 6: target.doAction("is surveying the battlefield"); break;
+        }
+    }
 
 
     private void meditate(){
         target.doAction("meditates");
 
-        target.attack++;
-        target.defence++;
+        if (target.level < 8) {
+            target.attack++;
+            target.defence++;
+        }
     }
 
     private void circularAttack(){
@@ -105,7 +127,7 @@ public class SamuriController extends HeroController {
 
     private void commitSeppiku(){
         target.doAction("brandishes a tanto");
-        target.takeDamage(1000);
-        target.world.tellAll(target.color, target.getName() + " has committed seppiku");
+        target.die();
+        target.tellAll(target.color, target.getName() + " has committed seppiku");
     }
 }

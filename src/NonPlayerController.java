@@ -21,19 +21,43 @@ public class NonPlayerController extends CreatureController {
         return path != null && path.size() > 0;
     }
 
+    public boolean equipItemIfBetter(Item item){
+        if (item.glyph == ')' && (target.weapon == null || item.getTotalValue() > target.weapon.getTotalValue())){
+            target.equip(item);
+            target.controller.onPickupItem(item);
+            return true;
+        } else if (item.glyph == ']' && (target.armor == null || item.getTotalValue() > target.armor.getTotalValue())){
+            target.equip(item);
+            target.controller.onPickupItem(item);
+            return true;
+        } else{
+            return false;
+        }
+    }
+
     @Override
     public void update() {
         if (target.isSlow && target.age % 3 != 0) {
             return;
         }
 
+        if (target.isHuman()){
+            for (Item item : target.world.items){
+                if (item.x == target.x && item.y == target.y){
+                    if (equipItemIfBetter(item))
+                        return;
+                    else
+                        break;
+                }
+            }
+        }
+
         Creature closest = null;
         int closestDist = 1000000;
 
         for (Creature other : target.world.creatures) {
-            if (other == target) {
+            if (other == target)
                 continue;
-            }
 
             int dist = target.distanceTo(other.x, other.y);
             if (dist > 64)
@@ -50,7 +74,7 @@ public class NonPlayerController extends CreatureController {
         }
 
         if (closest != null)
-            path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y, closestDist * 4);
+            path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y, 100);
         
         if (path != null && path.size() > 0) {
             followPath();
@@ -110,5 +134,13 @@ public class NonPlayerController extends CreatureController {
                 target.moveBy(1, 1);
                 break;
         }
+    }
+
+    @Override
+    public void onPickupItem(Item item){
+        if (item.glyph == ')')
+            target.tellNearby("I got a " + item.name + "!");
+        else
+            target.tellNearby("I got some " + item.name + "!");
     }
 }

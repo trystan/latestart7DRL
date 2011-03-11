@@ -28,22 +28,6 @@ public class PathFinder {
         parents.clear();
     }
 
-    private ArrayList<Point> getNeighbors(int x, int y) {
-        ArrayList<Point> points = new ArrayList<Point>(8);
-
-        for (int xo = -1; xo < 2; xo++) {
-            for (int yo = -1; yo < 2; yo++) {
-                if (x + xo < 0 || x + xo >= world.width || y + yo < 0 || y + yo >= world.height) {
-                    continue;
-                }
-
-                points.add(new Point(x + xo, y + yo));
-            }
-        }
-
-        return points;
-    }
-
     private double costToGetToEnd(Point p) {
         if (p == start) {
             return 0;
@@ -82,7 +66,7 @@ public class PathFinder {
         start = new Point(sx, sy);
         end = new Point(tx, ty);
 
-        for (Point neighbor : getNeighbors(sx, sy)) {
+        for (Point neighbor : start.getNeighbors(world)) {
             reParent(neighbor, start);
 
             if (neighbor != start) {
@@ -117,7 +101,7 @@ public class PathFinder {
                 if (!passable(best, creature))
                     continue;
                 
-                for (Point neighbor : getNeighbors(best.x, best.y)) {
+                for (Point neighbor : best.getNeighbors(world)) {
 
                     if (opened.contains(neighbor)) {
                         Point bestPathToNeighbor = new Point(neighbor.x, neighbor.y);

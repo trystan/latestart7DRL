@@ -28,10 +28,14 @@ public class Item {
         color = c;
     }
 
+    public int getTotalValue(){
+        return modHp + modAttack + modDefence;
+    }
+
     public void attack(Creature user, Creature target){
         if (doesKillVampires && target.personalTitle.equals("vampire")){
             user.doAction("stabs " + target.getName() + " in the heart");
-            target.takeDamage(1000);
+            target.die();
         } else if (doesKnockback && Math.random() < 0.5){
             int dx = Math.max(-1, Math.min(target.x - user.x, 1));
             int dy = Math.max(-1, Math.min(target.y - user.y, 1));
@@ -47,7 +51,7 @@ public class Item {
         } else if (doesDecapitate
                 && target.canBeDecapitated
                 && target.hp <= user.attack - target.defence){
-            target.takeDamage(1000);
+            target.die();
             user.controller.onDecapitated(target);
         }
     }
