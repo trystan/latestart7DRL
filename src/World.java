@@ -23,7 +23,8 @@ public class World {
     public int width;
     public int height;
     private Random rand;
-    public int age;
+    public int ticks;
+    public int ticksPerMinute;
 
     public int heroCount;
     public int villagerCount;
@@ -33,7 +34,8 @@ public class World {
         creatures = new ArrayList<Creature>();
         items = new ArrayList<Item>();
         rand = new Random();
-        age = 0;
+        ticks = 0;
+        ticksPerMinute = 3;
         create();
     }
 
@@ -48,7 +50,7 @@ public class World {
     }
 
     public void update(){
-        age++;
+        ticks++;
         Object[] creatureArray = creatures.toArray();
         for (Object creature : creatureArray){
             ((Creature)creature).update();
@@ -71,7 +73,7 @@ public class World {
         }
         creatures.removeAll(died);
 
-        if (age % 120 == 0)
+        if (ticks % 120 == 0)
             spawnEnemies();
     }
 
