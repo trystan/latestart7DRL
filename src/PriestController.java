@@ -1,10 +1,21 @@
 
 public class PriestController extends HeroController {
 
+    private int visibleUndead;
+
     public PriestController(Creature c, PathFinder pf) {
         super(c, pf);
     }
 
+    @Override
+    public void update(){
+        if (visibleUndead > rand.nextInt(100))
+            turnUndead();
+        
+        visibleUndead = 0;
+        super.update();
+    }
+    
     @Override
     public void see(Creature other){
         super.see(other);
@@ -13,6 +24,8 @@ public class PriestController extends HeroController {
                 && other.hp < other.maxHp
                 && rand.nextDouble() < 0.05)
             healOther(other);
+        else if (!other.isHuman())
+            visibleUndead++;
     }
 
     @Override
@@ -69,8 +82,19 @@ public class PriestController extends HeroController {
 
 
 
+    private void turnUndead(){
+        target.doAction("performs a priestly ritual");
+
+        for (Creature other : target.world.creatures){
+            if (!other.isHuman() && target.distanceTo(other.x, other.y) <= target.vision){
+                other.doAction("looks pained");
+                other.takeDamage(10);
+            }
+        }
+    }
+    
     private void healOther(Creature other){
-        target.doAction(" points at " + other.personalName + " and prays.");
+        target.doAction("points at " + other.personalName + " and prays");
 
         other.hp += 5 + rand.nextInt(6);
 

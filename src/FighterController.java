@@ -1,5 +1,6 @@
 
 public class FighterController extends HeroController {
+    private int rageCounter;
 
     public FighterController(Creature c, PathFinder pf) {
         super(c, pf);
@@ -35,6 +36,8 @@ public class FighterController extends HeroController {
     public void onInflictDamage(Creature other, int damage){
         if (rand.nextInt(50) < damage)
             target.tellNearby("Take that " + other.personalTitle + "!");
+        else if (rand.nextDouble() < 0.05)
+            target.tellNearby("Follow me!");
     }
 
     @Override
@@ -43,6 +46,8 @@ public class FighterController extends HeroController {
             target.tellNearby("Anyone else havin' as much fun as I am?");
         else if (rand.nextDouble() < 0.33)
             target.doAction("grins widely");
+        else if (rageCounter == 0 && rand.nextDouble() < 0.1)
+            startRage();
     }
 
     @Override
@@ -61,5 +66,40 @@ public class FighterController extends HeroController {
     public void onKnockback(int distance){
         if (rand.nextDouble() < 0.1)
             target.tellNearby("Ha! Look at em fly!");
+    }
+
+
+    
+
+    public void startRage(){
+        rageCounter = 20 + rand.nextInt(20);
+        
+        target.tellNearby("RAHHHHH!!!");
+        target.doAction("looks crazy");
+        target.maxHp += 15;
+        target.hp += 15;
+        target.attack += 15;
+        target.defence += 15;
+    }
+    
+    public void rage(){
+        switch (rand.nextInt(20)){
+            case 0: target.tellNearby("IMMA KILL ALL DEADZ!"); break;
+            case 1: target.tellNearby("KILL KILL KILL!"); break;
+            case 2: target.tellNearby("DIE!"); break;
+            case 3: target.tellNearby("UNSTOPABLE!"); break;
+            case 4: target.tellNearby("RAHHH!"); break;
+        }
+        if (--rageCounter < 1)
+            endRage();
+    }
+
+    public void endRage(){
+        rageCounter = 0;
+        target.doAction("looks tired");
+        target.maxHp -= 15;
+        target.hp -= 15;
+        target.attack -= 15;
+        target.defence -= 15;
     }
 }

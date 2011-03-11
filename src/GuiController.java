@@ -40,15 +40,16 @@ public class GuiController implements KeyListener {
         world.placeInVillage(creatureFactory.HeroWizzard(), rand);
         world.placeInVillage(creatureFactory.HeroMonk(), rand);
         world.placeInVillage(creatureFactory.HeroPreist(), rand);
+        world.placeInVillage(creatureFactory.HeroSamuri(), rand);
 
-        for (int i = 0; i < 20; i++){
+        for (int i = 0; i < 12; i++){
             world.placeInVillage(creatureFactory.Villager(), rand);
         }
 
         for (int i = 0; i < 4; i++){
             world.placeAnywhere(creatureFactory.Vampire(), rand);
         }
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < 4; i++){
             world.placeAnywhere(creatureFactory.Ghost(), rand);
         }
         for (int i = 0; i < 10; i++){
@@ -190,16 +191,16 @@ public class GuiController implements KeyListener {
         panel.clear();
         panel.writeCenter("help", 1);
         panel.write("@ = you, another hero, or a villager", 3, 3);
-        panel.write("s = skeleton, easy", 3, 4);
+        panel.write("s = skeleton, weak but you never know where one will show up", 3, 4);
         panel.write("z = zombie, slow but they can turn humans into zombies", 3, 5);
         panel.write("g = ghost, can move through walls", 3, 6);
-        panel.write("v = vampire, heals when they attack and can use weapons and armor", 3, 7);
+        panel.write("v = vampire, can't go indoors but heal when they attack and use weapons and armor", 3, 7);
 
         panel.write("swords can decapitate weakened opponents", 3, 8);
         panel.write("spears can counter attack opponents", 3, 9);
         panel.write("maces can knock opponents back", 3, 10);
 
-        panel.write("Each hero has special abilities to help defent the village", 3, 12);
+        panel.write("Each hero has special abilities to help defend the village", 3, 12);
         panel.write("from the undead hordes. The secret to staying alive is to ", 3, 13);
         panel.write("find the right location, equipment, and allies.", 3, 14);
 

@@ -43,6 +43,7 @@ public class Item {
             user.controller.onKnockback(realDist);
 
         } else if (doesDecapitate
+                && target.canBeDecapitated
                 && target.hp <= user.attack - target.defence){
             target.hp = 0;
             user.controller.onDecapitated(target);

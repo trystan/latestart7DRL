@@ -137,7 +137,7 @@ public class CreatureFactory {
 
     public Creature Skeleton(){
         Creature creature = new Creature(world, 0, 0, "", "skeleton", 's', AsciiPanel.white, "brittle");
-        creature.maxHp = 5 + rand.nextInt(5);
+        creature.maxHp = 10 + rand.nextInt(10);
         creature.hp = creature.maxHp;
         creature.attack = 5 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
@@ -158,12 +158,13 @@ public class CreatureFactory {
 
     public Creature Ghost(){
         Creature creature = new Creature(world, 0, 0, "", "ghost", 'g', AsciiPanel.brightBlack, "non coporeal");
-        creature.maxHp = 1 + rand.nextInt(20);
+        creature.maxHp = 1 + rand.nextInt(100);
         creature.hp = creature.maxHp;
         creature.attack = 1 + rand.nextInt(5);
         creature.defence = 100;
         creature.vision = 50;
         creature.canWalkThroughWalls = true;
+        creature.canBeDecapitated = false;
         creature.controller = new NonPlayerController(creature, pf);
         return creature;
     }
@@ -176,6 +177,7 @@ public class CreatureFactory {
         creature.defence = 5 + rand.nextInt(5);
         creature.controller = new NonPlayerController(creature, pf);
         creature.canStealLife = true;
+        creature.canNotGoIndoors = true;
         creature.equip(itemFactory.weapon());
         creature.equip(itemFactory.armor());
         return creature;

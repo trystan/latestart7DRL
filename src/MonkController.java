@@ -7,7 +7,6 @@ public class MonkController extends HeroController {
 
     @Override
     public void greet(Creature other){
-        target.doAction("bows to " + other.personalName);
         target.tell(other, "Hello.");
     }
 
@@ -18,15 +17,14 @@ public class MonkController extends HeroController {
 
     @Override
     public void onTakeDamage(int amount){
-        if (target.hp < target.maxHp
-                && rand.nextDouble() < 0.02)
+        if (target.hp < target.maxHp / 2
+                && rand.nextDouble() < 0.1)
             healSelf();
     }
 
     @Override
     public void onLowHealth(){
         if (Math.random() < 0.5) {
-            target.tellNearby("Monk, Heal Thyself!");
             healSelf();
         } else {
             target.tellNearby("I need some healing!");
@@ -47,7 +45,7 @@ public class MonkController extends HeroController {
         else if (r < 0.05)
             target.tellNearby("Takedown!");
         else if (r < 0.10)
-            target.tellNearby("Hi-yeah!");
+            target.tellNearby("Hiyah!");
         else if (r < 0.15)
             target.tellNearby("Iron Fist!");
         else if (r < 0.20)
@@ -55,7 +53,7 @@ public class MonkController extends HeroController {
         else if (r < 0.25)
             target.tellNearby("Flying armbar!");
         else if (rand.nextDouble() < 0.1)
-            target.attack(other); // Quick hands = free attack
+            quickAttack(other);
     }
 
     @Override
@@ -76,11 +74,16 @@ public class MonkController extends HeroController {
 
 
     private void healSelf(){
-        target.doAction("concentrates");
+        target.doAction("draws on inner power");
 
         target.hp += 5 + rand.nextInt(6);
 
         if (target.hp > target.maxHp)
             target.maxHp = target.hp;
+    }
+
+    private void quickAttack(Creature other){
+        target.doAction("attacks quickly");
+        target.attack(other);
     }
 }

@@ -6,6 +6,26 @@ public class SamuriController extends HeroController {
     }
 
     @Override
+    public void update() {
+        if (rand.nextDouble() < 0.25) {
+            int nearby = 0;
+            for (Creature other : target.world.creatures){
+                if (isAlly(other) || target.distanceTo(other.x, other.y) != 1)
+                    continue;
+
+                nearby++;
+            }
+            
+            if (nearby > 1)
+                circularAttack();
+            else if (rand.nextDouble() < 0.01)
+                meditate();
+        }
+
+        super.update();
+    }
+    
+    @Override
     public void greet(Creature other){
         target.tell(other, other.personalName);
     }
@@ -64,6 +84,25 @@ public class SamuriController extends HeroController {
         return false;
     }
 
+
+
+    private void meditate(){
+        target.doAction("meditates");
+
+        target.attack++;
+        target.defence++;
+    }
+
+    private void circularAttack(){
+        target.doAction("does a spinning attack");
+        
+        for (Creature other : target.world.creatures){
+            if (isAlly(other) || target.distanceTo(other.x, other.y) != 1)
+                continue;
+
+            target.attack(other);
+        }
+    }
 
     private void commitSeppiku(){
         target.doAction("brandishes a tanto");

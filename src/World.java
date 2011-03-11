@@ -14,8 +14,9 @@ public class World {
     public static final int unknown = 5;
     public static final int openDoor = 6;
     public static final int closedDoor = 7;
-    public static final int floor = 8;
-    public static final int wall = 9;
+    public static final int insidefloor = 8;
+    public static final int floor = 9;
+    public static final int wall = 10;
 
     public List<Creature> creatures;
     public List<Item> items;
@@ -30,6 +31,8 @@ public class World {
     public int villagerCount;
     public int undeadCount;
 
+    public boolean didDoOnlyTwoMessage;
+
     public World(){
         creatures = new ArrayList<Creature>();
         items = new ArrayList<Item>();
@@ -39,8 +42,12 @@ public class World {
         create();
     }
 
-    public boolean isImpassable(int tile, boolean canWalkThroughWalls){
-        return tile == water || tile == wall && !canWalkThroughWalls;
+    public boolean isImpassable(int tile, boolean canWalkThroughWalls, boolean canNotGoIndoors){
+        return tile == water 
+                || tile == wall && !canWalkThroughWalls
+                || tile == openDoor && canNotGoIndoors
+                || tile == closedDoor && canNotGoIndoors
+                || tile == insidefloor && canNotGoIndoors;
     }
 
     public void tellAll(Color color, String message){
@@ -72,6 +79,23 @@ public class World {
                 undeadCount++;
         }
         creatures.removeAll(died);
+
+        if (heroCount == 2 && !didDoOnlyTwoMessage){
+            didDoOnlyTwoMessage = true;
+            Creature player = null;
+            Creature other = null;
+            for (Creature creature : creatures){
+                if (!creature.isHero())
+                    continue;
+
+                if (creature.personalTitle.equals("player"))
+                    player = creature;
+
+                if (creature.personalTitle.equals("player"))
+                    other = creature;
+            }
+            other.tell(other, "It's just you and me now, " + player.personalName + ".");
+        }
 
         if (ticks % 60 == 0)
             spawnEnemies();
@@ -139,6 +163,7 @@ public class World {
             case grass: return 249;
             case shrub: return '*';
             case tree:  return 6;
+            case insidefloor: return 249;
             case floor: return 249;
             case wall:  return '#';
             case openDoor:  return '/';
@@ -154,6 +179,7 @@ public class World {
             case grass: return AsciiPanel.green;
             case shrub: return AsciiPanel.green;
             case tree:  return AsciiPanel.green;
+            case insidefloor: return AsciiPanel.white;
             case floor: return AsciiPanel.white;
             case wall:  return AsciiPanel.white;
             case openDoor:  return AsciiPanel.yellow;
@@ -185,7 +211,7 @@ public class World {
                 if (other.x == creature.x && other.y == creature.y)
                     continue;
             }
-        } while (tiles[creature.x][creature.y] != floor);
+        } while (tiles[creature.x][creature.y] != insidefloor);
 
         creatures.add(creature);
     }
@@ -200,7 +226,7 @@ public class World {
                     continue;
             }
 
-        } while (isImpassable(tiles[item.x][item.y], false));
+        } while (isImpassable(tiles[item.x][item.y], false, false));
 
         items.add(item);
     }
@@ -214,7 +240,7 @@ public class World {
                 if (other.x == item.x && other.y == item.y)
                     continue;
             }
-        } while (tiles[item.x][item.y] != floor);
+        } while (tiles[item.x][item.y] != insidefloor);
 
         items.add(item);
     }
@@ -266,7 +292,7 @@ public class World {
             randomize();
         }
 
-        addCity(64,64);
+        addCity(width / 2, height / 2);
     }
 
     private void randomize() {
@@ -299,10 +325,12 @@ public class World {
     }
 
     private void addCity(int cx, int cy){
-        for (int i = 0; i < 30; i++) {
-            addHouse(cx + rand.nextInt(40) - 20,
-                     cy + rand.nextInt(30) - 15,
+        int dist = 5;
+        for (int i = 0; i < 20; i++) {
+            addHouse(cx + rand.nextInt(dist) + rand.nextInt(dist) - dist,
+                     cy + rand.nextInt(dist) + rand.nextInt(dist) - dist,
                      2 + rand.nextInt(3));
+            dist++;
         }
     }
 
@@ -337,16 +365,19 @@ public class World {
                 } else if (x==0 || y==0 || x==s*2 || y==s*2) {
                     tiles[cx+x-s][cy+y-s] = wall;
                 } else {
-                    tiles[cx+x-s][cy+y-s] = floor;
+                    tiles[cx+x-s][cy+y-s] = insidefloor;
                 }
             }
         }
 
-        switch (rand.nextInt(4)){
-            case 0: tiles[cx][cy-s] = closedDoor; break;
-            case 1: tiles[cx][cy+s] = closedDoor; break;
-            case 2: tiles[cx-s][cy] = closedDoor; break;
-            case 3: tiles[cx+s][cy] = closedDoor; break;
-        }
+        do
+        {
+            switch (rand.nextInt(4)){
+                case 0: tiles[cx][cy-s] = closedDoor; break;
+                case 1: tiles[cx][cy+s] = closedDoor; break;
+                case 2: tiles[cx-s][cy] = closedDoor; break;
+                case 3: tiles[cx+s][cy] = closedDoor; break;
+            }
+        } while (rand.nextDouble() < 0.33);
     }
 }

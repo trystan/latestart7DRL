@@ -45,7 +45,7 @@ public class NonPlayerController extends CreatureController {
 
             if (dist < target.vision)
                 see(other);
-            
+
             if (isAlly(other) || dist >= closestDist)
                 continue;
 
@@ -53,11 +53,9 @@ public class NonPlayerController extends CreatureController {
             closest = other;
         }
 
-        if (closest != null
-                && (path == null
-                 || closestDist < 8))
+        if (closest != null)
             path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y, closestDist * 2);
-
+        
         if (path != null && path.size() > 0) {
             followPath();
         } else {

@@ -33,6 +33,9 @@ public class Creature {
     public boolean canStealLife;
     public int healCountdown;
 
+    public boolean canBeDecapitated;
+    public boolean canNotGoIndoors;
+
     public Item weapon;
     public Item armor;
 
@@ -63,6 +66,7 @@ public class Creature {
         healCountdown = 20;
         canSpeak = false;
 
+        canBeDecapitated = true;
         canHeal = isHuman();
         
         messages = new ArrayList<String>();
@@ -114,7 +118,7 @@ public class Creature {
          || ty < 0 || ty >= world.height)
             return false;
 
-        if (world.isImpassable(world.tiles[tx][ty], canWalkThroughWalls))
+        if (world.isImpassable(world.tiles[tx][ty], canWalkThroughWalls, canNotGoIndoors))
             return false;
 
         for (Creature other : world.creatures){
@@ -132,7 +136,7 @@ public class Creature {
          || ty < 0 || ty >= world.height)
             return false;
 
-        if (world.isImpassable(world.tiles[tx][ty], canWalkThroughWalls))
+        if (world.isImpassable(world.tiles[tx][ty], canWalkThroughWalls, canNotGoIndoors))
             return false;
 
         return true;
@@ -143,7 +147,7 @@ public class Creature {
          || y+my < 0 || y+my >= world.height)
             return false;
         
-        if (world.isImpassable(world.tiles[x+mx][y+my], canWalkThroughWalls))
+        if (world.isImpassable(world.tiles[x+mx][y+my], canWalkThroughWalls, canNotGoIndoors))
             return false;
 
         return true;
@@ -334,23 +338,26 @@ public class Creature {
         
         for (Creature other : world.creatures){
 
-            if (distanceTo(other.x, other.y) > vision)
+            if (distanceTo(other.x, other.y) > other.vision)
                 continue;
 
-            other.hear(color, getName() + " " + how + ": " + message);
+            if (other == this)
+                other.hear(color, "You " + how + ": " + message);
+            else
+                other.hear(color, getName() + " " + how + ": " + message);
         }
     }
 
     public void doAction(String message){
-        if (!canSpeak)
-            return;
-
         for (Creature other : world.creatures){
 
-            if (distanceTo(other.x, other.y) > vision)
+            if (distanceTo(other.x, other.y) > other.vision)
                 continue;
 
-            other.hear(color, getName() + " " + message);
+            if (other == this)
+                other.hear(color, "you " + message);
+            else
+                other.hear(color, getName() + " " + message);
         }
     }
 

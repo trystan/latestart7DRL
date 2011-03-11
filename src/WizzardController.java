@@ -9,7 +9,7 @@ public class WizzardController extends HeroController {
     public void see(Creature other){
         super.see(other);
 
-        if (!isAlly(other) && rand.nextDouble() < 0.01)
+        if (!isAlly(other) && rand.nextDouble() < 0.1)
             hurtOther(other);
     }
 
@@ -78,6 +78,6 @@ public class WizzardController extends HeroController {
     private void hurtOther(Creature other){
         target.doAction("points at " + other.getName() + " and mumbles");
         
-        other.takeDamage(rand.nextInt(10));
+        other.takeDamage(rand.nextInt(11) + rand.nextInt(11) + rand.nextInt(11));
     }
 }
