@@ -267,9 +267,19 @@ public class GuiController implements KeyListener {
         int top = 1;
         int left = panel.getWidthInCharacters() - panelWidth - 1;
 
-        panel.write(pad("    heroes: " + world.heroCount, panelWidth), left, top+0, AsciiPanel.green);
-        panel.write(pad(" villagers: " + world.villagerCount, panelWidth), left, top+1, AsciiPanel.white);
-        panel.write(pad("    undead: " + world.undeadCount, panelWidth), left, top+2, AsciiPanel.red);
+        String hours = "" + (world.age / 60);
+        String minutes = "" + (world.age % 60);
+        
+        if (minutes.length() == 0)
+            minutes = "00";
+        else if (minutes.length() == 1)
+            minutes = "0" + minutes;
+
+
+        panel.write(pad("     " + hours + ":" + minutes, panelWidth), left, top+0, AsciiPanel.brightWhite);
+        panel.write(pad("    heroes: " + world.heroCount, panelWidth), left, top+1, AsciiPanel.green);
+        panel.write(pad(" villagers: " + world.villagerCount, panelWidth), left, top+2, AsciiPanel.white);
+        panel.write(pad("    undead: " + world.undeadCount, panelWidth), left, top+3, AsciiPanel.red);
     }
 
     private void infoPanel(Creature creature, int left){
