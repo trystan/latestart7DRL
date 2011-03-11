@@ -54,4 +54,8 @@ public class CreatureController {
     public void onKnockback(int distance){
         
     }
+
+    public boolean beforeBittenByZombie(){
+        return true;
+    }
 }

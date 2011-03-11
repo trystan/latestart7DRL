@@ -31,8 +31,6 @@ public class NonPlayerController extends CreatureController {
             return;
         }
 
-        Creature closestAlly = null;
-        int closestAllyDist = 1000000;
         Creature closest = null;
         int closestDist = 1000000;
 
@@ -46,26 +44,15 @@ public class NonPlayerController extends CreatureController {
                 continue;
 
             see(other);
-            if (isAlly(other) && other.isHero()){
-                if (dist >= closestAllyDist)
-                    continue;
+            if (isAlly(other) || dist >= closestDist)
+                continue;
 
-                closestAllyDist = dist;
-                closestAlly = other;
-
-            } else {
-                if (dist >= closestDist)
-                    continue;
-
-                closestDist = dist;
-                closest = other;
-            }
+            closestDist = dist;
+            closest = other;
         }
 
         if (closest != null)
             path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y, target.vision * 5);
-        // else if (closestAlly != null && closestAllyDist > 4)
-        //    path = pathFinder.findPath(target, target.x, target.y, closestAlly.x, closestAlly.y, target.vision * 5);
 
         if (path != null && path.size() > 0) {
             followPath();

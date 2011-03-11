@@ -52,6 +52,14 @@ public class ItemFactory {
         }
     }
 
+    public Item katana(){
+        Item weapon = new Item(0,0,"katana",')',AsciiPanel.white, "decapitates");
+        weapon.modAttack = 15 + rand.nextInt(5);
+        weapon.modDefence = 5 + rand.nextInt(5);
+        weapon.doesDecapitate = true;
+        return weapon;
+    }
+
     public Item sword(){
         Item weapon = new Item(0,0,"sword",')',AsciiPanel.white, "decapitates");
         weapon.modAttack = 5 + rand.nextInt(10);

@@ -59,7 +59,7 @@ public class Creature {
         hp = maxHp;
         attack = 10;
         defence = 5;
-        vision = 11;
+        vision = 12;
         healCountdown = 20;
         canSpeak = false;
 
@@ -309,7 +309,7 @@ public class Creature {
         if((other.isHero() || other.isCommoner()) && other.hp == 0)
             world.tellAll(other.color, other.getName() + " was killed by " + getName());
 
-        if (other.hp == 0 && other.isHuman() && isZombie())
+        if (other.hp == 0 && other.isHuman() && isZombie() && other.controller.beforeBittenByZombie())
             other.becomeZombie();
     }
 

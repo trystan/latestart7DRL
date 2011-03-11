@@ -44,17 +44,17 @@ public class MonkController extends HeroController {
 
         if (r < 0.01)
             target.tellNearby("Judo chop!");
-        else if (r < 0.02)
-            target.tellNearby("Takedown!");
-        else if (r < 0.03)
-            target.tellNearby("Hi-yeah!");
-        else if (r < 0.04)
-            target.tellNearby("Iron Fist!");
         else if (r < 0.05)
+            target.tellNearby("Takedown!");
+        else if (r < 0.10)
+            target.tellNearby("Hi-yeah!");
+        else if (r < 0.15)
+            target.tellNearby("Iron Fist!");
+        else if (r < 0.20)
             target.tellNearby("Iron Foot!");
-        else if (r < 0.06)
+        else if (r < 0.25)
             target.tellNearby("Flying armbar!");
-        else if (rand.nextDouble() < 0.125)
+        else if (rand.nextDouble() < 0.1)
             target.attack(other); // Quick hands = free attack
     }
 

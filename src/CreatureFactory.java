@@ -59,15 +59,32 @@ public class CreatureFactory {
     }
 
     public Creature HeroFighter(){
-        Creature creature = new Creature(world, 0, 0, name(), "fighter", '@', AsciiPanel.brightRed, "strong");
+        Creature creature = new Creature(world, 0, 0, name(), "fighter", '@', AsciiPanel.red, "strong");
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
         creature.attack = 15 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
         creature.canSpeak = true;
         creature.controller = new FighterController(creature, pf);
-        creature.equip(itemFactory.sword());
+        Item personalWeapon = itemFactory.weapon();
+        personalWeapon.details = creature.personalName + "'s";
+        personalWeapon.modAttack += 5;
+        personalWeapon.modDefence += 5;
+        creature.equip(personalWeapon);
         creature.equip(itemFactory.heavyArmor());
+        return creature;
+    }
+
+    public Creature HeroSamuri(){
+        Creature creature = new Creature(world, 0, 0, name(), "samuri", '@', AsciiPanel.brightRed, "brave");
+        creature.maxHp = 60;
+        creature.hp = creature.maxHp;
+        creature.attack = 15 + rand.nextInt(5);
+        creature.defence = 10 + rand.nextInt(5);
+        creature.canSpeak = true;
+        creature.controller = new SamuriController(creature, pf);
+        creature.equip(itemFactory.katana());
+        creature.equip(itemFactory.mediumArmor());
         return creature;
     }
 
@@ -90,6 +107,8 @@ public class CreatureFactory {
         creature.defence =12 + rand.nextInt(5) + rand.nextInt(5);
         creature.canSpeak = true;
         creature.controller = new PriestController(creature, pf);
+        creature.equip(itemFactory.mace());
+        creature.equip(itemFactory.armor());
         return creature;
     }
 

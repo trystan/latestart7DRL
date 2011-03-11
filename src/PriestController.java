@@ -27,7 +27,7 @@ public class PriestController extends HeroController {
 
     @Override
     public void onTakeDamage(int amount){
-
+        
     }
 
     @Override
@@ -42,12 +42,14 @@ public class PriestController extends HeroController {
 
     @Override
     public void onInflictDamage(Creature other, int damage){
-
+        if(rand.nextDouble() < 0.50)
+            target.tellNearby( "Wretched " + other.personalTitle + ".");
     }
 
     @Override
     public void onKilled(Creature other){
-        
+        if(rand.nextDouble() < 0.50)
+            target.tellNearby( "Die vile " + other.personalTitle + ".");
     }
 
     @Override
