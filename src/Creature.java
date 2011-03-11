@@ -51,7 +51,7 @@ public class Creature {
         healCountdown = 20;
         canSpeak = false;
 
-        canHeal = glyph == '@';
+        canHeal = isHuman();
         
         messages = new ArrayList<String>();
         messageColors = new ArrayList<Color>();
@@ -72,13 +72,17 @@ public class Creature {
     public boolean isZombie(){
         return glyph == 'z' || glyph == 'Z';
     }
+
+    public boolean isHuman(){
+        return glyph == '@';
+    }
     
     public boolean isHero(){
-        return glyph == '@' && color != AsciiPanel.brightBlack;
+        return isHuman() && color != AsciiPanel.brightBlack;
     }
 
     public boolean isCommoner(){
-        return glyph == '@' && color == AsciiPanel.brightBlack;
+        return isHuman() && color == AsciiPanel.brightBlack;
     }
 
     public void update(){
@@ -139,23 +143,35 @@ public class Creature {
         return true;
     }
 
+
+    public boolean moveBy(int mx, int my) {
+        return moveBy(mx, my, false);
+    }
+    
     private int openDoorX;
     private int openDoorY;
     private boolean needToCloseDoor;
-    public void moveBy(int mx, int my) {
+    public boolean moveBy(int mx, int my, boolean isFlying) {
+        target = null;
         for (Creature other : world.creatures){
             if (other != this && other.x == x+mx && other.y == y+my) {
-                if (other.glyph == glyph)
+                if (isFlying){
+                    takeDamage(5);
+                    other.takeDamage(2);
+                    return false;
+                } else if (other.glyph == glyph) {
                     swapPlaces(other);
-                else
+                    return false;
+                } else {
                     attack(other);
-                return;
+                    return false;
+                }
             }
         }
         
         if (canMoveBy(mx,my)) {
-            if (world.tiles[x+mx][y+my] == world.closedDoor) {
-                world.tiles[x+mx][y+my] = world.openDoor;
+            if (world.tiles[x+mx][y+my] == World.closedDoor) {
+                world.tiles[x+mx][y+my] = World.openDoor;
                 openDoorX = x+mx;
                 openDoorY = y+my;
                 needToCloseDoor = true;
@@ -163,12 +179,12 @@ public class Creature {
                 x += mx;
                 y += my;
 
-                if (!needToCloseDoor && world.tiles[x][y] == world.openDoor){
+                if (!needToCloseDoor && world.tiles[x][y] == World.openDoor){
                     openDoorX = x;
                     openDoorY = y;
                     needToCloseDoor = true;
                 } else if (needToCloseDoor && isHero()
-                    && world.tiles[openDoorX][openDoorY] == world.openDoor
+                    && world.tiles[openDoorX][openDoorY] == World.openDoor
                     && distanceTo(openDoorX, openDoorY) == 2) {
                     world.tiles[openDoorX][openDoorY] = world.closedDoor;
                     x -= mx;
@@ -176,9 +192,9 @@ public class Creature {
                     needToCloseDoor = false;
                 }
             }
+            return true;
         }
-
-        target = null;
+        return false;
     }
 
     public void swapPlaces(Creature other){
@@ -236,19 +252,20 @@ public class Creature {
 
     public void die(){
         hp = 0;
+        controller.onDied();
         unequip(armor);
         unequip(weapon);
     }
 
     public void takeDamage(int amount){
-        if (isHero() && hp > maxHp * 0.25 && hp-amount < maxHp * 0.25)
+        if (hp > maxHp * 0.25 && hp-amount < maxHp * 0.25)
             controller.onLowHealth();
-
+        else
+            controller.onTakeDamage(amount);
+        
         hp -= amount;
 
         if (hp < 1){
-            if (isHero())
-                controller.onDied();
             die();
         }
     }
@@ -257,6 +274,9 @@ public class Creature {
         int damage = Math.max(1, attack - other.defence);
         other.takeDamage(damage);
 
+        if (other.target == null)
+            other.target = this;
+        
         if (isHero())
             controller.onInflictDamage(other, damage);
 
@@ -269,13 +289,15 @@ public class Creature {
         if (other.hp > 0
                 && other.weapon != null
                 && other.weapon.doesDefensiveAttack
-                && Math.random() < 0.5)
+                && Math.random() < 0.5){
             other.attack(this);
+            other.controller.onCounterAttacked(this);
+        }
 
-        if(canSpeak && (other.isHero() || other.isCommoner()) && other.hp == 0)
+        if((other.isHero() || other.isCommoner()) && other.hp == 0)
             world.tellAll(other.color, other.name + " was killed by " + name);
 
-        if (other.hp == 0 && other.isHero() && isZombie())
+        if (other.hp == 0 && other.isHuman() && isZombie())
             other.becomeZombie();
     }
 

@@ -11,11 +11,19 @@ public class CreatureController {
         rand = new Random();
     }
 
+    public boolean isAlly(Creature other){
+        return other.isHuman() == target.isHuman();
+    }
+
     public void update(){
         
     }
     
     public void see(Creature other){
+
+    }
+    
+    public void onTakeDamage(int amount){
 
     }
 
@@ -31,8 +39,19 @@ public class CreatureController {
 
     }
 
-    public boolean isAlly(Creature other){
-        return (other.glyph == '@' && target.glyph == '@')
-            || (other.glyph != '@' && target.glyph != '@');
+    public void onKilled(Creature other){
+        
+    }
+
+    public void onDecapitated(Creature other){
+
+    }
+
+    public void onCounterAttacked(Creature other){
+        
+    }
+
+    public void onKnockback(int distance){
+        
     }
 }

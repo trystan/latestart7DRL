@@ -39,6 +39,7 @@ public class GuiController implements KeyListener {
         world.placeInVillage(creatureFactory.HeroFighter(), rand);
         world.placeInVillage(creatureFactory.HeroWizzard(), rand);
         world.placeInVillage(creatureFactory.HeroMonk(), rand);
+        world.placeInVillage(creatureFactory.HeroPreist(), rand);
 
         for (int i = 0; i < 20; i++){
             world.placeInVillage(creatureFactory.Villager(), rand);

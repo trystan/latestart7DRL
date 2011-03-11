@@ -1,7 +1,7 @@
 
-public class WizzardController extends HeroController {
+public class FighterController extends HeroController {
 
-    public WizzardController(Creature c, PathFinder pf) {
+    public FighterController(Creature c, PathFinder pf) {
         super(c, pf);
     }
 

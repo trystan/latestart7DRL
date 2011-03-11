@@ -25,15 +25,50 @@ public class HeroController extends NonPlayerController {
     }
 
     public void greet(Creature other){
-        target.tell(other, "Hi " + other.name + "!");
+        
     }
 
     public void regreet(Creature other){
-        target.tell(other, "Hey " + other.name + "! Good to see you again.");
+        
+    }
+    
+    @Override
+    public void onTakeDamage(int amount){
+
     }
 
     @Override
     public void onLowHealth(){
-        target.tellNearby("I'm hurt! I need help!");
+        
+    }
+
+    @Override
+    public void onDied(){
+
+    }
+
+    @Override
+    public void onInflictDamage(Creature other, int damage){
+
+    }
+
+    @Override
+    public void onKilled(Creature other){
+
+    }
+
+    @Override
+    public void onDecapitated(Creature other){
+
+    }
+
+    @Override
+    public void onCounterAttacked(Creature other){
+
+    }
+
+    @Override
+    public void onKnockback(int distance){
+
     }
 }

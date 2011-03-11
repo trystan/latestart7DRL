@@ -43,8 +43,8 @@ public class NonPlayerController extends CreatureController {
                 continue;
 
             see(other);
-            if (isAlly(other)){
-                if (dist >= closestAllyDist)
+            if (isAlly(other) && other.isHero()){
+                if (dist >= closestAllyDist || dist < 3)
                     continue;
 
                 closestAllyDist = dist;
@@ -60,12 +60,10 @@ public class NonPlayerController extends CreatureController {
         }
 
         if (closest != null)
-            path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y, 50);
+            path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y, target.vision * 5);
         else if (closestAlly != null && closestAllyDist > 4)
-            path = pathFinder.findPath(target, target.x, target.y, closestAlly.x, closestAlly.y, 50);
+            path = pathFinder.findPath(target, target.x, target.y, closestAlly.x, closestAlly.y, target.vision * 5);
 
-        trimPath();
-        
         if (path != null && path.size() > 0) {
             followPath();
         } else {
@@ -73,28 +71,23 @@ public class NonPlayerController extends CreatureController {
         }
     }
 
-    public void trimPath(){
-        while (path != null && path.size() > 0
+
+    public void followPath(){
+        while (path.size() > 0
                 && target.x == path.get(0).x
                 && target.y == path.get(0).y) {
             path.remove(0);
         }
-    }
 
-    public void followPath(){
-        int mx = Math.max(-1, Math.min(path.get(0).x - target.x, 1));
-        int my = Math.max(-1, Math.min(path.get(0).y - target.y, 1));
+        if (path.size() > 0){
+            int mx = Math.max(-1, Math.min(path.get(0).x - target.x, 1));
+            int my = Math.max(-1, Math.min(path.get(0).y - target.y, 1));
 
-        target.moveBy(mx, my);
+            target.moveBy(mx, my);
+        }
     }
 
     public void meander(){
-        if (target.glyph != '@' && rand.nextDouble() < 0.05){
-            path = pathFinder.findPath(target, target.x, target.y,
-                    target.world.width / 2 + rand.nextInt(40) - 20,
-                    target.world.height / 2 + rand.nextInt(40) - 20, 50);
-            return;
-        }
         switch (rand.nextInt(9)) {
             case 0:
                 target.moveBy(-1, -1);

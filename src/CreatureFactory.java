@@ -65,7 +65,7 @@ public class CreatureFactory {
         creature.attack = 15 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
         creature.canSpeak = true;
-        creature.controller = new NonPlayerController(creature, pf);
+        creature.controller = new FighterController(creature, pf);
         creature.equip(itemFactory.sword());
         creature.equip(itemFactory.heavyArmor());
         return creature;
@@ -78,7 +78,18 @@ public class CreatureFactory {
         creature.attack = 12 + rand.nextInt(5) + rand.nextInt(5);
         creature.defence =12 + rand.nextInt(5) + rand.nextInt(5);
         creature.canSpeak = true;
-        creature.controller = new NonPlayerController(creature, pf);
+        creature.controller = new MonkController(creature, pf);
+        return creature;
+    }
+
+    public Creature HeroPreist(){
+        Creature creature = new Creature(world, 0, 0, name() + " the priest", '@', AsciiPanel.brightCyan, "balanced");
+        creature.maxHp = 60;
+        creature.hp = creature.maxHp;
+        creature.attack = 12 + rand.nextInt(5) + rand.nextInt(5);
+        creature.defence =12 + rand.nextInt(5) + rand.nextInt(5);
+        creature.canSpeak = true;
+        creature.controller = new PriestController(creature, pf);
         return creature;
     }
 
@@ -89,8 +100,7 @@ public class CreatureFactory {
         creature.attack = 10 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
         creature.canSpeak = true;
-        creature.controller = new NonPlayerController(creature, pf);
-        creature.equip(itemFactory.knife());
+        creature.controller = new WizzardController(creature, pf);
         creature.equip(itemFactory.robes());
         return creature;
     }

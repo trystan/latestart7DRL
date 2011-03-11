@@ -52,14 +52,6 @@ public class ItemFactory {
         }
     }
 
-    public Item knife(){
-        Item weapon = new Item(0,0,"knife",')',AsciiPanel.white, "fast");
-        weapon.modAttack = 1 + rand.nextInt(4);
-        weapon.modDefence = 1 + rand.nextInt(4);
-        weapon.doesDoubleAttack = true;
-        return weapon;
-    }
-
     public Item sword(){
         Item weapon = new Item(0,0,"sword",')',AsciiPanel.white, "decapitates");
         weapon.modAttack = 5 + rand.nextInt(10);
@@ -80,7 +72,7 @@ public class ItemFactory {
         Item weapon = new Item(0,0,"mace",')',AsciiPanel.white, "heavy");
         weapon.modAttack = 10 + rand.nextInt(10);
         weapon.modDefence = rand.nextInt(5);
-        weapon.doesCritical = true;
+        weapon.doesKnockback = true;
         return weapon;
     }
 }
