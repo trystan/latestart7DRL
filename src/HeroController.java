@@ -33,11 +33,6 @@ public class HeroController extends NonPlayerController {
     }
     
     @Override
-    public void onTakeDamage(int amount){
-
-    }
-
-    @Override
     public void onLowHealth(){
         
     }

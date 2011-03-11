@@ -1,7 +1,7 @@
 
 import java.util.Random;
 
-public class CreatureController {
+public abstract class CreatureController {
 
     public Creature target;
     protected Random rand;
@@ -23,7 +23,7 @@ public class CreatureController {
 
     }
     
-    public void onTakeDamage(int amount){
+    public void onTakeDamage(Creature other, int amount){
 
     }
 

@@ -16,11 +16,15 @@ public class GuiController implements KeyListener {
 
     private AsciiPanel panel;
     private World world;
-    private Creature target;
+    private PlayerController controller;
+
+    private ArrayList<String> currentMessages;
+    private ArrayList<Color> currentMessageColors;
     
-    public GuiController(AsciiPanel p) {
+    public GuiController(AsciiPanel p, PlayerController c) {
         panel = p;
         stage = start;
+        controller = c;
         reset();
     }
 
@@ -33,8 +37,8 @@ public class GuiController implements KeyListener {
         ItemFactory itemFactory = new ItemFactory();
         CreatureFactory creatureFactory = new CreatureFactory(world, itemFactory);
         
-        target = creatureFactory.Player();
-        world.placeInVillage(target, rand);
+        controller.target = creatureFactory.Player();
+        world.placeInVillage(controller.target, rand);
 
         world.placeInVillage(creatureFactory.HeroFighter(), rand);
         world.placeInVillage(creatureFactory.HeroWizzard(), rand);
@@ -88,54 +92,9 @@ public class GuiController implements KeyListener {
                 }
                 break;
             case play:
-                boolean endTurn1 = true;
-                boolean endTurn2 = true;
-                switch (ke.getKeyChar()) {
-                    case '?': stage = help; endTurn1 = false; break;
-                    case '8':
-                    case 'k': target.moveBy(0, -1); break;
-                    case '2':
-                    case 'j': target.moveBy(0, 1); break;
-                    case '4':
-                    case 'h': target.moveBy(-1, 0); break;
-                    case '6':
-                    case 'l': target.moveBy(1, 0); break;
-                    case '7':
-                    case 'y': target.moveBy(-1, -1); break;
-                    case '1':
-                    case 'b': target.moveBy(-1, 1); break;
-                    case '9':
-                    case 'u': target.moveBy(1, -1); break;
-                    case '3':
-                    case 'n': target.moveBy(1, 1); break;
-                    case '5':
-                    case '.': target.moveBy(0, 0); break;
-                    case 'g':
-                    case ',':
-                        boolean found = false;
-                        for (Item item : world.items){
-                            if (item.x == target.x && item.y == target.y && !item.equipped){
-                                target.equip(item);
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found){
-                            target.hear(AsciiPanel.white, "There's nothing here to pick up.");
-                            endTurn1 = false;
-                        }
-                        break;
-                    default: endTurn1 = false;
-                }
-                switch (ke.getKeyCode()) {
-                    case KeyEvent.VK_UP: target.moveBy(0, -1); break;
-                    case KeyEvent.VK_DOWN: target.moveBy(0, 1); break;
-                    case KeyEvent.VK_LEFT: target.moveBy(-1, 0); break;
-                    case KeyEvent.VK_RIGHT: target.moveBy(1, 0); break;
-                    default: endTurn2 = false;
-                }
-
-                if (endTurn1 || endTurn2)
+                if (ke.getKeyChar() == '?')
+                    stage = help;
+                else if(controller.keyPressed(ke))
                     world.update();
                 break;
             default: stage = 0; break;
@@ -148,7 +107,7 @@ public class GuiController implements KeyListener {
     }
 
     public void currentScreen() {
-        if (target.hp < 1 || target.isZombie())
+        if (controller.target.hp < 1 || controller.target.isZombie())
             stage = lose;
         
         switch (stage) {
@@ -215,8 +174,8 @@ public class GuiController implements KeyListener {
 
         int viewWidth = 80;
         int viewHeight = 24;
-        int vx = Math.max(0, Math.min(target.x - viewWidth / 2, world.width - viewWidth));
-        int vy = Math.max(0, Math.min(target.y - viewHeight / 2, world.height - viewHeight));
+        int vx = Math.max(0, Math.min(controller.target.x - viewWidth / 2, world.width - viewWidth));
+        int vy = Math.max(0, Math.min(controller.target.y - viewHeight / 2, world.height - viewHeight));
 
         for (int x = vx; x < vx + viewWidth; x++) {
             for (int y = vy; y < vy + viewHeight; y++) {
@@ -225,7 +184,6 @@ public class GuiController implements KeyListener {
         }
 
         Item itemHere = null;
-
         for (Item item : world.items){
             int cx = item.x - vx;
             int cy = item.y - vy;
@@ -236,7 +194,7 @@ public class GuiController implements KeyListener {
             if (item.equipped)
                 continue;
 
-            if (item.x == target.x && item.y == target.y)
+            if (item.x == controller.target.x && item.y == controller.target.y)
                 itemHere = item;
 
             panel.write(item.glyph, cx, cy, item.color);
@@ -252,26 +210,24 @@ public class GuiController implements KeyListener {
             panel.write(creature.glyph, cx, cy, creature.color);
         }
 
-        if (target.target != null){
-            infoPanel(target, 1);
-            infoPanel(target.target, 22);
+        if (controller.target.attacking != null){
+            infoPanel(controller.target, 1);
+            infoPanel(controller.target.attacking, 22);
         } else if (itemHere != null) {
-            infoPanel(target, 1);
-            infoPanel(target, itemHere, 22);
+            infoPanel(controller.target, 1);
+            infoPanel(controller.target, itemHere, 22);
         }
 
         scoreboard();
         writeMessages();
     }
 
-    private ArrayList<String> currentMessages;
-    private ArrayList<Color> currentMessageColors;
     private void writeMessages(){
-        if (!target.messages.isEmpty()){
-            currentMessages = (ArrayList<String>)target.messages.clone();
-            currentMessageColors = (ArrayList<Color>)target.messageColors.clone();
-            target.messages.clear();
-            target.messageColors.clear();
+        if (!controller.target.messages.isEmpty()){
+            currentMessages = (ArrayList<String>)controller.target.messages.clone();
+            currentMessageColors = (ArrayList<Color>)controller.target.messageColors.clone();
+            controller.target.messages.clear();
+            controller.target.messageColors.clear();
         }
 
         int startY = panel.getHeightInCharacters() - currentMessages.size();
@@ -294,10 +250,11 @@ public class GuiController implements KeyListener {
             minutes = "0" + minutes;
 
 
-        panel.write(pad(" " + hours + ":" + minutes + " left", panelWidth), left, top+0, AsciiPanel.brightWhite);
-        panel.write(pad("    heroes: " + world.heroCount, panelWidth), left, top+1, AsciiPanel.green);
-        panel.write(pad(" villagers: " + world.villagerCount, panelWidth), left, top+2, AsciiPanel.white);
-        panel.write(pad("    undead: " + world.undeadCount, panelWidth), left, top+3, AsciiPanel.red);
+        panel.clear(' ', left, top, panelWidth, 4);
+        panel.write(" " + hours + ":" + minutes + " left", left, top+0, AsciiPanel.brightWhite);
+        panel.write("    heroes: " + world.heroCount, left, top+1, AsciiPanel.green);
+        panel.write(" villagers: " + world.villagerCount, left, top+2, AsciiPanel.white);
+        panel.write("    undead: " + world.undeadCount, left, top+3, AsciiPanel.red);
     }
 
     private void infoPanel(Creature creature, int left){
@@ -309,15 +266,11 @@ public class GuiController implements KeyListener {
         String weaponName = creature.weapon != null ? " " + creature.weapon.name : "";
         String armorName = creature.armor != null ? " " + creature.armor.name : "";
 
-        panel.write(pad(" " + creature.getName(), panelWidth), left, 1);
-        panel.write(pad("  hp:" + creature.hp + "/" + creature.maxHp, panelWidth), left, 2);
-        panel.write(pad(" atk:" + creature.attack + weaponName, panelWidth), left, 3);
-        panel.write(pad(" def:" + creature.defence + armorName, panelWidth), left, 4);
-
-        if (creature.details != null && creature.details.length() > 0)
-            panel.write(pad(" (" + creature.details + ")", panelWidth), left, 5);
-        else
-            panel.write(pad("", panelWidth), left, 5);
+        panel.clear(' ',left, 1, panelWidth, 5);
+        panel.write(" " + creature.getName(), left, 1);
+        panel.write("  hp:" + creature.hp + "/" + creature.maxHp, left, 3);
+        panel.write(" atk:" + creature.attack + weaponName, left, 4);
+        panel.write(" def:" + creature.defence + armorName, left, 5);
     }
 
     private void infoPanel(Creature creature, Item item, int left){
@@ -351,26 +304,16 @@ public class GuiController implements KeyListener {
         String diffAtkStr = diffAtk == 0 ? "" : (diffAtk > 0 ? " " + up + diffAtk : " " + down + Math.abs(diffAtk));
         String diffDefStr = diffDef == 0 ? "" : (diffDef > 0 ? " " + up + diffDef : " " + down + Math.abs(diffDef));
 
-        panel.write(pad(" " + item.name, panelWidth), left, 1);
-        panel.write("  hp:" + item.modHp, left, 2);
-        panel.write(pad(diffHpStr, (panelWidth + left) - panel.getCursorX()), diffHp > 0 ? AsciiPanel.green : AsciiPanel.red);
+        panel.clear(' ', left, 1, panelWidth, 5);
+        panel.write(" " + item.name, left, 1);
+        
+        panel.write("  hp:" + item.modHp, left, 3);
+        panel.write(diffHpStr, diffHp > 0 ? AsciiPanel.green : AsciiPanel.red);
 
-        panel.write(" atk:" + item.modAttack, left, 3);
-        panel.write(pad(diffAtkStr, (panelWidth + left) - panel.getCursorX()), diffAtk > 0 ? AsciiPanel.green : AsciiPanel.red);
+        panel.write(" atk:" + item.modAttack, left, 4);
+        panel.write(diffAtkStr, diffAtk > 0 ? AsciiPanel.green : AsciiPanel.red);
 
-        panel.write(" def:" + item.modDefence, left, 4);
-        panel.write(pad(diffDefStr, (panelWidth + left) - panel.getCursorX()), diffDef > 0 ? AsciiPanel.green : AsciiPanel.red);
-
-        if (item.details != null && item.details.length() > 0)
-            panel.write(pad(" (" + item.details + ")", panelWidth), left, 5);
-        else
-            panel.write(pad("", panelWidth), left, 5);
-    }
-
-    private String pad(String str, int length){
-        while (str.length() < length){
-            str += " ";
-        }
-        return str.substring(0, length);
+        panel.write(" def:" + item.modDefence, left, 5);
+        panel.write(diffDefStr, diffDef > 0 ? AsciiPanel.green : AsciiPanel.red);
     }
 }

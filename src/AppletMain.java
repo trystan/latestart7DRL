@@ -7,7 +7,7 @@ public class AppletMain extends Applet {
         AsciiPanel panel = new AsciiPanel(80, 24);
         add(panel);
 
-        GuiController gui = new GuiController(panel);
+        GuiController gui = new GuiController(panel, new PlayerController(null));
 
         addKeyListener(gui);
         gui.startScreen();

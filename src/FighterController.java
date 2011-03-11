@@ -17,7 +17,7 @@ public class FighterController extends HeroController {
     }
 
     @Override
-    public void onTakeDamage(int amount){
+    public void onTakeDamage(Creature other, int amount){
         if (rand.nextDouble() < 0.05)
             target.doAction("grunts");
     }

@@ -8,7 +8,6 @@ public class Item {
     public String name;
     public char glyph;
     public Color color;
-    public String details;
     
     public boolean equipped;
     
@@ -20,13 +19,12 @@ public class Item {
     public boolean doesDecapitate;
     public boolean doesDefensiveAttack;
 
-    public Item(int ix, int iy, String n, char g, Color c, String d) {
+    public Item(int ix, int iy, String n, char g, Color c) {
         x = ix;
         y = iy;
         name = n;
         glyph = g;
         color = c;
-        details = d;
     }
 
     public void attack(Creature user, Creature target){

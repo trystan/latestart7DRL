@@ -25,7 +25,7 @@ public class Creature {
 
     public World world;
 
-    public Creature target;
+    public Creature attacking;
 
     public boolean isSlow;
     public boolean canWalkThroughWalls;
@@ -164,7 +164,7 @@ public class Creature {
     private int openDoorY;
     private boolean needToCloseDoor;
     public boolean moveBy(int mx, int my, boolean isFlying) {
-        target = null;
+        attacking = null;
         for (Creature other : world.creatures){
             if (other != this && other.x == x+mx && other.y == y+my) {
                 if (isFlying){
@@ -276,8 +276,6 @@ public class Creature {
     public void takeDamage(int amount){
         if (hp > maxHp * 0.25 && hp-amount < maxHp * 0.25)
             controller.onLowHealth();
-        else
-            controller.onTakeDamage(amount);
         
         hp -= amount;
 
@@ -289,6 +287,7 @@ public class Creature {
     public void attack(Creature other){
         int damage = Math.max(1, attack - other.defence);
         other.takeDamage(damage);
+        controller.onTakeDamage(other, damage);
 
         if (canStealLife){
             hp += damage / 4;
@@ -296,8 +295,8 @@ public class Creature {
                 hp = maxHp;
         }
         
-        if (other.target == null)
-            other.target = this;
+        if (other.attacking == null)
+            other.attacking = this;
         
         if (isHero())
             controller.onInflictDamage(other, damage);
@@ -306,7 +305,7 @@ public class Creature {
             weapon.attack(this, other);
         }
 
-        target = other;
+        attacking = other;
 
         if (other.hp > 0
                 && other.weapon != null

@@ -81,25 +81,28 @@ public class World {
         }
         creatures.removeAll(died);
 
-        if (heroCount == 2 && !didDoOnlyTwoMessage){
-            didDoOnlyTwoMessage = true;
-            Creature player = null;
-            Creature other = null;
-            for (Creature creature : creatures){
-                if (!creature.isHero())
-                    continue;
-
-                if (creature.personalTitle.equals("player"))
-                    player = creature;
-
-                if (creature.personalTitle.equals("player"))
-                    other = creature;
-            }
-            other.tell(other, "It's just you and me now, " + player.personalName + ".");
-        }
+        if (heroCount == 2 && !didDoOnlyTwoMessage)
+            onlyTwoMessage();
 
         if (ticks % 60 == 0)
             spawnEnemies();
+    }
+
+    public void onlyTwoMessage(){
+        didDoOnlyTwoMessage = true;
+        Creature player = null;
+        Creature other = null;
+        for (Creature creature : creatures){
+            if (!creature.isHero())
+                continue;
+
+            if (creature.personalTitle.equals("player"))
+                player = creature;
+
+            if (!creature.personalTitle.equals("player"))
+                other = creature;
+        }
+        other.tell(other, "It's just you and me now, " + player.personalName + ".");
     }
 
     public void spawnEnemies(){
@@ -338,7 +341,7 @@ public class World {
         int dist = 5;
         for (int i = 0; i < 20; i++) {
             addHouse(cx + rand.nextInt(dist) + rand.nextInt(dist) - dist,
-                     cy + rand.nextInt(dist) + rand.nextInt(dist) - dist,
+                     cy + rand.nextInt(dist) - dist / 2,
                      2 + rand.nextInt(3));
             dist++;
         }
@@ -353,7 +356,8 @@ public class World {
                     return false;
                 
                 if (x==0 || y==0 || x==s*2 || y==s*2) {
-                    ;
+                    if (tile == wall)
+                        return false;
                 } else if (tile == wall || tile == floor ||  tile == insideFloor) {
                     return false;
                 }

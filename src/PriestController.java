@@ -39,7 +39,7 @@ public class PriestController extends HeroController {
     }
 
     @Override
-    public void onTakeDamage(int amount){
+    public void onTakeDamage(Creature other, int amount){
         
     }
 

@@ -16,7 +16,7 @@ public class MonkController extends HeroController {
     }
 
     @Override
-    public void onTakeDamage(int amount){
+    public void onTakeDamage(Creature other, int amount){
         if (target.hp < target.maxHp / 2
                 && rand.nextDouble() < 0.1)
             healSelf();
@@ -24,7 +24,7 @@ public class MonkController extends HeroController {
 
     @Override
     public void onLowHealth(){
-        if (Math.random() < 0.5) {
+        if (rand.nextDouble() < 0.5) {
             healSelf();
         } else {
             target.tellNearby("I need some healing!");
@@ -38,7 +38,7 @@ public class MonkController extends HeroController {
 
     @Override
     public void onInflictDamage(Creature other, int damage){
-        double r = Math.random();
+        double r = rand.nextDouble();
 
         if (r < 0.01)
             target.tellNearby("Judo chop!");
@@ -86,7 +86,7 @@ public class MonkController extends HeroController {
     }
 
     private void quickAttack(Creature other){
-        target.doAction("attacks quickly");
+        target.doAction("quickly attacks");
         target.attack(other);
     }
 }

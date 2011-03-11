@@ -48,13 +48,13 @@ public class CreatureFactory {
     }
     
     public Creature Player(){
-        Creature creature = new Creature(world, 0, 0, "Trystan", "player", '@', AsciiPanel.brightWhite, "you");
+        Creature creature = new Creature(world, 0, 0, "Trystan", "player", '@', AsciiPanel.brightWhite, "");
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
         creature.attack = 10;
         creature.defence = 5;
         creature.canSpeak = true;
-        creature.controller = new CreatureController(creature);
+        creature.controller = new PlayerController(creature);
         return creature;
     }
 
@@ -67,7 +67,7 @@ public class CreatureFactory {
         creature.canSpeak = true;
         creature.controller = new FighterController(creature, pf);
         Item personalWeapon = itemFactory.weapon();
-        personalWeapon.details = creature.personalName + "'s";
+        personalWeapon.name = creature.personalName + "'s" + personalWeapon.name;
         personalWeapon.modAttack += 5;
         personalWeapon.modDefence += 5;
         creature.equip(personalWeapon);
@@ -100,7 +100,7 @@ public class CreatureFactory {
     }
 
     public Creature HeroPreist(){
-        Creature creature = new Creature(world, 0, 0, name(), "priest", '@', AsciiPanel.brightCyan, "balanced");
+        Creature creature = new Creature(world, 0, 0, name(), "priest", '@', AsciiPanel.brightCyan, "holy");
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
         creature.attack = 12 + rand.nextInt(5) + rand.nextInt(5);
@@ -125,23 +125,23 @@ public class CreatureFactory {
     }
 
     public Creature Villager(){
-        Creature creature = new Creature(world, 0, 0, name(), "villager", '@', AsciiPanel.brightBlack, "villager");
+        Creature creature = new Creature(world, 0, 0, name(), "villager", '@', AsciiPanel.brightBlack, "");
         creature.maxHp = 40;
         creature.hp = creature.maxHp;
         creature.attack = 1 + rand.nextInt(5);
         creature.defence = 1 + rand.nextInt(5);
         creature.canSpeak = true;
-        creature.controller = new NonPlayerController(creature, pf);
+        creature.controller = new VillagerController(creature, pf);
         return creature;
     }
 
     public Creature Skeleton(){
-        Creature creature = new Creature(world, 0, 0, "", "skeleton", 's', AsciiPanel.white, "brittle");
+        Creature creature = new Creature(world, 0, 0, "", "skeleton", 's', AsciiPanel.white, "weak");
         creature.maxHp = 10 + rand.nextInt(10);
         creature.hp = creature.maxHp;
         creature.attack = 5 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
-        creature.controller = new NonPlayerController(creature, pf);
+        creature.controller = new UndeadController(creature, pf);
         return creature;
     }
 
@@ -152,7 +152,7 @@ public class CreatureFactory {
         creature.attack = 10 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
         creature.isSlow = true;
-        creature.controller = new NonPlayerController(creature, pf);
+        creature.controller = new UndeadController(creature, pf);
         return creature;
     }
 
@@ -165,7 +165,7 @@ public class CreatureFactory {
         creature.vision = 50;
         creature.canWalkThroughWalls = true;
         creature.canBeDecapitated = false;
-        creature.controller = new NonPlayerController(creature, pf);
+        creature.controller = new UndeadController(creature, pf);
         return creature;
     }
 
@@ -175,7 +175,7 @@ public class CreatureFactory {
         creature.hp = creature.maxHp;
         creature.attack = 5 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
-        creature.controller = new NonPlayerController(creature, pf);
+        creature.controller = new UndeadController(creature, pf);
         creature.canStealLife = true;
         creature.canNotGoIndoors = true;
         creature.hasBlood = true;

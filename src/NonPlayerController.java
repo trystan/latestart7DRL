@@ -24,9 +24,6 @@ public class NonPlayerController extends CreatureController {
 
     @Override
     public void update() {
-        if (target.isZombie() && Math.random() < 0.05)
-            target.tellNearby("moans", "brains....");
-
         if (target.isSlow && target.age % 3 != 0) {
             return;
         }
@@ -114,18 +111,5 @@ public class NonPlayerController extends CreatureController {
                 target.moveBy(1, 1);
                 break;
         }
-    }
-
-    @Override
-    public void onTakeDamage(int amount){
-        if (!target.isCommoner())
-            return;
-        
-        double r = rand.nextDouble();
-        
-        if (r < 0.25)
-            target.tellNearby("Help!");
-        else if (r < 0.5)
-            target.tellNearby("Ahh!");
     }
 }
