@@ -14,13 +14,14 @@ public class World {
     public static final int unknown = 5;
     public static final int openDoor = 6;
     public static final int closedDoor = 7;
-    public static final int insidefloor = 8;
+    public static final int insideFloor = 8;
     public static final int floor = 9;
     public static final int wall = 10;
 
     public List<Creature> creatures;
     public List<Item> items;
     public int[][] tiles;
+    public boolean[][] gore;
     public int width;
     public int height;
     private Random rand;
@@ -47,7 +48,7 @@ public class World {
                 || tile == wall && !canWalkThroughWalls
                 || tile == openDoor && canNotGoIndoors
                 || tile == closedDoor && canNotGoIndoors
-                || tile == insidefloor && canNotGoIndoors;
+                || tile == insideFloor && canNotGoIndoors;
     }
 
     public void tellAll(Color color, String message){
@@ -163,7 +164,7 @@ public class World {
             case grass: return 249;
             case shrub: return '*';
             case tree:  return 6;
-            case insidefloor: return 249;
+            case insideFloor: return 249;
             case floor: return 249;
             case wall:  return '#';
             case openDoor:  return '/';
@@ -173,19 +174,26 @@ public class World {
     }
 
     public Color getColor(int x, int y) {
+        if (gore[x][y])
+            return AsciiPanel.red;
+        
         switch (tiles[x][y]) {
             case water: return AsciiPanel.blue;
             case dirt:  return AsciiPanel.yellow;
             case grass: return AsciiPanel.green;
             case shrub: return AsciiPanel.green;
             case tree:  return AsciiPanel.green;
-            case insidefloor: return AsciiPanel.white;
+            case insideFloor: return AsciiPanel.white;
             case floor: return AsciiPanel.white;
             case wall:  return AsciiPanel.white;
             case openDoor:  return AsciiPanel.yellow;
             case closedDoor:  return AsciiPanel.yellow;
             default:    return AsciiPanel.black;
         }
+    }
+
+    public void addGore(int x, int y){
+        gore[x][y] = true;
     }
 
     public void placeAnywhere(Creature creature, Random rand){
@@ -211,7 +219,7 @@ public class World {
                 if (other.x == creature.x && other.y == creature.y)
                     continue;
             }
-        } while (tiles[creature.x][creature.y] != insidefloor);
+        } while (tiles[creature.x][creature.y] != insideFloor);
 
         creatures.add(creature);
     }
@@ -240,7 +248,7 @@ public class World {
                 if (other.x == item.x && other.y == item.y)
                     continue;
             }
-        } while (tiles[item.x][item.y] != insidefloor);
+        } while (tiles[item.x][item.y] != insideFloor);
 
         items.add(item);
     }
@@ -248,6 +256,7 @@ public class World {
     private void create() {
         int size = 8;
         tiles = new int[size][size];
+        gore = new boolean[size][size];
         width = size;
         height = size;
 
@@ -291,6 +300,7 @@ public class World {
 
             randomize();
         }
+        gore = new boolean[width][height];
 
         addCity(width / 2, height / 2);
     }
@@ -344,7 +354,7 @@ public class World {
                 
                 if (x==0 || y==0 || x==s*2 || y==s*2) {
                     ;
-                } else if (tile == wall || tile == floor) {
+                } else if (tile == wall || tile == floor ||  tile == insideFloor) {
                     return false;
                 }
             }
@@ -365,7 +375,7 @@ public class World {
                 } else if (x==0 || y==0 || x==s*2 || y==s*2) {
                     tiles[cx+x-s][cy+y-s] = wall;
                 } else {
-                    tiles[cx+x-s][cy+y-s] = insidefloor;
+                    tiles[cx+x-s][cy+y-s] = insideFloor;
                 }
             }
         }

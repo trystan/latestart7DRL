@@ -58,6 +58,8 @@ public class MonkController extends HeroController {
 
     @Override
     public void onKilled(Creature other){
+        if (rand.nextDouble() < 0.33)
+            target.tellNearby("Victory!");
     }
 
     @Override
@@ -71,6 +73,7 @@ public class MonkController extends HeroController {
     @Override
     public void onKnockback(int distance){
     }
+    
 
 
     private void healSelf(){

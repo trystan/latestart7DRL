@@ -87,12 +87,10 @@ public class PathFinder {
                 if (totalCost(creature, other) < totalCost(creature, best))
                     best = other;
             }
-            System.out.print(".");
             opened.remove(best);
             closed.add(best);
 
             if (best.x == tx && best.y == ty) {
-                System.out.println("!");
                 ArrayList<Point> path = new ArrayList<Point>();
                 Point current = best;
 
@@ -135,7 +133,6 @@ public class PathFinder {
             }
         }
         
-        System.out.println("?");
         return null;
     }
 }

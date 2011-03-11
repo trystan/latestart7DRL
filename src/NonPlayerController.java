@@ -115,4 +115,17 @@ public class NonPlayerController extends CreatureController {
                 break;
         }
     }
+
+    @Override
+    public void onTakeDamage(int amount){
+        if (!target.isCommoner())
+            return;
+        
+        double r = rand.nextDouble();
+        
+        if (r < 0.25)
+            target.tellNearby("Help!");
+        else if (r < 0.5)
+            target.tellNearby("Ahh!");
+    }
 }

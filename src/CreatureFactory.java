@@ -178,6 +178,7 @@ public class CreatureFactory {
         creature.controller = new NonPlayerController(creature, pf);
         creature.canStealLife = true;
         creature.canNotGoIndoors = true;
+        creature.hasBlood = true;
         creature.equip(itemFactory.weapon());
         creature.equip(itemFactory.armor());
         return creature;

@@ -35,6 +35,7 @@ public class Creature {
 
     public boolean canBeDecapitated;
     public boolean canNotGoIndoors;
+    public boolean hasBlood;
 
     public Item weapon;
     public Item armor;
@@ -68,6 +69,7 @@ public class Creature {
 
         canBeDecapitated = true;
         canHeal = isHuman();
+        hasBlood = isHuman();
         
         messages = new ArrayList<String>();
         messageColors = new ArrayList<Color>();
@@ -262,6 +264,10 @@ public class Creature {
 
     public void die(){
         hp = 0;
+
+        if (isHuman())
+            world.addGore(x, y);
+        
         controller.onDied();
         unequip(armor);
         unequip(weapon);

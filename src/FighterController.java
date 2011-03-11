@@ -42,9 +42,9 @@ public class FighterController extends HeroController {
 
     @Override
     public void onKilled(Creature other){
-        if (rand.nextDouble() < 0.01)
+        if (rand.nextDouble() < 0.1)
             target.tellNearby("Anyone else havin' as much fun as I am?");
-        else if (rand.nextDouble() < 0.33)
+        else if (rand.nextDouble() < 0.5)
             target.doAction("grins widely");
         else if (rageCounter == 0 && rand.nextDouble() < 0.1)
             startRage();

@@ -46,8 +46,8 @@ public class WizzardController extends HeroController {
 
     @Override
     public void onKilled(Creature other){
-        if (Math.random() < 0.01)
-            target.tellNearby("One less " + other.personalTitle + "....");
+        if (rand.nextDouble() < 0.1)
+            target.tellNearby("That's one less " + other.personalTitle + "....");
     }
 
     @Override
