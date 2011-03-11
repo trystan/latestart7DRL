@@ -17,6 +17,9 @@ public class Creature {
 
     public Creature target;
 
+    public boolean isSlow;
+    public boolean canWalkThroughWalls;
+    public boolean canHeal;
     public int healCountdown;
 
     public Item weapon;
@@ -47,6 +50,8 @@ public class Creature {
         vision = 9;
         healCountdown = 20;
         canSpeak = false;
+
+        canHeal = glyph == '@';
         
         messages = new ArrayList<String>();
         messageColors = new ArrayList<Color>();
@@ -57,10 +62,10 @@ public class Creature {
         
         name = "zobmie " + name;
         glyph = 'z';
+        // keep the same color so you know who it was
         maxHp = (int)(maxHp * 0.8);
         hp = maxHp;
-        if (controller != null)
-            controller.moveWaitTime++;
+        isSlow = true;
         canSpeak = false;
     }
 
@@ -88,7 +93,7 @@ public class Creature {
         if (isHero() && Math.random() < 0.01)
             tellNearby("Who else is havin' fun?");
 
-        if (--healCountdown < 1){
+        if (canHeal && --healCountdown < 1){
             healCountdown = 20;
             if (hp < maxHp)
                 hp++;
@@ -103,7 +108,7 @@ public class Creature {
          || ty < 0 || ty >= world.height)
             return false;
 
-        if (world.isImpassable(world.tiles[tx][ty]))
+        if (world.isImpassable(world.tiles[tx][ty], canWalkThroughWalls))
             return false;
 
         for (Creature other : world.creatures){
@@ -124,7 +129,7 @@ public class Creature {
          || ty < 0 || ty >= world.height)
             return false;
 
-        if (world.isImpassable(world.tiles[tx][ty]))
+        if (world.isImpassable(world.tiles[tx][ty], canWalkThroughWalls))
             return false;
 
         return true;
@@ -135,7 +140,7 @@ public class Creature {
          || y+my < 0 || y+my >= world.height)
             return false;
         
-        if (world.isImpassable(world.tiles[x+mx][y+my]))
+        if (world.isImpassable(world.tiles[x+mx][y+my], canWalkThroughWalls))
             return false;
 
         return true;

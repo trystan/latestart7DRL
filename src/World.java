@@ -37,8 +37,8 @@ public class World {
         create();
     }
 
-    public boolean isImpassable(int tile){
-        return tile == water || tile == wall;
+    public boolean isImpassable(int tile, boolean canWalkThroughWalls){
+        return tile == water || tile == wall && !canWalkThroughWalls;
     }
 
     public void tellAll(Color color, String message){
@@ -178,7 +178,7 @@ public class World {
                     continue;
             }
 
-        } while (isImpassable(tiles[item.x][item.y]));
+        } while (isImpassable(tiles[item.x][item.y], false));
 
         items.add(item);
     }

@@ -70,7 +70,6 @@ public class CreatureFactory {
         creature.canSpeak = true;
         creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;
-        creature.controller.moveWaitTime = 0;
         creature.equip(itemFactory.sword());
         creature.equip(itemFactory.heavyArmor());
         return creature;
@@ -86,7 +85,6 @@ public class CreatureFactory {
         creature.canSpeak = true;
         creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;
-        creature.controller.moveWaitTime = 0;
         return creature;
     }
 
@@ -100,7 +98,6 @@ public class CreatureFactory {
         creature.canSpeak = true;
         creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;
-        creature.controller.moveWaitTime = 0;
         creature.equip(itemFactory.knife());
         creature.equip(itemFactory.robes());
         return creature;
@@ -114,21 +111,44 @@ public class CreatureFactory {
         creature.defence = 1 + rand.nextInt(5);
         creature.canSpeak = true;
         creature.controller = new CreatureController(creature, pf);
+        // creature.controller.canPathfind = true;
+        return creature;
+    }
+
+    public Creature Skeleton(){
+        Creature creature = new Creature(world, 0, 0, "a skeleton", 's', AsciiPanel.white, "brittle");
+        creature.maxHp = 5 + rand.nextInt(5);
+        creature.hp = creature.maxHp;
+        creature.attack = 5 + rand.nextInt(5);
+        creature.defence = 5 + rand.nextInt(5);
+        creature.vision = 6;
+        creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;
-        creature.controller.moveWaitTime = 0;
         return creature;
     }
 
     public Creature Zombie(){
-        Creature creature = new Creature(world, 0, 0, "a zombie", 'z', AsciiPanel.brightWhite, "undead");
+        Creature creature = new Creature(world, 0, 0, "a zombie", 'z', AsciiPanel.white, "slow");
         creature.maxHp = 40 + rand.nextInt(10);
         creature.hp = creature.maxHp;
         creature.attack = 10 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
         creature.vision = 10;
+        creature.isSlow = true;
         creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;
-        creature.controller.moveWaitTime = 2;
+        return creature;
+    }
+
+    public Creature Ghost(){
+        Creature creature = new Creature(world, 0, 0, "a ghost", 'g', AsciiPanel.brightBlack, "non coporeal");
+        creature.maxHp = 1 + rand.nextInt(20);
+        creature.hp = creature.maxHp;
+        creature.attack = 1 + rand.nextInt(5);
+        creature.defence = 100;
+        creature.canWalkThroughWalls = true;
+        creature.controller = new CreatureController(creature, pf);
+        creature.controller.canPathfind = true;
         return creature;
     }
 }

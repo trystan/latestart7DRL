@@ -58,8 +58,8 @@ public class PathFinder {
         return 1 + 0.5 * costToGetHere(c, parents.get(p));
     }
 
-    private boolean passable(Point p){
-        return !world.isImpassable(world.tiles[p.x][p.y]);
+    private boolean passable(Point p, Creature c){
+        return !world.isImpassable(world.tiles[p.x][p.y], c.canWalkThroughWalls);
     }
 
     private double totalCost(Creature c, Point p) {
@@ -105,7 +105,7 @@ public class PathFinder {
                 return path;
 
             } else {
-                if (!passable(best))
+                if (!passable(best, creature))
                     continue;
                 
                 for (Point neighbor : getNeighbors(best.x, best.y)) {

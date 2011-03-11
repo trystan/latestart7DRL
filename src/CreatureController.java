@@ -7,8 +7,6 @@ public class CreatureController {
 
     public Creature target;
     private Random rand;
-    private int walkCountdown;
-    public int moveWaitTime;
     public PathFinder pathFinder;
     private ArrayList<Point> path;
     private HashMap<String,Integer> lastSeenNames;
@@ -18,11 +16,9 @@ public class CreatureController {
     public CreatureController(Creature t, PathFinder pf) {
         target = t;
         rand = new Random();
-        walkCountdown = rand.nextInt(5);
         pathFinder = pf;
         path = null;
         lastSeenNames = new HashMap<String,Integer>();
-        moveWaitTime = 3;
     }
 
     public boolean goTo(int x, int y){
@@ -38,7 +34,7 @@ public class CreatureController {
     }
     
     public void update() {
-        if (--walkCountdown > 0) {
+        if (target.isSlow && target.age % 3 != 0) {
             return;
         }
 
@@ -100,7 +96,6 @@ public class CreatureController {
         } else {
             meander();
         }
-        walkCountdown = moveWaitTime;
     }
 
     public void trimPath(){
@@ -119,6 +114,12 @@ public class CreatureController {
     }
 
     public void meander(){
+        if (target.glyph != '@' && rand.nextDouble() < 0.05){
+            path = pathFinder.findPath(target, target.x, target.y,
+                    target.world.width / 2 + rand.nextInt(40) - 20,
+                    target.world.height / 2 + rand.nextInt(40) - 20, 50);
+            return;
+        }
         switch (rand.nextInt(9)) {
             case 0:
                 target.moveBy(-1, -1);
@@ -151,6 +152,7 @@ public class CreatureController {
     }
 
     public boolean isAlly(Creature other){
-        return (""+other.glyph).toLowerCase().equals((""+target.glyph).toLowerCase());
+        return (other.glyph == '@' && target.glyph == '@')
+            || (other.glyph != '@' && target.glyph != '@');
     }
 }
