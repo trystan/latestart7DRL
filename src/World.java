@@ -12,6 +12,10 @@ public class World {
     public static final int shrub = 3;
     public static final int tree  = 4;
     public static final int unknown = 5;
+    public static final int openDoor = 6;
+    public static final int closedDoor = 7;
+    public static final int floor = 8;
+    public static final int wall = 9;
 
     public List<Creature> creatures;
     public List<Item> items;
@@ -27,6 +31,10 @@ public class World {
         rand = new Random();
         age = 0;
         create();
+    }
+
+    public boolean isImpassable(int tile){
+        return tile == water || tile == wall;
     }
 
     public void tellAll(Color color, String message){
@@ -88,17 +96,6 @@ public class World {
          tellAll(AsciiPanel.brightWhite, "!! " + message + " !!");
     }
 
-    public String getName(int x, int y){
-        switch (tiles[x][y]) {
-            case water: return "water";
-            case dirt:  return "dirt";
-            case grass: return "grass";
-            case shrub: return "bushes";
-            case tree:  return "tree";
-            default:    return "(unknown)";
-        }
-    }
-
     public char getGlyph(int x, int y) {
         switch (tiles[x][y]) {
             case water: return '~';
@@ -106,6 +103,10 @@ public class World {
             case grass: return 249;
             case shrub: return '*';
             case tree:  return 6;
+            case floor: return 249;
+            case wall:  return '#';
+            case openDoor:  return '/';
+            case closedDoor:  return '+';
             default:    return ' ';
         }
     }
@@ -117,6 +118,10 @@ public class World {
             case grass: return AsciiPanel.green;
             case shrub: return AsciiPanel.green;
             case tree:  return AsciiPanel.green;
+            case floor: return AsciiPanel.white;
+            case wall:  return AsciiPanel.white;
+            case openDoor:  return AsciiPanel.yellow;
+            case closedDoor:  return AsciiPanel.yellow;
             default:    return AsciiPanel.black;
         }
     }
@@ -136,7 +141,6 @@ public class World {
     }
 
     public void placeItem(Item item, Random rand){
-        int tile;
         do {
             item.x = rand.nextInt(width);
             item.y = rand.nextInt(height);
@@ -146,8 +150,7 @@ public class World {
                     continue;
             }
 
-            tile = tiles[item.x][item.y];
-        } while (tile == water);
+        } while (isImpassable(tiles[item.x][item.y]));
 
         items.add(item);
     }
@@ -198,6 +201,8 @@ public class World {
 
             randomize();
         }
+
+        addCity(64,64);
     }
 
     private void randomize() {
@@ -226,6 +231,53 @@ public class World {
                         break;
                 }
             }
+        }
+    }
+
+    private void addCity(int cx, int cy){
+        for (int i = 0; i < 30; i++) {
+            addHouse(cx + rand.nextInt(40) - 20,
+                     cy + rand.nextInt(30) - 15,
+                     2 + rand.nextInt(3));
+        }
+    }
+
+    private boolean canAddHouse(int cx, int cy, int s){
+        for (int x = 0; x < s*2+1; x++){
+            for (int y = 0; y < s*2+1; y++){
+                int tile = tiles[cx+x-s][cy+y-s];
+
+                if (tile == openDoor || tile == closedDoor)
+                    return false;
+                
+                if (x==0 || y==0 || x==s*2 || y==s*2) {
+                    ;
+                } else if (tile == wall || tile == floor) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void addHouse(int cx, int cy, int s){
+        if (!canAddHouse(cx, cy, s))
+            return;
+        
+        for (int x = 0; x < s*2+1; x++){
+            for (int y = 0; y < s*2+1; y++){
+                if (x==0 || y==0 || x==s*2 || y==s*2)
+                    tiles[cx+x-s][cy+y-s] = wall;
+                else
+                    tiles[cx+x-s][cy+y-s] = floor;
+            }
+        }
+
+        switch (rand.nextInt(4)){
+            case 0: tiles[cx][cy-s] = closedDoor; break;
+            case 1: tiles[cx][cy+s] = closedDoor; break;
+            case 2: tiles[cx-s][cy] = closedDoor; break;
+            case 3: tiles[cx+s][cy] = closedDoor; break;
         }
     }
 }

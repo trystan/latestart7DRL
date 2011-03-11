@@ -41,6 +41,9 @@ public class GuiController implements KeyListener {
         world.placeCreature(creatureFactory.HeroWizzard(), rand);
         world.placeCreature(creatureFactory.HeroMonk(), rand);
 
+        target.x = 64;
+        target.y = 64;
+
         for (int i = 0; i < 100; i++){
             world.placeCreature(creatureFactory.Zombie(), rand);
         }

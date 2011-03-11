@@ -94,7 +94,7 @@ public class Creature {
          || ty < 0 || ty >= world.height)
             return false;
 
-        if (world.tiles[tx][ty] == World.water)
+        if (world.isImpassable(world.tiles[tx][ty]))
             return false;
 
         for (Creature other : world.creatures){
@@ -115,7 +115,7 @@ public class Creature {
          || ty < 0 || ty >= world.height)
             return false;
 
-        if (world.tiles[tx][ty] == World.water)
+        if (world.isImpassable(world.tiles[tx][ty]))
             return false;
 
         return true;
@@ -126,12 +126,15 @@ public class Creature {
          || y+my < 0 || y+my >= world.height)
             return false;
         
-        if (world.tiles[x+mx][y+my] == World.water)
+        if (world.isImpassable(world.tiles[x+mx][y+my]))
             return false;
 
         return true;
     }
-    
+
+    private int openDoorX;
+    private int openDoorY;
+    private boolean needToCloseDoor;
     public void moveBy(int mx, int my) {
         for (Creature other : world.creatures){
             if (other != this && other.x == x+mx && other.y == y+my) {
@@ -141,8 +144,24 @@ public class Creature {
         }
         
         if (canMoveBy(mx,my)) {
-            x += mx;
-            y += my;
+            if (world.tiles[x+mx][y+my] == world.closedDoor) {
+                world.tiles[x+mx][y+my] = world.openDoor;
+                openDoorX = x+mx;
+                openDoorY = y+my;
+                needToCloseDoor = true;
+            } else {
+                x += mx;
+                y += my;
+
+                if (needToCloseDoor && isHero()
+                    && world.tiles[openDoorX][openDoorY] == world.openDoor
+                    && distanceTo(openDoorX, openDoorY) == 2) {
+                    world.tiles[openDoorX][openDoorY] = world.closedDoor;
+                    x -= mx;
+                    y -= my;
+                    needToCloseDoor = false;
+                }
+            }
         }
 
         target = null;
