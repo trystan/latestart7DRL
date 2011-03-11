@@ -264,12 +264,17 @@ public class World {
         if (!canAddHouse(cx, cy, s))
             return;
         
-        for (int x = 0; x < s*2+1; x++){
-            for (int y = 0; y < s*2+1; y++){
-                if (x==0 || y==0 || x==s*2 || y==s*2)
+        for (int x = -1; x < s*2+2; x++){
+            for (int y = -1; y < s*2+2; y++){
+                if (x==-1 || y==-1 || x==s*2+1 || y==s*2+1) {
+                    int tile = tiles[cx+x-s][cy+y-s];
+                    if (tile != wall && tile != closedDoor && tile != openDoor)
+                        tiles[cx+x-s][cy+y-s] = floor;
+                } else if (x==0 || y==0 || x==s*2 || y==s*2) {
                     tiles[cx+x-s][cy+y-s] = wall;
-                else
+                } else {
                     tiles[cx+x-s][cy+y-s] = floor;
+                }
             }
         }
 
