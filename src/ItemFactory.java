@@ -18,7 +18,7 @@ public class ItemFactory {
     }
 
     public Item robes(){
-        Item armor = new Item(0,0,"robes",']',AsciiPanel.white, "");
+        Item armor = new Item(0,0,"wizzard robes",']',AsciiPanel.white, "");
         armor.modDefence = 2;
         return armor;
     }
@@ -45,10 +45,9 @@ public class ItemFactory {
     }
 
     public Item weapon(){
-        switch (rand.nextInt(4)){
+        switch (rand.nextInt(3)){
             case 0: return sword();
             case 1: return spear();
-            case 2: return club();
             default: return mace();
         }
     }
@@ -74,14 +73,6 @@ public class ItemFactory {
         weapon.modAttack = 5 + rand.nextInt(5);
         weapon.modDefence = 5 + rand.nextInt(10);
         weapon.doesDefensiveAttack = true;
-        return weapon;
-    }
-
-    public Item club(){
-        Item weapon = new Item(0,0,"club",')',AsciiPanel.white, "heavy");
-        weapon.modAttack = 10 + rand.nextInt(5);
-        weapon.modDefence = rand.nextInt(5);
-        weapon.doesCritical = true;
         return weapon;
     }
 

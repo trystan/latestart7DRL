@@ -59,11 +59,7 @@ public class PathFinder {
     }
 
     private boolean passable(Point p){
-        switch (world.tiles[p.x][p.y]) {
-            case World.dirtWall:
-            case World.water: return false;
-            default: return true;
-        }
+        return world.tiles[p.x][p.y] != World.water;
     }
 
     private double totalCost(Creature c, Point p) {

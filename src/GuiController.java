@@ -43,7 +43,6 @@ public class GuiController implements KeyListener {
 
         for (int i = 0; i < 100; i++){
             world.placeCreature(creatureFactory.Zombie(), rand);
-            world.placeCreature(creatureFactory.Blob(rand), rand);
         }
 
         for (int i = 0; i < 25; i++){

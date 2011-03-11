@@ -134,20 +134,4 @@ public class CreatureFactory {
         creature.controller.moveWaitTime = 2;
         return creature;
     }
-
-    public Creature Blob(Random rand){
-        Color[] blobColors = new Color[]{ AsciiPanel.red, AsciiPanel.yellow, AsciiPanel.green, AsciiPanel.cyan, AsciiPanel.blue, AsciiPanel.magenta };
-
-        Color c = blobColors[rand.nextInt(blobColors.length)];
-        Creature creature = new Creature(world, 0, 0, "some blob", 'b', c, "mostly harmless");
-        creature.maxHp = 5 + rand.nextInt(6);
-        creature.hp = creature.maxHp;
-        creature.attack = 2 + rand.nextInt(5);
-        creature.defence = rand.nextInt(3);
-        creature.vision = 1;
-        creature.controller = new CreatureController(creature, pf);
-        creature.controller.canPathfind = false;
-        creature.controller.moveWaitTime = 1;
-        return creature;
-    }
 }

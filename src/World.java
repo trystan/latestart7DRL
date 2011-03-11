@@ -7,12 +7,11 @@ import java.util.Random;
 
 public class World {
     public static final int water = 0;
-    public static final int dirtFloor = 1;
-    public static final int dirtWall  = 2;
-    public static final int grass = 3;
-    public static final int shrub = 4;
-    public static final int tree  = 5;
-    public static final int unknown = 6;
+    public static final int dirt = 1;
+    public static final int grass = 2;
+    public static final int shrub = 3;
+    public static final int tree  = 4;
+    public static final int unknown = 5;
 
     public List<Creature> creatures;
     public List<Item> items;
@@ -50,12 +49,12 @@ public class World {
         }
         creatures.removeAll(died);
 
-        if (age % 100 == 0)
+        if (age % 120 == 0)
             spawnEnemies();
     }
 
     public void spawnEnemies(){
-        String message = " are attacking from the ";
+        String message = "Zombies are attacking from the ";
         int x = 0;
         int y = 0;
 
@@ -69,19 +68,8 @@ public class World {
         }
 
         ArrayList<Creature> group = new ArrayList();
-        switch (rand.nextInt(2)){
-            case 0:
-                message = "Zombies " + message;
-                for (int i = 0; i < rand.nextInt(10) + rand.nextInt(10); i++) {
-                    group.add(factory.Zombie());
-                }
-                break;
-            case 1:
-                message = "Blobs " + message;
-                for (int i = 0; i < 20 + rand.nextInt(20); i++) {
-                    group.add(factory.Blob(rand));
-                }
-                break;
+        for (int i = 0; i < rand.nextInt(10) + rand.nextInt(10); i++) {
+            group.add(factory.Zombie());
         }
 
         if (group.isEmpty())
@@ -97,23 +85,13 @@ public class World {
             }
          }
 
-         tellAll(AsciiPanel.brightWhite, "!!" + message + "!!");
-         
-         for (Creature c : creatures){
-             if (!c.isHero() || c.controller == null)
-                 continue;
-
-             if (c.controller.goTo(x, y)){
-                 c.tellNearby("I'll take 'em!");
-             }
-         }
+         tellAll(AsciiPanel.brightWhite, "!! " + message + " !!");
     }
 
     public String getName(int x, int y){
         switch (tiles[x][y]) {
             case water: return "water";
-            case dirtFloor:  return "dirt";
-            case dirtWall:   return "dirt";
+            case dirt:  return "dirt";
             case grass: return "grass";
             case shrub: return "bushes";
             case tree:  return "tree";
@@ -121,23 +99,10 @@ public class World {
         }
     }
 
-    public double getImpassability(int x, int y){
-        switch (tiles[x][y]) {
-            case water: return 0.9;
-            case dirtFloor:  return 0.0;
-            case dirtWall:   return 0.7;
-            case grass: return 0.0;
-            case shrub: return 0.2;
-            case tree:  return 0.4;
-            default:    return 0.5;
-        }
-    }
-
     public char getGlyph(int x, int y) {
         switch (tiles[x][y]) {
             case water: return '~';
-            case dirtFloor:  return 249;
-            case dirtWall:   return 177;
+            case dirt:  return 249;
             case grass: return 249;
             case shrub: return '*';
             case tree:  return 6;
@@ -148,8 +113,7 @@ public class World {
     public Color getColor(int x, int y) {
         switch (tiles[x][y]) {
             case water: return AsciiPanel.blue;
-            case dirtFloor:  return AsciiPanel.yellow;
-            case dirtWall:  return AsciiPanel.yellow;
+            case dirt:  return AsciiPanel.yellow;
             case grass: return AsciiPanel.green;
             case shrub: return AsciiPanel.green;
             case tree:  return AsciiPanel.green;
@@ -183,7 +147,7 @@ public class World {
             }
 
             tile = tiles[item.x][item.y];
-        } while (tile == water || tile == dirtWall);
+        } while (tile == water);
 
         items.add(item);
     }
@@ -200,7 +164,7 @@ public class World {
             }
         }
         
-        for (int zoom : new int[]{2,4,2}) {
+        for (int zoom : new int[]{2,2,4}) {
             size *= zoom;
             int[][] tiles2 = new int[size][size];
 
@@ -245,7 +209,7 @@ public class World {
                     case grass:
                         if (rand.nextDouble() < 0.1) tiles[x][y] = shrub;
                         else if(rand.nextDouble() < 0.01) tiles[x][y] = tree;
-                        else if(rand.nextDouble() < 0.01) tiles[x][y] = dirtFloor;
+                        else if(rand.nextDouble() < 0.01) tiles[x][y] = dirt;
                         break;
                     case shrub:
                         if (rand.nextDouble() < 0.05) tiles[x][y] = grass;
@@ -255,10 +219,7 @@ public class World {
                         if (rand.nextDouble() < 0.1) tiles[x][y] = grass;
                         else if(rand.nextDouble() < 0.1) tiles[x][y] = shrub;
                         break;
-                    case dirtWall:
-                        if (rand.nextDouble() < 0.01) tiles[x][y] = dirtFloor;
-                        break;
-                    case dirtFloor:
+                    case dirt:
                         if (rand.nextDouble() < 0.1) tiles[x][y] = grass;
                         else if(rand.nextDouble() < 0.01) tiles[x][y] = shrub;
                         else if(rand.nextDouble() < 0.01) tiles[x][y] = tree;

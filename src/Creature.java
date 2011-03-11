@@ -60,7 +60,8 @@ public class Creature {
         color = AsciiPanel.white;
         maxHp = (int)(maxHp * 0.8);
         hp = maxHp;
-        controller.moveWaitTime++;
+        if (controller != null)
+            controller.moveWaitTime++;
         canSpeak = false;
     }
 
@@ -93,10 +94,8 @@ public class Creature {
          || ty < 0 || ty >= world.height)
             return false;
 
-        switch (world.tiles[tx][ty]) {
-            case World.dirtWall:
-            case World.water: return false;
-        }
+        if (world.tiles[tx][ty] == World.water)
+            return false;
 
         for (Creature other : world.creatures){
             if (other == this || other.x != tx || other.y != ty)
@@ -116,10 +115,8 @@ public class Creature {
          || ty < 0 || ty >= world.height)
             return false;
 
-        switch (world.tiles[tx][ty]) {
-            case World.dirtWall:
-            case World.water: return false;
-        }
+        if (world.tiles[tx][ty] == World.water)
+            return false;
 
         return true;
     }
@@ -129,10 +126,8 @@ public class Creature {
          || y+my < 0 || y+my >= world.height)
             return false;
         
-        switch (world.tiles[x+mx][y+my]) {
-            case World.dirtWall:
-            case World.water: return false;
-        }
+        if (world.tiles[x+mx][y+my] == World.water)
+            return false;
 
         return true;
     }
