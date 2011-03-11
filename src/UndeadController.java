@@ -76,7 +76,7 @@ public class UndeadController extends NonPlayerController {
                 target.doAction("points at " + other.getName());
                 other.doAction("screams in pain");
                 other.hear(AsciiPanel.white, "You feel icy cold.");
-                other.takeDamage(rand.nextInt(5) + rand.nextInt(5));
+                target.attack(other, rand.nextInt(5) + rand.nextInt(5));
                 break;
             case 1:
                 target.doAction("says an ancient chant");
@@ -86,7 +86,7 @@ public class UndeadController extends NonPlayerController {
                         continue;
 
                     c.hear(AsciiPanel.white, "You feel ill.");
-                    c.takeDamage(rand.nextInt(5) + rand.nextInt(5));
+                    target.attack(c, rand.nextInt(5) + rand.nextInt(5));
                 }
                 break;
             case 2:
@@ -97,10 +97,16 @@ public class UndeadController extends NonPlayerController {
                         if (ox==0 && oy==0)
                             continue;
 
+                        boolean occupied = false;
                         for (Creature c : target.world.creatures){
-                            if (c.x == target.x+ox && c.y == target.y+oy)
-                                continue;
+                            if (c.x == target.x+ox && c.y == target.y+oy){
+                                occupied = true;
+                                break;
+                            }
                         }
+
+                        if (occupied)
+                            continue;
 
                         Creature summoned = factory.Skeleton();
                         if (summoned.canBeAt(target.x+ox, target.y+oy)){

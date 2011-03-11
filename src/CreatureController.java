@@ -18,7 +18,11 @@ public abstract class CreatureController {
     public void update(){
         
     }
-    
+
+    public void move(){
+
+    }
+
     public void see(Creature other){
 
     }

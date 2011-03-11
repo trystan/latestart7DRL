@@ -10,16 +10,18 @@ public class MonkController extends HeroController {
     @Override
     public void update(){
         comboCounter = 1;
+        super.update();
     }
     
     @Override
     public void greet(Creature other){
-        target.tell(other, "Hello.");
+        if (rand.nextBoolean())
+            target.tell(other, "Hello.");
     }
 
     @Override
     public void regreet(Creature other){
-        target.tellNearby("Glad you're still not a zombie " + other.personalName + ".");
+        target.tellNearby("Glad you're not a zombie " + other.personalName + ".");
     }
 
     @Override
@@ -62,7 +64,7 @@ public class MonkController extends HeroController {
             target.tellNearby("Iron Foot!");
         else if (r < 0.25)
             target.tellNearby("Flying armbar!");
-        else if (r > 0.5)
+        else if (r > 0.66)
             quickAttack(other);
     }
 

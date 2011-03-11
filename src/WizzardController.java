@@ -15,7 +15,8 @@ public class WizzardController extends HeroController {
 
     @Override
     public void greet(Creature other){
-        target.tell(other, "Greetings....");
+        if (rand.nextBoolean())
+            target.tell(other, "Greetings " + other.personalName + "....");
     }
 
     @Override
@@ -87,6 +88,6 @@ public class WizzardController extends HeroController {
     private void hurtOther(Creature other){
         target.doAction("points at " + other.getName() + " and mumbles");
         
-        other.takeDamage(rand.nextInt(11) + rand.nextInt(11) + rand.nextInt(11));
+        target.attack(other, rand.nextInt(11) + rand.nextInt(11) + rand.nextInt(11));
     }
 }

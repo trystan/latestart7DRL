@@ -33,6 +33,8 @@ public class Creature {
     public int healthRate;
     public boolean canStealLife;
 
+    public boolean canSwapWeapons;
+    public boolean canSwapArmor;
     public boolean canBeDecapitated;
     public boolean canNotGoIndoors;
     public boolean hasBlood;
@@ -65,6 +67,8 @@ public class Creature {
         defence = 5;
         vision = 12;
         canSpeak = isHuman();
+        canSwapWeapons = isHuman();
+        canSwapArmor = isHuman();
 
         canBeDecapitated = true;
         healthRate = isHuman() ? 30 : 0;
@@ -92,7 +96,7 @@ public class Creature {
         return glyph == 'z' || glyph == 'Z';
     }
 
-    public boolean isHuman(){
+    public final boolean isHuman(){
         return glyph == '@';
     }
     
@@ -112,7 +116,7 @@ public class Creature {
         
         controller.update();
 
-        if (exp > level * 5)
+        if (exp > level * 10)
             gainLevel();
     }
     
@@ -286,7 +290,7 @@ public class Creature {
     }
 
     public void gainLevel(){
-        exp -= level * 5;
+        exp -= level * 10;
         level++;
         maxHp += 1;
         attack += 1;
@@ -327,12 +331,16 @@ public class Creature {
         } else if (hp > maxHp)
             hp = maxHp;
     }
-    
+
     public void attack(Creature other){
+        attack(other, 0);
+    }
+    
+    public void attack(Creature other, int magic){
         if (other.hp == 0)
             return;
 
-        int damage = Math.max(1, attack - other.defence);
+        int damage = magic == 0 ? Math.max(1, attack - other.defence) : magic;
         other.takeDamage(damage);
         controller.onTakeDamage(other, damage);
 
@@ -355,7 +363,8 @@ public class Creature {
         if (other.hp > 0
                 && other.weapon != null
                 && other.weapon.doesDefensiveAttack
-                && Math.random() < 0.5){
+                && Math.random() < 0.5
+                && other.distanceTo(x, y) == 1){
             other.attack(this);
             other.controller.onCounterAttacked(this);
         }

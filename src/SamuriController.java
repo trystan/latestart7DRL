@@ -1,12 +1,16 @@
 
 public class SamuriController extends HeroController {
 
+    boolean alreadyAttacked;
+
     public SamuriController(Creature c, PathFinder pf) {
         super(c, pf);
     }
 
     @Override
     public void update() {
+        alreadyAttacked = false;
+
         if (rand.nextDouble() < 0.25) {
             int nearby = 0;
             for (Creature other : target.world.creatures){
@@ -16,17 +20,25 @@ public class SamuriController extends HeroController {
                 nearby++;
             }
             
-            if (nearby > 1)
+            if (nearby > 1){
                 circularAttack();
-            else if (rand.nextDouble() < 0.01)
-                meditate();
+                alreadyAttacked = true;
+            }
         }
 
         super.update();
     }
+
+    @Override
+    public void move(){
+        if (!alreadyAttacked)
+            super.move();
+    }
     
     @Override
     public void greet(Creature other){
+        if (rand.nextBoolean())
+            target.tell(other, "Let's go " + other.personalName + ".");
     }
 
     @Override
@@ -41,10 +53,10 @@ public class SamuriController extends HeroController {
         else {
 
             if (other.weapon != null && rand.nextDouble() < 0.1)
-                target.tellNearby("Careful! It's using a " + other.weapon.name + ".");
+                target.tellNearby("Careful! This " + other.personalTitle + " is using a " + other.weapon.name + ".");
 
             else if(other.armor != null && rand.nextDouble() < 0.1)
-                target.tellNearby("Careful! It's wearing " + other.armor.name + ".");
+                target.tellNearby("Careful! This " + other.personalTitle + " is wearing " + other.armor.name + ".");
         }
     }
 
@@ -101,16 +113,6 @@ public class SamuriController extends HeroController {
             case 4: target.tellNearby("Over here!"); break;
             case 5: target.tellNearby("Who needs the aid of my " + target.weapon.name + "!"); break;
             case 6: target.doAction("is surveying the battlefield"); break;
-        }
-    }
-
-
-    private void meditate(){
-        target.doAction("meditates");
-
-        if (target.level < 8) {
-            target.attack++;
-            target.defence++;
         }
     }
 

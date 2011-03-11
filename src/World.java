@@ -29,6 +29,7 @@ public class World {
     public int ticks;
     public int ticksPerMinute;
 
+    public int waveNumber;
     public CreatureFactory factory;
 
     public int heroCount;
@@ -60,6 +61,7 @@ public class World {
         ticks++;
         for (Creature creature : creatures){
             creature.update();
+            creature.controller.move();
         }
 
         creatures.addAll(creaturesToAdd);
@@ -85,16 +87,16 @@ public class World {
         if (heroCount == 2 && !didDoOnlyTwoMessage)
             onlyTwoMessage();
 
-        if (ticks % 60 == 0)
+        if ((ticks / ticksPerMinute) % 45 == 0)
             spawnEnemies();
 
-        if (undeadCount < 10 && rand.nextDouble() < 0.1) {
+        if (undeadCount < 10 && rand.nextDouble() < 0.2) {
             Creature badGuy = factory.Zombie();
             badGuy.doAction("crawls up from the ground");
             placeAnywhere(badGuy, factory.rand);
         }
         
-        if (undeadCount < 50 && rand.nextDouble() < 0.05){
+        if (undeadCount < 50 && rand.nextDouble() < 0.1){
             Creature badGuy = factory.Skeleton();
             badGuy.doAction("crawls up from the ground");
             placeAnywhere(badGuy, factory.rand);
@@ -121,41 +123,45 @@ public class World {
     }
 
     public void spawnEnemies(){
+        waveNumber++;
         String message = " are attacking from the ";
         int x = 0;
         int y = 0;
 
+        int sx = 0;
+        int sy = 0;
+
         switch (rand.nextInt(4)){
-            case 0: x = rand.nextInt(width); message += "north"; break;
-            case 1: x = rand.nextInt(width); message += "south"; y=height; break;
-            case 2: y = rand.nextInt(height); message += "west"; break;
-            case 3: y = rand.nextInt(height); message += "east"; x=width; break;
+            case 0: x = rand.nextInt(width); sx = 32; message += "north"; break;
+            case 1: x = rand.nextInt(width); sx = 32; message += "south"; y=height; break;
+            case 2: y = rand.nextInt(height); sy = 32; message += "west"; break;
+            case 3: y = rand.nextInt(height); sy = 32; message += "east"; x=width; break;
         }
 
         ArrayList<Creature> group = new ArrayList();
         switch (rand.nextInt(5)){
             case 0: message = "Skeletons" + message;
-                for (int i = 0; i < 30; i++) {
+                for (int i = 0; i < 10 + 6 * waveNumber; i++) {
                     group.add(factory.Skeleton());
                 }
             break;
             case 1: message = "Zombies" + message;
-                for (int i = 0; i < 20; i++) {
+                for (int i = 0; i < 10 + 3 * waveNumber; i++) {
                     group.add(factory.Zombie());
                 }
             break;
             case 2: message = "Ghosts" + message;
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 4 + waveNumber; i++) {
                     group.add(factory.Ghost());
                 }
             break;
             case 3: message = "Vampires" + message;
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 3 + waveNumber; i++) {
                     group.add(factory.Vampire());
                 }
             break;
             case 4: message = "Lichs" + message;
-                for (int i = 0; i < 2; i++) {
+                for (int i = 0; i < 1 + waveNumber; i++) {
                     group.add(factory.Lich());
                 }
             break;
@@ -167,11 +173,11 @@ public class World {
 
         group.get(0).tellAll(AsciiPanel.brightWhite, "!! " + message + " !!");
 
-         int tries = 0;
-         while (!group.isEmpty() && tries++ < 1000){
+         int tries = group.size() * 4;
+         while (!group.isEmpty() && --tries > 0){
             Creature c = group.get(0);
-            c.x = x + rand.nextInt(20) - 10;
-            c.y = y + rand.nextInt(20) - 10;
+            c.x = x + (sx == 0 ? 0 : rand.nextInt(sx*2) - sx);
+            c.y = y + (sy == 0 ? 0 : rand.nextInt(sy*2) - sy);
             if (c.canBeAt(c.x, c.y)){
                 creatures.add(group.remove(0));
             }
@@ -218,15 +224,19 @@ public class World {
     }
 
     public void placeAnywhere(Creature creature, Random rand){
+        boolean occupied = false;
         do {
+            occupied = false;
             creature.x = rand.nextInt(width);
             creature.y = rand.nextInt(height);
 
             for (Creature other : creatures){
-                if (other.x == creature.x && other.y == creature.y)
-                    continue;
+                if (other.x == creature.x && other.y == creature.y){
+                    occupied = true;
+                    break;
+                }
             }
-        } while (!creature.canMoveBy(0, 0));
+        } while (occupied || !creature.canMoveBy(0, 0));
 
         creatures.add(creature);
     }
@@ -243,30 +253,38 @@ public class World {
     }
 
     public void placeAnywhere(Item item, Random rand){
+        boolean occupied;
         do {
+            occupied = false;
             item.x = rand.nextInt(width);
             item.y = rand.nextInt(height);
 
             for (Item other : items){
-                if (other.x == item.x && other.y == item.y)
-                    continue;
+                if (other.x == item.x && other.y == item.y){
+                    occupied = true;
+                    break;
+                }
             }
 
-        } while (isImpassable(tiles[item.x][item.y], false, false, false));
+        } while (occupied || isImpassable(tiles[item.x][item.y], false, false, false));
 
         items.add(item);
     }
 
     public void placeInVillage(Item item, Random rand){
+        boolean occupied;
         do {
+            occupied = false;
             item.x = rand.nextInt(width);
             item.y = rand.nextInt(height);
 
             for (Item other : items){
-                if (other.x == item.x && other.y == item.y)
-                    continue;
+                if (other.x == item.x && other.y == item.y){
+                    occupied = true;
+                    break;
+                }
             }
-        } while (tiles[item.x][item.y] != insideFloor);
+        } while (occupied || tiles[item.x][item.y] != insideFloor);
 
         items.add(item);
     }
@@ -354,10 +372,11 @@ public class World {
 
     private void addCity(int cx, int cy){
         int dist = 5;
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 35; i++) {
             addHouse(cx + rand.nextInt(dist) + rand.nextInt(dist) - dist,
                      cy + rand.nextInt(dist) - dist / 2,
                      2 + rand.nextInt(3));
+            
             dist++;
         }
     }

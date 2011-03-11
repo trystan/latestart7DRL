@@ -7,6 +7,9 @@ public class CreatureFactory {
     PathFinder pf;
     ItemFactory itemFactory;
 
+    String vowels;
+    String consonants;
+
     String[] sylables;
 
     public CreatureFactory(World w, ItemFactory factory){
@@ -15,36 +18,54 @@ public class CreatureFactory {
         pf = new PathFinder(w);
         itemFactory = factory;
         
-        String vowels = "aeiou";
-        String consonants = "bcdfghjklmnpqrstvwxzy";
+        vowels = "aeiou";
+        consonants = shuffle("bcdfghjklmnpqrstvwxzy");
 
-        sylables = new String[6];
+        consonants = consonants.substring(consonants.length() / 2);
+    }
 
-        for (int i = 0; i < sylables.length; i++){
-            String part = "";
-            part += consonants.charAt(rand.nextInt(consonants.length()));
-            part += vowels.charAt(rand.nextInt(vowels.length()));
+    static String shuffle(String cards){
+	if (cards.length()<=1)
+	    return cards;
 
-            if (rand.nextDouble() < 0.25)
-                part += consonants.charAt(rand.nextInt(consonants.length()));
+	int split=cards.length()/2;
 
-            if (rand.nextDouble() < 0.25)
-                part = vowels.charAt(rand.nextInt(vowels.length())) + part;
+	String temp1=shuffle(cards.substring(0,split));
+	String temp2=shuffle(cards.substring(split));
 
-            part = part.replace("q", "qu");
-            sylables[i] = part;
+	if (Math.random() > 0.5)
+	    return temp1 + temp2;
+	else
+	    return temp2 + temp1;
+    }
+
+    private String shortName(){
+        return name(4 + rand.nextInt(4));
+    }
+
+    private String longName(){
+        String n = name(8 + rand.nextInt(4));
+        if (rand.nextDouble() < 0.5){
+            int i = rand.nextInt(n.length() - 2) + 1;
+            n = n.substring(0,i) + "'" + n.substring(i);
         }
+        return n;
     }
 
-    private String name(){
-        return name(4);
-    }
-    
     private String name(int length){
-        String name = sylables[rand.nextInt(sylables.length)];
+        String name = "";
 
-        while (name.length() < length)
-            name += sylables[rand.nextInt(sylables.length)];
+        while (name.length() < length){
+            if (name.length() % 2 == 0)
+                name += vowels.charAt(rand.nextInt(vowels.length()));
+            else
+                name += consonants.charAt(rand.nextInt(consonants.length()));
+        }
+
+        if (rand.nextBoolean()){
+           name = vowels.charAt(rand.nextInt(vowels.length())) + name;
+           name = name.substring(0, name.length() - 1);
+        }
 
         name = name.substring(0,1).toUpperCase() + name.substring(1);
         
@@ -65,11 +86,13 @@ public class CreatureFactory {
         creature.defence = 5;
         creature.canSpeak = true;
         creature.controller = new PlayerController(creature);
+        creature.equip(add(itemFactory.weapon()));
+        creature.equip(add(itemFactory.armor()));
         return creature;
     }
 
     public Creature HeroFighter(){
-        Creature creature = new Creature(world, 0, 0, name(), "fighter", '@', AsciiPanel.red);
+        Creature creature = new Creature(world, 0, 0, shortName(), "fighter", '@', AsciiPanel.red);
         creature.level = 3;
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
@@ -77,6 +100,7 @@ public class CreatureFactory {
         creature.defence = 5 + rand.nextInt(5);
         creature.canSpeak = true;
         creature.controller = new FighterController(creature, pf);
+        creature.canSwapWeapons = false;
         Item personalWeapon = itemFactory.weapon();
         personalWeapon.name = creature.personalName + "'s" + personalWeapon.name;
         personalWeapon.modAttack += 5;
@@ -87,7 +111,7 @@ public class CreatureFactory {
     }
 
     public Creature HeroSamuri(){
-        Creature creature = new Creature(world, 0, 0, name(), "samuri", '@', AsciiPanel.brightRed);
+        Creature creature = new Creature(world, 0, 0, shortName(), "samuri", '@', AsciiPanel.brightRed);
         creature.level = 3;
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
@@ -95,13 +119,14 @@ public class CreatureFactory {
         creature.defence = 5 + rand.nextInt(5);
         creature.canSpeak = true;
         creature.controller = new SamuriController(creature, pf);
+        creature.canSwapWeapons = false;
         creature.equip(add(itemFactory.katana()));
         creature.equip(add(itemFactory.mediumArmor()));
         return creature;
     }
 
     public Creature HeroSlayer(){
-        Creature creature = new Creature(world, 0, 0, name(), "slayer", '@', AsciiPanel.cyan);
+        Creature creature = new Creature(world, 0, 0, shortName(), "slayer", '@', AsciiPanel.cyan);
         creature.level = 2;
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
@@ -110,25 +135,27 @@ public class CreatureFactory {
         creature.canSpeak = true;
         creature.healthRate /= 2;
         creature.controller = new SlayerController(creature, pf);
+        creature.canSwapWeapons = false;
         creature.equip(add(itemFactory.mrPointy()));
         return creature;
     }
 
     public Creature HeroMonk(){
-        Creature creature = new Creature(world, 0, 0, name(), "monk", '@', AsciiPanel.brightCyan);
+        Creature creature = new Creature(world, 0, 0, shortName(), "monk", '@', AsciiPanel.brightCyan);
         creature.level = 1;
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
         creature.attack = 12 + rand.nextInt(5) + rand.nextInt(5);
         creature.defence =12 + rand.nextInt(5) + rand.nextInt(5);
-        creature.healthRate /= 1.5;
         creature.canSpeak = true;
+        creature.canSwapWeapons = false;
+        creature.canSwapArmor = false;
         creature.controller = new MonkController(creature, pf);
         return creature;
     }
 
     public Creature HeroPreist(){
-        Creature creature = new Creature(world, 0, 0, name(), "priest", '@', AsciiPanel.magenta);
+        Creature creature = new Creature(world, 0, 0, shortName(), "priest", '@', AsciiPanel.magenta);
         creature.level = 4;
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
@@ -136,13 +163,14 @@ public class CreatureFactory {
         creature.defence =12 + rand.nextInt(5) + rand.nextInt(5);
         creature.canSpeak = true;
         creature.controller = new PriestController(creature, pf);
+        creature.canSwapArmor = false;
         creature.equip(add(itemFactory.mace()));
         creature.equip(add(itemFactory.holyArmor()));
         return creature;
     }
 
     public Creature HeroWizzard(){
-        Creature creature = new Creature(world, 0, 0, name(), "wizzard", '@', AsciiPanel.brightMagenta);
+        Creature creature = new Creature(world, 0, 0, shortName(), "wizzard", '@', AsciiPanel.brightMagenta);
         creature.level = 1;
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
@@ -150,14 +178,15 @@ public class CreatureFactory {
         creature.defence = 5 + rand.nextInt(5);
         creature.canSpeak = true;
         creature.controller = new WizzardController(creature, pf);
+        creature.canSwapArmor = false;
         creature.equip(add(itemFactory.robes()));
         return creature;
     }
 
     public Creature Villager(){
-        Creature creature = new Creature(world, 0, 0, name(), "villager", '@', AsciiPanel.brightBlack);
+        Creature creature = new Creature(world, 0, 0, shortName(), "villager", '@', AsciiPanel.brightBlack);
         creature.level = 1;
-        creature.maxHp = 40;
+        creature.maxHp = 50 + rand.nextInt(10);
         creature.hp = creature.maxHp;
         creature.attack = 1 + rand.nextInt(5);
         creature.defence = 1 + rand.nextInt(5);
@@ -180,10 +209,10 @@ public class CreatureFactory {
     public Creature Zombie(){
         Creature creature = new Creature(world, 0, 0, "", "zombie", 'z', AsciiPanel.white);
         creature.level = 2;
-        creature.maxHp = 40 + rand.nextInt(10);
+        creature.maxHp = 40 + rand.nextInt(20);
         creature.hp = creature.maxHp;
-        creature.attack = 10 + rand.nextInt(5);
-        creature.defence = 5 + rand.nextInt(5);
+        creature.attack = 10 + rand.nextInt(10);
+        creature.defence = 10 + rand.nextInt(10);
         creature.isSlow = true;
         creature.controller = new UndeadController(creature, pf, this);
         return creature;
@@ -192,9 +221,9 @@ public class CreatureFactory {
     public Creature Ghost(){
         Creature creature = new Creature(world, 0, 0, "", "ghost", 'g', AsciiPanel.brightBlack);
         creature.level = 3;
-        creature.maxHp = 1 + rand.nextInt(100);
+        creature.maxHp = 1 + rand.nextInt(51);
         creature.hp = creature.maxHp;
-        creature.attack = 1 + rand.nextInt(5);
+        creature.attack = 1;
         creature.defence = 100;
         creature.vision = 50;
         creature.canFly = true;
@@ -216,6 +245,8 @@ public class CreatureFactory {
         creature.canNotGoIndoors = true;
         creature.hasBlood = true;
         creature.canSpeak = true;
+        creature.canSwapWeapons = true;
+        creature.canSwapArmor = true;
         creature.equip(add(itemFactory.weapon()));
 
         if (rand.nextDouble() < 0.25)
@@ -226,12 +257,8 @@ public class CreatureFactory {
     }
 
     public Creature Lich(){
-        Creature creature = new Creature(world, 0, 0, name(8), "lich", 'L', AsciiPanel.magenta);
+        Creature creature = new Creature(world, 0, 0, longName(), "lich", 'L', AsciiPanel.magenta);
         creature.level = 5 + rand.nextInt(6);
-        if (rand.nextDouble() < 0.5){
-            int i = rand.nextInt(creature.personalName.length() - 2) + 1;
-            creature.personalName = creature.personalName.substring(0,i) + "'" + creature.personalName.substring(i);
-        }
         creature.maxHp = 100;
         creature.hp = creature.maxHp;
         creature.attack = 1 + rand.nextInt(5);
@@ -239,6 +266,7 @@ public class CreatureFactory {
         creature.controller = new UndeadController(creature, pf, this);
         creature.canSpeak = true;
         creature.equip(add(itemFactory.lichStaff()));
+        creature.equip(add(itemFactory.unholyRobes()));
         return creature;
     }
 }

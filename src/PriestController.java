@@ -21,8 +21,7 @@ public class PriestController extends HeroController {
         super.see(other);
 
         if (isAlly(other)
-                && other.hp < other.maxHp
-                && rand.nextDouble() < 0.05)
+                && rand.nextInt(other.maxHp) > other.hp)
             healOther(other);
         else if (!other.isHuman()) {
             visibleUndead++;
@@ -36,7 +35,8 @@ public class PriestController extends HeroController {
     
     @Override
     public void greet(Creature other){
-        target.tell(other, "How can I help you " + other.personalName + "?");
+        if (rand.nextBoolean())
+            target.tell(other, "How can I help you " + other.personalName + "?");
     }
     
     @Override
@@ -113,8 +113,7 @@ public class PriestController extends HeroController {
 
         for (Creature other : target.world.creatures){
             if (!other.isHuman() && target.distanceTo(other.x, other.y) <= target.vision){
-                other.doAction("looks pained");
-                other.takeDamage(10);
+                target.attack(other, 10);
             }
         }
     }

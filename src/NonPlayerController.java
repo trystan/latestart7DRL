@@ -22,11 +22,11 @@ public class NonPlayerController extends CreatureController {
     }
 
     public boolean equipItemIfBetter(Item item){
-        if (item.glyph == ')' && (target.weapon == null || item.getTotalValue() > target.weapon.getTotalValue())){
+        if (item.glyph == ')' && target.canSwapWeapons && (target.weapon == null || item.getTotalValue() > target.weapon.getTotalValue())){
             target.equip(item);
             target.controller.onPickupItem(item);
             return true;
-        } else if (item.glyph == ']' && (target.armor == null || item.getTotalValue() > target.armor.getTotalValue())){
+        } else if (item.glyph == ']' && target.canSwapArmor && (target.armor == null || item.getTotalValue() > target.armor.getTotalValue())){
             target.equip(item);
             target.controller.onPickupItem(item);
             return true;
@@ -37,6 +37,12 @@ public class NonPlayerController extends CreatureController {
 
     @Override
     public void update() {
+        target.messageColors.clear();
+        target.messages.clear();
+    }
+
+    @Override
+    public void move(){
         if (target.isSlow && target.age % 3 != 0) {
             return;
         }

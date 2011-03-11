@@ -13,7 +13,8 @@ public class FighterController extends HeroController {
         if (other.personalTitle.equals("priest"))
             priestName = other.getName();
         
-        target.tell(other, "Hail " + other.personalTitle + "!");
+        if (rand.nextBoolean())
+            target.tell(other, "Hail " + other.personalTitle + "!");
     }
 
     @Override
@@ -95,7 +96,7 @@ public class FighterController extends HeroController {
     public void startRage(){
         rageCounter = 20 + rand.nextInt(20);
         
-        target.tellNearby("RAHHHHH!!!");
+        target.tellAll(target.color, target.getName() + " has gone berserk!");
         target.doAction("looks crazy");
         target.maxHp += 15;
         target.healDamage(15);
@@ -117,6 +118,7 @@ public class FighterController extends HeroController {
 
     public void endRage(){
         rageCounter = 0;
+        target.tellAll(target.color, target.getName() + " has tired.");
         target.doAction("looks tired");
         target.maxHp -= 15;
         target.takeDamage(15);

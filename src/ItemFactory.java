@@ -23,9 +23,17 @@ public class ItemFactory {
         return armor;
     }
 
+    public Item unholyRobes(){
+        Item armor = new Item(0,0,"unholy robes",']',AsciiPanel.brightBlack);
+        armor.modHp = rand.nextInt(11);
+        armor.modAttack = 2;
+        armor.modDefence = 2;
+        return armor;
+    }
+
     public Item unholyArmor(){
         Item armor = new Item(0,0,"unholy armor",']',AsciiPanel.brightBlack);
-        armor.modHp = 10;
+        armor.modHp = rand.nextInt(11);
         armor.modAttack = 5;
         armor.modDefence = 5;
         return armor;
@@ -33,7 +41,7 @@ public class ItemFactory {
 
     public Item holyArmor(){
         Item armor = new Item(0,0,"unholy armor",']',AsciiPanel.brightBlack);
-        armor.modHp = 10;
+        armor.modHp = rand.nextInt(11);
         armor.modAttack = 0;
         armor.modDefence = 10;
         return armor;
@@ -48,7 +56,7 @@ public class ItemFactory {
 
     public Item mediumArmor(){
         Item armor = new Item(0,0,"medium armor",']',AsciiPanel.white);
-        armor.modAttack = -1;
+        armor.modAttack = -2;
         armor.modDefence = 6 + rand.nextInt(5);
         return armor;
     }
@@ -70,8 +78,8 @@ public class ItemFactory {
 
     public Item mrPointy(){
         Item weapon = new Item(0,0,"wooden stake",')',AsciiPanel.white);
-        weapon.modAttack = 10 + rand.nextInt(5);
-        weapon.modDefence = 10 + rand.nextInt(5);
+        weapon.modAttack = 5 + rand.nextInt(6);
+        weapon.modDefence = 5 + rand.nextInt(6);
         weapon.doesKillVampires = true;
         return weapon;
     }
@@ -79,39 +87,39 @@ public class ItemFactory {
     public Item lichStaff(){
         Item weapon = new Item(0,0,"skull staff",')',AsciiPanel.white);
         weapon.modHp = + 10;
-        weapon.modAttack = 5 + rand.nextInt(5);
-        weapon.modDefence = 5 + rand.nextInt(5);
+        weapon.modAttack = 5 + rand.nextInt(6);
+        weapon.modDefence = 5 + rand.nextInt(6);
         return weapon;
     }
     
     public Item katana(){
         Item weapon = new Item(0,0,"katana",')',AsciiPanel.white);
-        weapon.modAttack = 15 + rand.nextInt(5);
-        weapon.modDefence = 5 + rand.nextInt(5);
+        weapon.modAttack = 15 + rand.nextInt(6);
+        weapon.modDefence = 5 + rand.nextInt(6);
         weapon.doesDecapitate = true;
         return weapon;
     }
 
     public Item sword(){
         Item weapon = new Item(0,0,"sword",')',AsciiPanel.white);
-        weapon.modAttack = 5 + rand.nextInt(10);
-        weapon.modDefence = 5 + rand.nextInt(5);
+        weapon.modAttack = 5 + rand.nextInt(11);
+        weapon.modDefence = 5 + rand.nextInt(6);
         weapon.doesDecapitate = true;
         return weapon;
     }
 
     public Item spear(){
         Item weapon = new Item(0,0,"spear",')',AsciiPanel.white);
-        weapon.modAttack = 5 + rand.nextInt(5);
-        weapon.modDefence = 5 + rand.nextInt(10);
+        weapon.modAttack = 5 + rand.nextInt(6);
+        weapon.modDefence = 5 + rand.nextInt(11);
         weapon.doesDefensiveAttack = true;
         return weapon;
     }
 
     public Item mace(){
         Item weapon = new Item(0,0,"mace",')',AsciiPanel.white);
-        weapon.modAttack = 10 + rand.nextInt(10);
-        weapon.modDefence = rand.nextInt(5);
+        weapon.modAttack = 10 + rand.nextInt(6);
+        weapon.modDefence = 5 + rand.nextInt(6);
         weapon.doesKnockback = true;
         return weapon;
     }
