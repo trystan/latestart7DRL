@@ -18,6 +18,7 @@ public class World {
     public static final int floor = 9;
     public static final int wall = 10;
 
+    public List<Creature> creaturesToAdd;
     public List<Creature> creatures;
     public List<Item> items;
     public int[][] tiles;
@@ -35,11 +36,12 @@ public class World {
     public boolean didDoOnlyTwoMessage;
 
     public World(){
+        creaturesToAdd = new ArrayList<Creature>();
         creatures = new ArrayList<Creature>();
         items = new ArrayList<Item>();
         rand = new Random();
         ticks = 0;
-        ticksPerMinute = 3;
+        ticksPerMinute = 1;
         create();
     }
 
@@ -59,10 +61,12 @@ public class World {
 
     public void update(){
         ticks++;
-        Object[] creatureArray = creatures.toArray();
-        for (Object creature : creatureArray){
-            ((Creature)creature).update();
+        for (Creature creature : creatures){
+            creature.update();
         }
+
+        creatures.addAll(creaturesToAdd);
+        creaturesToAdd.clear();
 
         heroCount = 0;
         villagerCount = 0;
@@ -102,7 +106,9 @@ public class World {
             if (!creature.personalTitle.equals("player"))
                 other = creature;
         }
-        other.tell(other, "It's just you and me now, " + player.personalName + ".");
+        
+        if (other != null && player != null)
+            other.tell(other, "It's just you and me now, " + player.personalName + ".");
     }
 
     public void spawnEnemies(){
@@ -120,7 +126,7 @@ public class World {
         }
 
         ArrayList<Creature> group = new ArrayList();
-        switch (rand.nextInt(4)){
+        switch (rand.nextInt(5)){
             case 0: message = "Skeletons" + message;
                 for (int i = 0; i < 20; i++) {
                     group.add(factory.Skeleton());
@@ -139,6 +145,11 @@ public class World {
             case 3: message = "Vampires" + message;
                 for (int i = 0; i < 4; i++) {
                     group.add(factory.Vampire());
+                }
+            break;
+            case 4: message = "Lichs" + message;
+                for (int i = 0; i < 2; i++) {
+                    group.add(factory.Lich());
                 }
             break;
         }

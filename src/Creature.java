@@ -10,7 +10,6 @@ public class Creature {
     public char glyph;
     public Color color;
     public CreatureController controller;
-    public String details;
     public boolean canSpeak;
     public int age;
 
@@ -29,9 +28,8 @@ public class Creature {
 
     public boolean isSlow;
     public boolean canWalkThroughWalls;
-    public boolean canHeal;
+    public int healthRate;
     public boolean canStealLife;
-    public int healCountdown;
 
     public boolean canBeDecapitated;
     public boolean canNotGoIndoors;
@@ -49,7 +47,7 @@ public class Creature {
     public ArrayList<String> messages;
     public ArrayList<Color> messageColors;
 
-    public Creature(World w, int cx, int cy, String n, String t, char g, Color c, String d) {
+    public Creature(World w, int cx, int cy, String n, String t, char g, Color c) {
         world = w;
         x = cx;
         y = cy;
@@ -57,22 +55,22 @@ public class Creature {
         personalTitle = t;
         glyph = g;
         color = c;
-        details = d;
 
         maxHp = 60;
         hp = maxHp;
         attack = 10;
         defence = 5;
         vision = 12;
-        healCountdown = 20;
-        canSpeak = false;
+        canSpeak = isHuman();
 
         canBeDecapitated = true;
-        canHeal = isHuman();
+        healthRate = isHuman() ? 30 : 0;
         hasBlood = isHuman();
         
         messages = new ArrayList<String>();
+        messages.add("Press '?' for help");
         messageColors = new ArrayList<Color>();
+        messageColors.add(AsciiPanel.brightWhite);
     }
 
     public void becomeZombie(){
@@ -106,21 +104,14 @@ public class Creature {
     public void update(){
         age++;
 
-        if (canHeal && --healCountdown < 1){
-            healCountdown = 20;
-            if (hp < maxHp)
-                hp++;
-        }
+        if (healthRate > 0 && age % healthRate == 0)
+            healDamage(1);
         
         controller.update();
     }
     
     public boolean canEnter(int tx, int ty){
-        if (tx < 0 || tx >= world.width
-         || ty < 0 || ty >= world.height)
-            return false;
-
-        if (world.isImpassable(world.tiles[tx][ty], canWalkThroughWalls, canNotGoIndoors))
+        if (!canBeAt(tx, ty))
             return false;
 
         for (Creature other : world.creatures){
@@ -145,14 +136,7 @@ public class Creature {
     }
 
     public boolean canMoveBy(int mx, int my) {
-        if (x+mx < 0 || x+mx >= world.width
-         || y+my < 0 || y+my >= world.height)
-            return false;
-        
-        if (world.isImpassable(world.tiles[x+mx][y+my], canWalkThroughWalls, canNotGoIndoors))
-            return false;
-
-        return true;
+        return canBeAt(x+mx, y+my);
     }
 
 
@@ -171,7 +155,7 @@ public class Creature {
                     takeDamage(5);
                     other.takeDamage(2);
                     return false;
-                } else if (other.glyph == glyph) {
+                } else if (controller.isAlly(other)) {
                     swapPlaces(other);
                     return false;
                 } else {
@@ -182,7 +166,8 @@ public class Creature {
         }
         
         if (canMoveBy(mx,my)) {
-            if (world.tiles[x+mx][y+my] == World.closedDoor) {
+            if (!canWalkThroughWalls
+                && world.tiles[x+mx][y+my] == World.closedDoor) {
                 world.tiles[x+mx][y+my] = World.openDoor;
                 openDoorX = x+mx;
                 openDoorY = y+my;
@@ -191,7 +176,9 @@ public class Creature {
                 x += mx;
                 y += my;
 
-                if (!needToCloseDoor && world.tiles[x][y] == World.openDoor){
+                if (!canWalkThroughWalls 
+                        && !needToCloseDoor
+                        && world.tiles[x][y] == World.openDoor){
                     openDoorX = x;
                     openDoorY = y;
                     needToCloseDoor = true;
@@ -265,7 +252,7 @@ public class Creature {
     public void die(){
         hp = 0;
 
-        if (isHuman())
+        if (hasBlood)
             world.addGore(x, y);
         
         controller.onDied();
@@ -273,15 +260,23 @@ public class Creature {
         unequip(weapon);
     }
 
+    public void healDamage(int amount){
+        takeDamage(-amount);
+    }
+    
     public void takeDamage(int amount){
         if (hp > maxHp * 0.25 && hp-amount < maxHp * 0.25)
             controller.onLowHealth();
         
         hp -= amount;
 
+        if (hasBlood && amount > 0)
+            world.addGore(x, y);
+
         if (hp < 1){
             die();
-        }
+        } else if (hp > maxHp)
+            hp = maxHp;
     }
     
     public void attack(Creature other){
@@ -290,9 +285,7 @@ public class Creature {
         controller.onTakeDamage(other, damage);
 
         if (canStealLife){
-            hp += damage / 4;
-            if (hp > maxHp)
-                hp = maxHp;
+            healDamage(damage / 3);
         }
         
         if (other.attacking == null)
@@ -315,7 +308,7 @@ public class Creature {
             other.controller.onCounterAttacked(this);
         }
 
-        if((other.isHero() || other.isCommoner()) && other.hp == 0)
+        if(other.isHuman() && other.hp == 0)
             world.tellAll(other.color, other.getName() + " was killed by " + getName());
 
         if (other.hp == 0 && other.isHuman() && isZombie() && other.controller.beforeBittenByZombie())
@@ -368,5 +361,9 @@ public class Creature {
 
     public int distanceTo(int ox, int oy){
         return Math.max(Math.abs(x-ox), Math.abs(y-oy));
+    }
+
+    public void summon(Creature other){
+        world.creaturesToAdd.add(other);
     }
 }

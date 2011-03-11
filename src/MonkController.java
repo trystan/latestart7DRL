@@ -17,6 +17,9 @@ public class MonkController extends HeroController {
 
     @Override
     public void onTakeDamage(Creature other, int amount){
+        if (rand.nextDouble() < 0.1)
+            target.tellNearby("Ow!");
+
         if (target.hp < target.maxHp / 2
                 && rand.nextDouble() < 0.1)
             healSelf();
@@ -79,10 +82,7 @@ public class MonkController extends HeroController {
     private void healSelf(){
         target.doAction("draws on inner power");
 
-        target.hp += 5 + rand.nextInt(6);
-
-        if (target.hp > target.maxHp)
-            target.maxHp = target.hp;
+        target.healDamage(5 + rand.nextInt(11));
     }
 
     private void quickAttack(Creature other){

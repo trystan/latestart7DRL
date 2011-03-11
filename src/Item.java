@@ -18,6 +18,7 @@ public class Item {
     public boolean doesKnockback;
     public boolean doesDecapitate;
     public boolean doesDefensiveAttack;
+    public boolean doesKillVampires;
 
     public Item(int ix, int iy, String n, char g, Color c) {
         x = ix;
@@ -28,7 +29,10 @@ public class Item {
     }
 
     public void attack(Creature user, Creature target){
-        if (doesKnockback && Math.random() < 0.5){
+        if (doesKillVampires && target.personalTitle.equals("vampire")){
+            user.doAction("stabs " + target.getName() + " in the heart");
+            target.takeDamage(1000);
+        } else if (doesKnockback && Math.random() < 0.5){
             int dx = Math.max(-1, Math.min(target.x - user.x, 1));
             int dy = Math.max(-1, Math.min(target.y - user.y, 1));
 
@@ -43,7 +47,7 @@ public class Item {
         } else if (doesDecapitate
                 && target.canBeDecapitated
                 && target.hp <= user.attack - target.defence){
-            target.hp = 0;
+            target.takeDamage(1000);
             user.controller.onDecapitated(target);
         }
     }

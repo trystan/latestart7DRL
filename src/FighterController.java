@@ -2,12 +2,17 @@
 public class FighterController extends HeroController {
     private int rageCounter;
 
+    String priestName;
+    
     public FighterController(Creature c, PathFinder pf) {
         super(c, pf);
     }
 
     @Override
     public void greet(Creature other){
+        if (other.personalTitle.equals("priest"))
+            priestName = other.getName();
+        
         target.tell(other, "Hail " + other.personalTitle + "!");
     }
 
@@ -18,13 +23,16 @@ public class FighterController extends HeroController {
 
     @Override
     public void onTakeDamage(Creature other, int amount){
-        if (rand.nextDouble() < 0.05)
+        if (rand.nextDouble() < 0.1)
             target.doAction("grunts");
     }
 
     @Override
     public void onLowHealth(){
-        target.tellNearby("Where's that priest? I need healin'.");
+        if (priestName == null)
+            target.tellNearby("Where's that priest? I need healin'.");
+        else
+            target.tellNearby("Where's " + priestName + "? I need healin'.");
     }
 
     @Override
@@ -46,7 +54,7 @@ public class FighterController extends HeroController {
             target.tellNearby("Anyone else havin' as much fun as I am?");
         else if (rand.nextDouble() < 0.5)
             target.doAction("grins widely");
-        else if (rageCounter == 0 && rand.nextDouble() < 0.1)
+        else if (rageCounter == 0 && rand.nextDouble() < 0.25)
             startRage();
     }
 
@@ -77,7 +85,7 @@ public class FighterController extends HeroController {
         target.tellNearby("RAHHHHH!!!");
         target.doAction("looks crazy");
         target.maxHp += 15;
-        target.hp += 15;
+        target.healDamage(-15);
         target.attack += 15;
         target.defence += 15;
     }
@@ -98,7 +106,7 @@ public class FighterController extends HeroController {
         rageCounter = 0;
         target.doAction("looks tired");
         target.maxHp -= 15;
-        target.hp -= 15;
+        target.takeDamage(15);
         target.attack -= 15;
         target.defence -= 15;
     }

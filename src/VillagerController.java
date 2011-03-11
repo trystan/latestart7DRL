@@ -14,4 +14,9 @@ public class VillagerController extends NonPlayerController {
         else if (r < 0.125)
             target.tellNearby(other.getName() + "! Ahh!");
     }
+
+    @Override
+    public void onDied(){
+        target.tellNearby("Arghhhhh!");
+    }
 }

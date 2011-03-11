@@ -40,12 +40,13 @@ public class PriestController extends HeroController {
 
     @Override
     public void onTakeDamage(Creature other, int amount){
-        
+        if (rand.nextDouble() < 0.1)
+            target.tellNearby("Ouch!");
     }
 
     @Override
     public void onLowHealth(){
-
+        target.tellNearby("yeals", "A little help here?");
     }
 
     @Override
@@ -96,9 +97,6 @@ public class PriestController extends HeroController {
     private void healOther(Creature other){
         target.doAction("points at " + other.personalName + " and prays");
 
-        other.hp += 5 + rand.nextInt(6);
-
-        if (other.hp > other.maxHp)
-            other.maxHp = other.hp;
+        target.healDamage(5 + rand.nextInt(6));
     }
 }

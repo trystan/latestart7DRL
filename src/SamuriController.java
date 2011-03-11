@@ -37,12 +37,11 @@ public class SamuriController extends HeroController {
 
     @Override
     public void onTakeDamage(Creature other, int amount){
-        
     }
 
     @Override
     public void onLowHealth(){
-        target.tellNearby("Priest! Over here!");
+        target.tellNearby("Today is a good day to die!");
     }
 
     @Override
@@ -106,7 +105,7 @@ public class SamuriController extends HeroController {
 
     private void commitSeppiku(){
         target.doAction("brandishes a tanto");
-        target.hp = 0;
+        target.takeDamage(1000);
         target.world.tellAll(target.color, target.getName() + " has committed seppiku");
     }
 }

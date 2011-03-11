@@ -13,7 +13,6 @@ public class NonPlayerController extends CreatureController {
     }
 
     public boolean goTo(int x, int y){
-
         if (path != null && path.size() > 20)
             return false;
 
@@ -51,7 +50,7 @@ public class NonPlayerController extends CreatureController {
         }
 
         if (closest != null)
-            path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y, closestDist * 2);
+            path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y, closestDist * 4);
         
         if (path != null && path.size() > 0) {
             followPath();

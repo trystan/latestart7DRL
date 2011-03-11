@@ -25,7 +25,12 @@ public class WizzardController extends HeroController {
 
     @Override
     public void onTakeDamage(Creature other, int amount){
-        if (rand.nextDouble() < 0.25)
+        double r = rand.nextDouble();
+
+        if (r < 0.1)
+            target.tellNearby("Oof!");
+
+        if (r < 0.25)
             teleportSelf();
     }
 

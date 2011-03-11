@@ -6,7 +6,8 @@ import java.util.HashMap;
 public class PathFinder {
 
     private World world;
-    
+
+    double[][] cost;
     ArrayList<Point> opened;
     ArrayList<Point> closed;
     HashMap<Point, Point> parents;
@@ -21,6 +22,7 @@ public class PathFinder {
     }
 
     private void reset(){
+        cost = new double[world.width][world.height];
         opened.clear();
         closed.clear();
         parents.clear();
@@ -50,20 +52,29 @@ public class PathFinder {
         return Math.abs(end.x - p.x) + Math.abs(end.y - p.y);
     }
 
-    private double costToGetHere(Creature c, Point p) {
+    private double costToGetHere(Point p) {
         if (p == start) {
             return 0;
         }
 
-        return 1 + 0.5 * costToGetHere(c, parents.get(p));
+        return 1 + 0.5 * costToGetHere(parents.get(p));
     }
 
     private boolean passable(Point p, Creature c){
         return c.canEnter(p.x, p.y);
     }
 
-    private double totalCost(Creature c, Point p) {
-        return costToGetHere(c, p) + costToGetToEnd(p);
+    private double totalCost(Point p) {
+        if (cost[p.x][p.y] == 0)
+            cost[p.x][p.y] = costToGetHere(p) + costToGetToEnd(p);
+        
+        return cost[p.x][p.y];
+    }
+
+    private void reParent(Point child, Point parent){
+        parents.put(child, parent);
+        
+        cost[child.x][child.y] = costToGetHere(child) + costToGetToEnd(child);
     }
 
     public ArrayList<Point> findPath(Creature creature, int sx, int sy, int tx, int ty, int maxTries) {
@@ -72,7 +83,7 @@ public class PathFinder {
         end = new Point(tx, ty);
 
         for (Point neighbor : getNeighbors(sx, sy)) {
-            parents.put(neighbor, start);
+            reParent(neighbor, start);
 
             if (neighbor != start) {
                 opened.add(neighbor);
@@ -84,7 +95,7 @@ public class PathFinder {
             Point best = opened.get(0);
 
             for (Point other : opened){
-                if (totalCost(creature, other) < totalCost(creature, best))
+                if (totalCost(other) < totalCost(best))
                     best = other;
             }
             opened.remove(best);
@@ -110,21 +121,21 @@ public class PathFinder {
 
                     if (opened.contains(neighbor)) {
                         Point bestPathToNeighbor = new Point(neighbor.x, neighbor.y);
-                        parents.put(bestPathToNeighbor, best);
-                        if (totalCost(creature, bestPathToNeighbor) >= totalCost(creature, neighbor)) {
+                        reParent(bestPathToNeighbor, best);
+                        if (totalCost(bestPathToNeighbor) >= totalCost(neighbor)) {
                             continue;
                         }
                     }
 
                     if (closed.contains(neighbor)) {
                         Point bestPathToNeighbor = new Point(neighbor.x, neighbor.x);
-                        parents.put(bestPathToNeighbor, best);
-                        if (totalCost(creature, bestPathToNeighbor) >= totalCost(creature, neighbor)) {
+                        reParent(bestPathToNeighbor, best);
+                        if (totalCost(bestPathToNeighbor) >= totalCost(neighbor)) {
                             continue;
                         }
                     }
 
-                    parents.put(neighbor, best);
+                    reParent(neighbor, best);
 
                     opened.remove(neighbor);
                     closed.remove(neighbor);

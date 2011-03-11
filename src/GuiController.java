@@ -12,6 +12,7 @@ public class GuiController implements KeyListener {
     private final static int play = 4;
     private final static int help = 5;
 
+    private String input;
     private int stage;
 
     private AsciiPanel panel;
@@ -25,7 +26,7 @@ public class GuiController implements KeyListener {
         panel = p;
         stage = start;
         controller = c;
-        reset();
+        input = "";
     }
 
     public void reset(){
@@ -38,6 +39,7 @@ public class GuiController implements KeyListener {
         CreatureFactory creatureFactory = new CreatureFactory(world, itemFactory);
         
         controller.target = creatureFactory.Player();
+        controller.target.personalName = input;
         world.placeInVillage(controller.target, rand);
 
         world.placeInVillage(creatureFactory.HeroFighter(), rand);
@@ -79,15 +81,24 @@ public class GuiController implements KeyListener {
     public void keyPressed(KeyEvent ke) {
         switch (stage) {
             case start:
+                if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                    if (input.length() > 0)
+                        input = input.substring(0,input.length() - 1);
+                } else if(ke.getKeyChar() == '\n')  {
+                    stage = play;
+                    reset();
+                } else if (ke.getKeyChar() >= ' ' && ke.getKeyChar() <= '~') {
+                    input += ke.getKeyChar();
+                }
             case win:
             case lose:
-                if (ke.getKeyChar() == ' '){
+                if (ke.getKeyChar() == '\n'){
                     stage = play;
                     reset();
                 }
             break;
             case help:
-                if (ke.getKeyChar() == ' '){
+                if (ke.getKeyChar() == '\n'){
                     stage = play;
                 }
                 break;
@@ -107,9 +118,13 @@ public class GuiController implements KeyListener {
     }
 
     public void currentScreen() {
-        if (controller.target.hp < 1 || controller.target.isZombie())
-            stage = lose;
-        
+        if (stage == play) {
+            if (controller.target.hp < 1 || controller.target.isZombie())
+                stage = lose;
+            else if (world.ticks >= world.ticksPerMinute * 720)
+                stage = win;
+        }
+
         switch (stage) {
             case start: startScreen(); break;
             case win: winScreen(); break;
@@ -125,48 +140,55 @@ public class GuiController implements KeyListener {
         panel.clear();
         panel.writeCenter("late start, a 2011 7DRL", 1);
         panel.writeCenter("   by Trystan Spangler", 2);
-        panel.writeCenter("-- press space to start --", panel.getHeightInCharacters() - 2);
+        panel.write("What is your name today? ", 3, 5);
+        panel.write(input);
+        
+        if (input.length() > 0)
+            panel.writeCenter("-- press enter to start --", panel.getHeightInCharacters() - 2);
     }
 
     public void winScreen() {
         panel.clear();
         panel.writeCenter("win", 1);
-        panel.writeCenter("-- press space to restart --", panel.getHeightInCharacters() - 2);
+        panel.writeCenter("-- press enter to restart --", panel.getHeightInCharacters() - 2);
     }
 
     public void loseScreen() {
         panel.clear();
         panel.writeCenter("lose", 1);
-        panel.writeCenter("-- press space to restart --", panel.getHeightInCharacters() - 2);
+        panel.writeCenter("-- press enter to restart --", panel.getHeightInCharacters() - 2);
     }
 
     public void wtfScreen() {
         panel.clear();
         panel.write("wtf? Invalid game state.", panel.getHeightInCharacters() - 4, 2);
-        panel.writeCenter("-- press space to restart --", panel.getHeightInCharacters() - 2);
+        panel.writeCenter("-- press enter to restart --", panel.getHeightInCharacters() - 2);
     }
 
     public void helpScreen() {
         panel.clear();
         panel.writeCenter("help", 1);
-        panel.write("@ = you, another hero, or a villager", 3, 3);
-        panel.write("s = skeleton, weak but you never know where one will show up", 3, 4);
-        panel.write("z = zombie, slow but they can turn humans into zombies", 3, 5);
-        panel.write("g = ghost, can move through walls", 3, 6);
-        panel.write("v = vampire, can't go indoors but heal when they attack and use weapons and armor", 3, 7);
 
-        panel.write("swords can decapitate weakened opponents", 3, 8);
-        panel.write("spears can counter attack opponents", 3, 9);
-        panel.write("maces can knock opponents back", 3, 10);
+        panel.write(" Can you survive the night and help protect the villagers from the undead?", 3, 3);
+        panel.write("Each hero has special abilities to help defend the village. The secret to ",3, 4);
+        panel.write("staying alive is to find the right location, equipment, and allies.", 3, 5);
 
-        panel.write("Each hero has special abilities to help defend the village", 3, 12);
-        panel.write("from the undead hordes. The secret to staying alive is to ", 3, 13);
-        panel.write("find the right location, equipment, and allies.", 3, 14);
+        panel.write("@ = you, another hero, or a villager", 3, 7);
+        panel.write("s = skeleton. Weak but you never know where one will show up", 3, 8);
+        panel.write("z = zombie. Slow but they can turn humans into zombies", 3, 9);
+        panel.write("g = ghost. Can move through walls", 3, 10);
+        panel.write("v = vampire. Can't go indoors, heal when they attack and use equipment", 3, 11);
+        panel.write("L = lich. A powerfull undead magic user", 3, 12);
 
-        panel.write("[hjklyubn] or arrow keys or numpad to move", 3, 16);
-        panel.write("[g] or [,] to pickup or swap weapon or armor", 3, 17);
+        panel.write("swords can decapitate weakened opponents", 3, 14);
+        panel.write("spears can counter attack opponents", 3, 15);
+        panel.write("maces can knock opponents back", 3, 16);
+        panel.write("some heros and enemies have their own special equipment", 3, 17);
 
-        panel.writeCenter("-- press space to continue --", panel.getHeightInCharacters() - 2);
+        panel.write("[hjklyubn] or arrow keys or numpad to move", 3, 19);
+        panel.write("[g] or [,] to pickup or swap weapon or armor", 3, 20);
+
+        panel.writeCenter("-- press enter to continue --", panel.getHeightInCharacters() - 2);
     }
 
     public void playScreen() {
@@ -210,11 +232,11 @@ public class GuiController implements KeyListener {
             panel.write(creature.glyph, cx, cy, creature.color);
         }
 
-        if (controller.target.attacking != null){
-            infoPanel(controller.target, 1);
+        infoPanel(controller.target, 1);
+
+        if (controller.target.attacking != null){    
             infoPanel(controller.target.attacking, 22);
         } else if (itemHere != null) {
-            infoPanel(controller.target, 1);
             infoPanel(controller.target, itemHere, 22);
         }
 
@@ -232,7 +254,7 @@ public class GuiController implements KeyListener {
 
         int startY = panel.getHeightInCharacters() - currentMessages.size();
         for (int i = 0; i < currentMessages.size(); i++){
-            panel.writeCenter(currentMessages.get(i), startY+i, currentMessageColors.get(i));
+            panel.writeCenter(" " + currentMessages.get(i) + " ", startY+i, currentMessageColors.get(i));
         }
     }
 

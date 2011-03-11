@@ -52,6 +52,21 @@ public class ItemFactory {
         }
     }
 
+    public Item mrPointy(){
+        Item weapon = new Item(0,0,"wooden stake",')',AsciiPanel.white);
+        weapon.modAttack = 10 + rand.nextInt(5);
+        weapon.modDefence = 10 + rand.nextInt(5);
+        weapon.doesKillVampires = true;
+        return weapon;
+    }
+
+    public Item lichStaff(){
+        Item weapon = new Item(0,0,"skull staff",')',AsciiPanel.white);
+        weapon.modAttack = 5 + rand.nextInt(5);
+        weapon.modDefence = 5 + rand.nextInt(5);
+        return weapon;
+    }
+    
     public Item katana(){
         Item weapon = new Item(0,0,"katana",')',AsciiPanel.white);
         weapon.modAttack = 15 + rand.nextInt(5);
