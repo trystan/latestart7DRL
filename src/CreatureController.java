@@ -1,154 +1,34 @@
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 public class CreatureController {
 
     public Creature target;
-    private Random rand;
-    public PathFinder pathFinder;
-    private ArrayList<Point> path;
-    private HashMap<String,Integer> lastSeenNames;
+    protected Random rand;
 
-    public boolean canPathfind;
-
-    public CreatureController(Creature t, PathFinder pf) {
-        target = t;
+    public CreatureController(Creature c){
+        target = c;
         rand = new Random();
-        pathFinder = pf;
-        path = null;
-        lastSeenNames = new HashMap<String,Integer>();
     }
 
-    public boolean goTo(int x, int y){
-        if (!canPathfind)
-            return false;
-
-        if (path != null && path.size() > 20)
-            return false;
-
-        path = pathFinder.findPath(target, target.x, target.y, x, y, target.distanceTo(x,y) * 4);
-
-        return path != null && path.size() > 0;
+    public void update(){
+        
     }
     
-    public void update() {
-        if (target.isSlow && target.age % 3 != 0) {
-            return;
-        }
+    public void see(Creature other){
 
-        if (canPathfind) {
-            Creature closestAlly = null;
-            int closestAllyDist = 1000000;
-            Creature closest = null;
-            int closestDist = 1000000;
-            
-            for (Creature other : target.world.creatures) {
-                if (other == target) {
-                    continue;
-                }
-
-                int dist = target.distanceTo(other.x, other.y);
-                if (dist > target.vision)
-                    continue;
-
-                if (isAlly(other)){
-                    if (target.isHero() && !lastSeenNames.containsKey(other.name))
-                        target.tell(other, "Hi " + other.name + "!");
-                    else if (target.isHero() && lastSeenNames.get(other.name) < target.age - 100)
-                        target.tell(other, "Hey " + other.name + "! Good to see you again.");
-                    
-                    lastSeenNames.put(other.name, target.age);
-
-                    if (dist >= closestAllyDist)
-                        continue;
-
-                    closestAllyDist = dist;
-                    closestAlly = other;
-                    
-                } else {
-                    if (target.isHero() && lastSeenNames.containsKey(other.name)
-                            && lastSeenNames.get(other.name) > target.age + 50)
-                        target.tell(other, "I haven't forgotten about you " + other.name + "....");
-
-                    if (other.isHero())
-                        lastSeenNames.put(other.name, target.age);
-
-                    if (dist >= closestDist)
-                        continue;
-
-                    closestDist = dist;
-                    closest = other;
-                }
-            }
-
-            if (closest != null)
-                path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y, 50);
-            else if (closestAlly != null && closestAllyDist > 4)
-                path = pathFinder.findPath(target, target.x, target.y, closestAlly.x, closestAlly.y, 50);
-        }
-
-        trimPath();
-        
-        if (path != null && path.size() > 0) {
-            followPath();
-        } else {
-            meander();
-        }
     }
 
-    public void trimPath(){
-        while (path != null && path.size() > 0
-                && target.x == path.get(0).x
-                && target.y == path.get(0).y) {
-            path.remove(0);
-        }
+    public void onLowHealth(){
+
     }
 
-    public void followPath(){
-        int mx = Math.max(-1, Math.min(path.get(0).x - target.x, 1));
-        int my = Math.max(-1, Math.min(path.get(0).y - target.y, 1));
+    public void onDied(){
 
-        target.moveBy(mx, my);
     }
 
-    public void meander(){
-        if (target.glyph != '@' && rand.nextDouble() < 0.05){
-            path = pathFinder.findPath(target, target.x, target.y,
-                    target.world.width / 2 + rand.nextInt(40) - 20,
-                    target.world.height / 2 + rand.nextInt(40) - 20, 50);
-            return;
-        }
-        switch (rand.nextInt(9)) {
-            case 0:
-                target.moveBy(-1, -1);
-                break;
-            case 1:
-                target.moveBy(-1, 0);
-                break;
-            case 2:
-                target.moveBy(-1, 1);
-                break;
-            case 3:
-                target.moveBy(0, -1);
-                break;
-            case 4:
-                target.moveBy(0, 0);
-                break;
-            case 5:
-                target.moveBy(0, 1);
-                break;
-            case 6:
-                target.moveBy(1, -1);
-                break;
-            case 7:
-                target.moveBy(1, 0);
-                break;
-            case 8:
-                target.moveBy(1, 1);
-                break;
-        }
+    public void onInflictDamage(Creature other, int damage){
+
     }
 
     public boolean isAlly(Creature other){

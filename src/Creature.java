@@ -47,7 +47,7 @@ public class Creature {
         hp = maxHp;
         attack = 10;
         defence = 5;
-        vision = 9;
+        vision = 11;
         healCountdown = 20;
         canSpeak = false;
 
@@ -87,20 +87,13 @@ public class Creature {
         if (isZombie() && Math.random() < 0.01)
             tellNearby("brains....");
 
-        if (isCommoner() && Math.random() < 0.01)
-            tellNearby("Help!");
-
-        if (isHero() && Math.random() < 0.01)
-            tellNearby("Who else is havin' fun?");
-
         if (canHeal && --healCountdown < 1){
             healCountdown = 20;
             if (hp < maxHp)
                 hp++;
         }
         
-        if (controller != null)
-            controller.update();
+        controller.update();
     }
     
     public boolean canEnter(int tx, int ty){
@@ -249,13 +242,13 @@ public class Creature {
 
     public void takeDamage(int amount){
         if (isHero() && hp > maxHp * 0.25 && hp-amount < maxHp * 0.25)
-            tellNearby("I'm hurt! I need help!");
+            controller.onLowHealth();
 
         hp -= amount;
 
         if (hp < 1){
             if (isHero())
-                tellNearby("Arhhh!");
+                controller.onDied();
             die();
         }
     }
@@ -264,8 +257,8 @@ public class Creature {
         int damage = Math.max(1, attack - other.defence);
         other.takeDamage(damage);
 
-        if (isHero() && Math.random() * 100 < damage)
-            tellNearby("Take that!");
+        if (isHero())
+            controller.onInflictDamage(other, damage);
 
         if (weapon != null && other.hp > 0){
             weapon.attack(this, other);
@@ -278,9 +271,6 @@ public class Creature {
                 && other.weapon.doesDefensiveAttack
                 && Math.random() < 0.5)
             other.attack(this);
-
-        if (canSpeak && hp > 0 && hp + defence < other.attack)
-            tell(other, ": Please! Have mercy on me " + other.name + "!");
 
         if(canSpeak && (other.isHero() || other.isCommoner()) && other.hp == 0)
             world.tellAll(other.color, other.name + " was killed by " + name);

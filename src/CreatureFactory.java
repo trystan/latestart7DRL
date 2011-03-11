@@ -1,7 +1,5 @@
 
-import java.awt.Color;
 import java.util.Random;
-
 
 public class CreatureFactory {
     World world;
@@ -55,8 +53,8 @@ public class CreatureFactory {
         creature.hp = creature.maxHp;
         creature.attack = 10;
         creature.defence = 5;
-        creature.vision = 11;
         creature.canSpeak = true;
+        creature.controller = new CreatureController(creature);
         return creature;
     }
 
@@ -66,10 +64,8 @@ public class CreatureFactory {
         creature.hp = creature.maxHp;
         creature.attack = 15 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
-        creature.vision = 11;
         creature.canSpeak = true;
-        creature.controller = new CreatureController(creature, pf);
-        creature.controller.canPathfind = true;
+        creature.controller = new NonPlayerController(creature, pf);
         creature.equip(itemFactory.sword());
         creature.equip(itemFactory.heavyArmor());
         return creature;
@@ -81,10 +77,8 @@ public class CreatureFactory {
         creature.hp = creature.maxHp;
         creature.attack = 12 + rand.nextInt(5) + rand.nextInt(5);
         creature.defence =12 + rand.nextInt(5) + rand.nextInt(5);
-        creature.vision = 11 + rand.nextInt(5);
         creature.canSpeak = true;
-        creature.controller = new CreatureController(creature, pf);
-        creature.controller.canPathfind = true;
+        creature.controller = new NonPlayerController(creature, pf);
         return creature;
     }
 
@@ -94,10 +88,8 @@ public class CreatureFactory {
         creature.hp = creature.maxHp;
         creature.attack = 10 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
-        creature.vision = 15;
         creature.canSpeak = true;
-        creature.controller = new CreatureController(creature, pf);
-        creature.controller.canPathfind = true;
+        creature.controller = new NonPlayerController(creature, pf);
         creature.equip(itemFactory.knife());
         creature.equip(itemFactory.robes());
         return creature;
@@ -110,8 +102,7 @@ public class CreatureFactory {
         creature.attack = 1 + rand.nextInt(5);
         creature.defence = 1 + rand.nextInt(5);
         creature.canSpeak = true;
-        creature.controller = new CreatureController(creature, pf);
-        // creature.controller.canPathfind = true;
+        creature.controller = new NonPlayerController(creature, pf);
         return creature;
     }
 
@@ -121,9 +112,7 @@ public class CreatureFactory {
         creature.hp = creature.maxHp;
         creature.attack = 5 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
-        creature.vision = 6;
-        creature.controller = new CreatureController(creature, pf);
-        creature.controller.canPathfind = true;
+        creature.controller = new NonPlayerController(creature, pf);
         return creature;
     }
 
@@ -133,10 +122,8 @@ public class CreatureFactory {
         creature.hp = creature.maxHp;
         creature.attack = 10 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
-        creature.vision = 10;
         creature.isSlow = true;
-        creature.controller = new CreatureController(creature, pf);
-        creature.controller.canPathfind = true;
+        creature.controller = new NonPlayerController(creature, pf);
         return creature;
     }
 
@@ -147,8 +134,7 @@ public class CreatureFactory {
         creature.attack = 1 + rand.nextInt(5);
         creature.defence = 100;
         creature.canWalkThroughWalls = true;
-        creature.controller = new CreatureController(creature, pf);
-        creature.controller.canPathfind = true;
+        creature.controller = new NonPlayerController(creature, pf);
         return creature;
     }
 }
