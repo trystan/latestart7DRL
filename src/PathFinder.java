@@ -59,7 +59,7 @@ public class PathFinder {
     }
 
     private boolean passable(Point p, Creature c){
-        return !world.isImpassable(world.tiles[p.x][p.y], c.canWalkThroughWalls);
+        return c.canEnter(p.x, p.y);
     }
 
     private double totalCost(Creature c, Point p) {

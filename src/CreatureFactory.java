@@ -48,7 +48,7 @@ public class CreatureFactory {
     }
     
     public Creature Player(){
-        Creature creature = new Creature(world, 0, 0, "player", '@', AsciiPanel.brightWhite, "you");
+        Creature creature = new Creature(world, 0, 0, "Trystan", "player", '@', AsciiPanel.brightWhite, "you");
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
         creature.attack = 10;
@@ -59,7 +59,7 @@ public class CreatureFactory {
     }
 
     public Creature HeroFighter(){
-        Creature creature = new Creature(world, 0, 0, name() + " the fighter", '@', AsciiPanel.brightRed, "strong");
+        Creature creature = new Creature(world, 0, 0, name(), "fighter", '@', AsciiPanel.brightRed, "strong");
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
         creature.attack = 15 + rand.nextInt(5);
@@ -72,7 +72,7 @@ public class CreatureFactory {
     }
 
     public Creature HeroMonk(){
-        Creature creature = new Creature(world, 0, 0, name() + " the monk", '@', AsciiPanel.cyan, "balanced");
+        Creature creature = new Creature(world, 0, 0, name(), "monk", '@', AsciiPanel.cyan, "balanced");
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
         creature.attack = 12 + rand.nextInt(5) + rand.nextInt(5);
@@ -83,7 +83,7 @@ public class CreatureFactory {
     }
 
     public Creature HeroPreist(){
-        Creature creature = new Creature(world, 0, 0, name() + " the priest", '@', AsciiPanel.brightCyan, "balanced");
+        Creature creature = new Creature(world, 0, 0, name(), "priest", '@', AsciiPanel.brightCyan, "balanced");
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
         creature.attack = 12 + rand.nextInt(5) + rand.nextInt(5);
@@ -94,7 +94,7 @@ public class CreatureFactory {
     }
 
     public Creature HeroWizzard(){
-        Creature creature = new Creature(world, 0, 0, name() + " the wizzard", '@', AsciiPanel.brightMagenta, "magical");
+        Creature creature = new Creature(world, 0, 0, name(), "wizzard", '@', AsciiPanel.brightMagenta, "magical");
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
         creature.attack = 10 + rand.nextInt(5);
@@ -106,7 +106,7 @@ public class CreatureFactory {
     }
 
     public Creature Villager(){
-        Creature creature = new Creature(world, 0, 0, name() + " the villager", '@', AsciiPanel.brightBlack, "villager");
+        Creature creature = new Creature(world, 0, 0, name(), "villager", '@', AsciiPanel.brightBlack, "villager");
         creature.maxHp = 40;
         creature.hp = creature.maxHp;
         creature.attack = 1 + rand.nextInt(5);
@@ -117,7 +117,7 @@ public class CreatureFactory {
     }
 
     public Creature Skeleton(){
-        Creature creature = new Creature(world, 0, 0, "a skeleton", 's', AsciiPanel.white, "brittle");
+        Creature creature = new Creature(world, 0, 0, "", "skeleton", 's', AsciiPanel.white, "brittle");
         creature.maxHp = 5 + rand.nextInt(5);
         creature.hp = creature.maxHp;
         creature.attack = 5 + rand.nextInt(5);
@@ -127,7 +127,7 @@ public class CreatureFactory {
     }
 
     public Creature Zombie(){
-        Creature creature = new Creature(world, 0, 0, "a zombie", 'z', AsciiPanel.white, "slow");
+        Creature creature = new Creature(world, 0, 0, "", "zombie", 'z', AsciiPanel.white, "slow");
         creature.maxHp = 40 + rand.nextInt(10);
         creature.hp = creature.maxHp;
         creature.attack = 10 + rand.nextInt(5);
@@ -138,7 +138,7 @@ public class CreatureFactory {
     }
 
     public Creature Ghost(){
-        Creature creature = new Creature(world, 0, 0, "a ghost", 'g', AsciiPanel.brightBlack, "non coporeal");
+        Creature creature = new Creature(world, 0, 0, "", "ghost", 'g', AsciiPanel.brightBlack, "non coporeal");
         creature.maxHp = 1 + rand.nextInt(20);
         creature.hp = creature.maxHp;
         creature.attack = 1 + rand.nextInt(5);

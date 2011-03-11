@@ -15,13 +15,13 @@ public class HeroController extends NonPlayerController {
         if (!other.isHero())
             return;
         
-        if (!lastSeenNames.containsKey(other.name)) {
+        if (!lastSeenNames.containsKey(other.getName())) {
             greet(other);
-        } else if (lastSeenNames.get(other.name) < target.age - 100) {
+        } else if (lastSeenNames.get(other.getName()) < target.age - 100) {
             regreet(other);
         }
 
-        lastSeenNames.put(other.name, target.age);
+        lastSeenNames.put(other.getName(), target.age);
     }
 
     public void greet(Creature other){

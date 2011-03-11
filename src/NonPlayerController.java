@@ -24,6 +24,9 @@ public class NonPlayerController extends CreatureController {
 
     @Override
     public void update() {
+        if (target.isZombie() && Math.random() < 0.05)
+            target.tellNearby("moans", "brains....");
+
         if (target.isSlow && target.age % 3 != 0) {
             return;
         }
@@ -44,7 +47,7 @@ public class NonPlayerController extends CreatureController {
 
             see(other);
             if (isAlly(other) && other.isHero()){
-                if (dist >= closestAllyDist || dist < 3)
+                if (dist >= closestAllyDist)
                     continue;
 
                 closestAllyDist = dist;
@@ -61,8 +64,8 @@ public class NonPlayerController extends CreatureController {
 
         if (closest != null)
             path = pathFinder.findPath(target, target.x, target.y, closest.x, closest.y, target.vision * 5);
-        else if (closestAlly != null && closestAllyDist > 4)
-            path = pathFinder.findPath(target, target.x, target.y, closestAlly.x, closestAlly.y, target.vision * 5);
+        // else if (closestAlly != null && closestAllyDist > 4)
+        //    path = pathFinder.findPath(target, target.x, target.y, closestAlly.x, closestAlly.y, target.vision * 5);
 
         if (path != null && path.size() > 0) {
             followPath();
@@ -83,7 +86,12 @@ public class NonPlayerController extends CreatureController {
             int mx = Math.max(-1, Math.min(path.get(0).x - target.x, 1));
             int my = Math.max(-1, Math.min(path.get(0).y - target.y, 1));
 
-            target.moveBy(mx, my);
+            if (target.canEnter(target.x+mx, target.y+my)) {
+                target.moveBy(mx, my);
+            } else {
+                meander();
+                path = null;
+            }
         }
     }
 

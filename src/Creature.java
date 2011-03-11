@@ -5,14 +5,24 @@ import java.util.ArrayList;
 public class Creature {
     public int x;
     public int y;
-    public String name;
+    public String personalName;
+    public String personalTitle;
     public char glyph;
     public Color color;
     public CreatureController controller;
     public String details;
     public boolean canSpeak;
     public int age;
-    
+
+    public String getName(){
+        if (personalName.isEmpty())
+            return "a " + personalTitle;
+        if (personalTitle.isEmpty())
+            return personalName;
+        else
+            return personalName + " the " + personalTitle;
+    }
+
     public World world;
 
     public Creature target;
@@ -34,11 +44,12 @@ public class Creature {
     public ArrayList<String> messages;
     public ArrayList<Color> messageColors;
 
-    public Creature(World w, int cx, int cy, String n, char g, Color c, String d) {
+    public Creature(World w, int cx, int cy, String n, String t, char g, Color c, String d) {
         world = w;
         x = cx;
         y = cy;
-        name = n;
+        personalName = n;
+        personalTitle = t;
         glyph = g;
         color = c;
         details = d;
@@ -58,9 +69,9 @@ public class Creature {
     }
 
     public void becomeZombie(){
-        world.tellAll(color, name + " has risen as a zombie!");
+        world.tellAll(color, getName() + " has risen as a zombie!");
         
-        name = "zobmie " + name;
+        personalTitle = "zobmie";
         glyph = 'z';
         // keep the same color so you know who it was
         maxHp = (int)(maxHp * 0.8);
@@ -88,9 +99,6 @@ public class Creature {
     public void update(){
         age++;
 
-        if (isZombie() && Math.random() < 0.01)
-            tellNearby("brains....");
-
         if (canHeal && --healCountdown < 1){
             healCountdown = 20;
             if (hp < maxHp)
@@ -112,10 +120,7 @@ public class Creature {
             if (other == this || other.x != tx || other.y != ty)
                 continue;
 
-            if (controller != null)
-                return !controller.isAlly(other);
-            else
-                return glyph == other.glyph;
+            return !controller.isAlly(other);
         }
 
         return true;
@@ -295,7 +300,7 @@ public class Creature {
         }
 
         if((other.isHero() || other.isCommoner()) && other.hp == 0)
-            world.tellAll(other.color, other.name + " was killed by " + name);
+            world.tellAll(other.color, other.getName() + " was killed by " + getName());
 
         if (other.hp == 0 && other.isHuman() && isZombie())
             other.becomeZombie();
@@ -308,10 +313,15 @@ public class Creature {
 
     public void tell(Creature other, String message){
         if (canSpeak)
-            other.hear(color, name + " says: " + message);
+            other.hear(color, getName() + " says: " + message);
     }
 
+
     public void tellNearby(String message){
+        tellNearby("shouts", message);
+    }
+    
+    public void tellNearby(String how, String message){
         if (!canSpeak)
             return;
         
@@ -320,7 +330,20 @@ public class Creature {
             if (distanceTo(other.x, other.y) > vision)
                 continue;
 
-            other.hear(color, name + " shouts: " + message);
+            other.hear(color, getName() + " " + how + ": " + message);
+        }
+    }
+
+    public void doAction(String message){
+        if (!canSpeak)
+            return;
+
+        for (Creature other : world.creatures){
+
+            if (distanceTo(other.x, other.y) > vision)
+                continue;
+
+            other.hear(color, getName() + " " + message);
         }
     }
 
