@@ -25,6 +25,10 @@ public class World {
     private Random rand;
     public int age;
 
+    public int heroCount;
+    public int villagerCount;
+    public int undeadCount;
+
     public World(){
         creatures = new ArrayList<Creature>();
         items = new ArrayList<Item>();
@@ -50,10 +54,20 @@ public class World {
             ((Creature)creature).update();
         }
 
+        heroCount = 0;
+        villagerCount = 0;
+        undeadCount = 0;
+        
         ArrayList<Creature> died = new ArrayList<Creature>();
         for (Creature creature : creatures){
             if (creature.hp < 1)
                 died.add(creature);
+            else if (creature.isHero())
+                heroCount++;
+            else if (creature.isCommoner())
+                villagerCount++;
+            else
+                undeadCount++;
         }
         creatures.removeAll(died);
 
@@ -126,7 +140,7 @@ public class World {
         }
     }
 
-    public void placeCreature(Creature creature, Random rand){
+    public void placeAnywhere(Creature creature, Random rand){
         do {
             creature.x = rand.nextInt(width);
             creature.y = rand.nextInt(height);
@@ -140,7 +154,21 @@ public class World {
         creatures.add(creature);
     }
 
-    public void placeItem(Item item, Random rand){
+    public void placeInVillage(Creature creature, Random rand){
+        do {
+            creature.x = rand.nextInt(width);
+            creature.y = rand.nextInt(height);
+
+            for (Creature other : creatures){
+                if (other.x == creature.x && other.y == creature.y)
+                    continue;
+            }
+        } while (tiles[creature.x][creature.y] != floor);
+
+        creatures.add(creature);
+    }
+
+    public void placeAnywhere(Item item, Random rand){
         do {
             item.x = rand.nextInt(width);
             item.y = rand.nextInt(height);
@@ -151,6 +179,20 @@ public class World {
             }
 
         } while (isImpassable(tiles[item.x][item.y]));
+
+        items.add(item);
+    }
+
+    public void placeInVillage(Item item, Random rand){
+        do {
+            item.x = rand.nextInt(width);
+            item.y = rand.nextInt(height);
+
+            for (Item other : items){
+                if (other.x == item.x && other.y == item.y)
+                    continue;
+            }
+        } while (tiles[item.x][item.y] != floor);
 
         items.add(item);
     }

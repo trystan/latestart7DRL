@@ -60,9 +60,9 @@ public class CreatureController {
                     continue;
 
                 if (isAlly(other)){
-                    if (!lastSeenNames.containsKey(other.name))
+                    if (target.isHero() && !lastSeenNames.containsKey(other.name))
                         target.tell(other, "Hi " + other.name + "!");
-                    else if (lastSeenNames.get(other.name) < target.age - 100)
+                    else if (target.isHero() && lastSeenNames.get(other.name) < target.age - 100)
                         target.tell(other, "Hey " + other.name + "! Good to see you again.");
                     
                     lastSeenNames.put(other.name, target.age);
@@ -74,7 +74,7 @@ public class CreatureController {
                     closestAlly = other;
                     
                 } else {
-                    if (lastSeenNames.containsKey(other.name)
+                    if (target.isHero() && lastSeenNames.containsKey(other.name)
                             && lastSeenNames.get(other.name) > target.age + 50)
                         target.tell(other, "I haven't forgotten about you " + other.name + "....");
 
@@ -157,9 +157,11 @@ public class CreatureController {
             return;
         
         if (!hatedNames.contains(other.name)){
-            if (isAlly(other))
-                target.tellNearby("Hey, " + other.name + " just attacked me!");
-            target.tell(other, "You've made a new enemy today " + other.name + "...");
+            if (target.isHero()){
+                if (isAlly(other))
+                    target.tellNearby("Hey, " + other.name + " just attacked me!");
+                target.tell(other, "You've made a new enemy today " + other.name + "...");
+            }
             hatedNames.add(other.name);
         }
     }

@@ -34,23 +34,30 @@ public class GuiController implements KeyListener {
         CreatureFactory creatureFactory = new CreatureFactory(world, itemFactory);
         
         target = creatureFactory.Player();
-        world.placeCreature(target, rand);
+        world.placeInVillage(target, rand);
 
-        world.placeCreature(creatureFactory.HeroFighter(), rand);
-        world.placeCreature(creatureFactory.HeroTheif(), rand);
-        world.placeCreature(creatureFactory.HeroWizzard(), rand);
-        world.placeCreature(creatureFactory.HeroMonk(), rand);
+        world.placeInVillage(creatureFactory.HeroFighter(), rand);
+        world.placeInVillage(creatureFactory.HeroWizzard(), rand);
+        world.placeInVillage(creatureFactory.HeroMonk(), rand);
+
+        for (int i = 0; i < 12; i++){
+            world.placeInVillage(creatureFactory.Villager(), rand);
+        }
 
         target.x = 64;
         target.y = 64;
 
         for (int i = 0; i < 100; i++){
-            world.placeCreature(creatureFactory.Zombie(), rand);
+            world.placeAnywhere(creatureFactory.Zombie(), rand);
         }
 
-        for (int i = 0; i < 25; i++){
-            world.placeItem(itemFactory.armor(), rand);
-            world.placeItem(itemFactory.weapon(), rand);
+        for (int i = 0; i < 15; i++){
+            world.placeInVillage(itemFactory.armor(), rand);
+            world.placeInVillage(itemFactory.weapon(), rand);
+        }
+        for (int i = 0; i < 5; i++){
+            world.placeAnywhere(itemFactory.armor(), rand);
+            world.placeAnywhere(itemFactory.weapon(), rand);
         }
     }
 
@@ -224,15 +231,15 @@ public class GuiController implements KeyListener {
             panel.write(creature.glyph, cx, cy, creature.color);
         }
 
-        infoPanel(target, 1);
-
         if (target.target != null){
-            infoPanel(target.target, -1);
+            infoPanel(target, 1);
+            infoPanel(target.target, 22);
         } else if (itemHere != null) {
             infoPanel(target, 1);
             infoPanel(target, itemHere, 22);
         }
 
+        scoreboard();
         writeMessages();
     }
 
@@ -250,6 +257,16 @@ public class GuiController implements KeyListener {
         for (int i = 0; i < currentMessages.size(); i++){
             panel.writeCenter(currentMessages.get(i), startY+i, currentMessageColors.get(i));
         }
+    }
+
+    private void scoreboard(){
+        int panelWidth = 15;
+        int top = 1;
+        int left = panel.getWidthInCharacters() - panelWidth - 1;
+
+        panel.write(pad("    heroes: " + world.heroCount, panelWidth), left, top+0, AsciiPanel.green);
+        panel.write(pad(" villagers: " + world.villagerCount, panelWidth), left, top+1, AsciiPanel.white);
+        panel.write(pad("    undead: " + world.undeadCount, panelWidth), left, top+2, AsciiPanel.red);
     }
 
     private void infoPanel(Creature creature, int left){

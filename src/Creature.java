@@ -56,8 +56,7 @@ public class Creature {
         world.tellAll(color, name + " has risen as a zombie!");
         
         name = "zobmie " + name;
-        glyph = 'Z';
-        color = AsciiPanel.white;
+        glyph = 'z';
         maxHp = (int)(maxHp * 0.8);
         hp = maxHp;
         if (controller != null)
@@ -70,7 +69,11 @@ public class Creature {
     }
     
     public boolean isHero(){
-        return glyph == '@';
+        return glyph == '@' && color != AsciiPanel.brightBlack;
+    }
+
+    public boolean isCommoner(){
+        return glyph == '@' && color == AsciiPanel.brightBlack;
     }
 
     public void update(){
@@ -138,7 +141,10 @@ public class Creature {
     public void moveBy(int mx, int my) {
         for (Creature other : world.creatures){
             if (other != this && other.x == x+mx && other.y == y+my) {
-                attack(other);
+                if (other.glyph == glyph)
+                    swapPlaces(other);
+                else
+                    attack(other);
                 return;
             }
         }
@@ -165,6 +171,17 @@ public class Creature {
         }
 
         target = null;
+    }
+
+    public void swapPlaces(Creature other){
+        int tempx = other.x;
+        int tempy = other.y;
+
+        other.x = x;
+        other.y = y;
+
+        x = tempx;
+        y = tempy;
     }
 
     public void unequip(Item item){
@@ -253,7 +270,7 @@ public class Creature {
         if (canSpeak && isHero() && hp > 0 && hp + defence < other.attack)
             tell(other, ": Please! Have mercy on me " + other.name + "!");
 
-        if(canSpeak && other.isHero() && other.hp == 0)
+        if(canSpeak && (other.isHero() || other.isCommoner()) && other.hp == 0)
             world.tellAll(other.color, other.name + " was killed by " + name);
 
         if (other.hp == 0 && other.isHero() && isZombie())

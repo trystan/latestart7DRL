@@ -60,22 +60,6 @@ public class CreatureFactory {
         return creature;
     }
 
-    public Creature HeroTheif(){
-        Creature creature = new Creature(world, 0, 0, name() + " the theif", '@', AsciiPanel.brightBlack, "sneaky");
-        creature.maxHp = 60;
-        creature.hp = creature.maxHp;
-        creature.attack = 10 + rand.nextInt(5);
-        creature.defence =10 + rand.nextInt(5);
-        creature.vision = 11;
-        creature.canSpeak = true;
-        creature.controller = new CreatureController(creature, pf);
-        creature.controller.canPathfind = true;
-        creature.controller.moveWaitTime = 0;
-        creature.equip(itemFactory.knife());
-        creature.equip(itemFactory.lightArmor());
-        return creature;
-    }
-
     public Creature HeroFighter(){
         Creature creature = new Creature(world, 0, 0, name() + " the fighter", '@', AsciiPanel.brightRed, "strong");
         creature.maxHp = 60;
@@ -122,8 +106,21 @@ public class CreatureFactory {
         return creature;
     }
 
+    public Creature Villager(){
+        Creature creature = new Creature(world, 0, 0, name(), '@', AsciiPanel.brightBlack, "villager");
+        creature.maxHp = 60;
+        creature.hp = creature.maxHp;
+        creature.attack = 5 + rand.nextInt(5);
+        creature.defence = 5 + rand.nextInt(5);
+        creature.canSpeak = true;
+        creature.controller = new CreatureController(creature, pf);
+        creature.controller.canPathfind = true;
+        creature.controller.moveWaitTime = 0;
+        return creature;
+    }
+
     public Creature Zombie(){
-        Creature creature = new Creature(world, 0, 0, name() + " the zombie", 'z', AsciiPanel.brightWhite, "undead");
+        Creature creature = new Creature(world, 0, 0, "a zombie", 'z', AsciiPanel.brightWhite, "undead");
         creature.maxHp = 40 + rand.nextInt(10);
         creature.hp = creature.maxHp;
         creature.attack = 10 + rand.nextInt(5);
