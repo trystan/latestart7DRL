@@ -107,11 +107,11 @@ public class CreatureFactory {
     }
 
     public Creature Villager(){
-        Creature creature = new Creature(world, 0, 0, name(), '@', AsciiPanel.brightBlack, "villager");
-        creature.maxHp = 60;
+        Creature creature = new Creature(world, 0, 0, name() + " the villager", '@', AsciiPanel.brightBlack, "villager");
+        creature.maxHp = 40;
         creature.hp = creature.maxHp;
-        creature.attack = 5 + rand.nextInt(5);
-        creature.defence = 5 + rand.nextInt(5);
+        creature.attack = 1 + rand.nextInt(5);
+        creature.defence = 1 + rand.nextInt(5);
         creature.canSpeak = true;
         creature.controller = new CreatureController(creature, pf);
         creature.controller.canPathfind = true;

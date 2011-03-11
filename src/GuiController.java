@@ -40,18 +40,15 @@ public class GuiController implements KeyListener {
         world.placeInVillage(creatureFactory.HeroWizzard(), rand);
         world.placeInVillage(creatureFactory.HeroMonk(), rand);
 
-        for (int i = 0; i < 12; i++){
+        for (int i = 0; i < 20; i++){
             world.placeInVillage(creatureFactory.Villager(), rand);
         }
-
-        target.x = 64;
-        target.y = 64;
 
         for (int i = 0; i < 100; i++){
             world.placeAnywhere(creatureFactory.Zombie(), rand);
         }
 
-        for (int i = 0; i < 15; i++){
+        for (int i = 0; i < 10; i++){
             world.placeInVillage(itemFactory.armor(), rand);
             world.placeInVillage(itemFactory.weapon(), rand);
         }
@@ -279,7 +276,7 @@ public class GuiController implements KeyListener {
         String armorName = creature.armor != null ? " " + creature.armor.name : "";
 
         panel.write(pad(" " + creature.name, panelWidth), left, 1);
-        panel.write(pad("  hp:" + creature.hp, panelWidth), left, 2);
+        panel.write(pad("  hp:" + creature.hp + "/" + creature.maxHp, panelWidth), left, 2);
         panel.write(pad(" atk:" + creature.attack + weaponName, panelWidth), left, 3);
         panel.write(pad(" def:" + creature.defence + armorName, panelWidth), left, 4);
 

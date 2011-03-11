@@ -81,7 +81,13 @@ public class Creature {
 
         if (isZombie() && Math.random() < 0.01)
             tellNearby("brains....");
-        
+
+        if (isCommoner() && Math.random() < 0.01)
+            tellNearby("Help!");
+
+        if (isHero() && Math.random() < 0.01)
+            tellNearby("Who else is havin' fun?");
+
         if (--healCountdown < 1){
             healCountdown = 20;
             if (hp < maxHp)
@@ -159,7 +165,11 @@ public class Creature {
                 x += mx;
                 y += my;
 
-                if (needToCloseDoor && isHero()
+                if (!needToCloseDoor && world.tiles[x][y] == world.openDoor){
+                    openDoorX = x;
+                    openDoorY = y;
+                    needToCloseDoor = true;
+                } else if (needToCloseDoor && isHero()
                     && world.tiles[openDoorX][openDoorY] == world.openDoor
                     && distanceTo(openDoorX, openDoorY) == 2) {
                     world.tiles[openDoorX][openDoorY] = world.closedDoor;
@@ -258,16 +268,13 @@ public class Creature {
 
         target = other;
 
-        if (other.hp > 0 && other.controller != null)
-            other.controller.onAttackedBy(this);
-        
         if (other.hp > 0
                 && other.weapon != null
                 && other.weapon.doesDefensiveAttack
                 && Math.random() < 0.5)
             other.attack(this);
 
-        if (canSpeak && isHero() && hp > 0 && hp + defence < other.attack)
+        if (canSpeak && hp > 0 && hp + defence < other.attack)
             tell(other, ": Please! Have mercy on me " + other.name + "!");
 
         if(canSpeak && (other.isHero() || other.isCommoner()) && other.hp == 0)

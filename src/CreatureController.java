@@ -11,7 +11,6 @@ public class CreatureController {
     public int moveWaitTime;
     public PathFinder pathFinder;
     private ArrayList<Point> path;
-    private ArrayList<String> hatedNames;
     private HashMap<String,Integer> lastSeenNames;
 
     public boolean canPathfind;
@@ -22,7 +21,6 @@ public class CreatureController {
         walkCountdown = rand.nextInt(5);
         pathFinder = pf;
         path = null;
-        hatedNames = new ArrayList<String>();
         lastSeenNames = new HashMap<String,Integer>();
         moveWaitTime = 3;
     }
@@ -152,22 +150,7 @@ public class CreatureController {
         }
     }
 
-    public void onAttackedBy(Creature other){
-        if (!target.canSpeak)
-            return;
-        
-        if (!hatedNames.contains(other.name)){
-            if (target.isHero()){
-                if (isAlly(other))
-                    target.tellNearby("Hey, " + other.name + " just attacked me!");
-                target.tell(other, "You've made a new enemy today " + other.name + "...");
-            }
-            hatedNames.add(other.name);
-        }
-    }
-
     public boolean isAlly(Creature other){
-        return (""+other.glyph).toLowerCase().equals((""+target.glyph).toLowerCase())
-                && !hatedNames.contains(other.name);
+        return (""+other.glyph).toLowerCase().equals((""+target.glyph).toLowerCase());
     }
 }
