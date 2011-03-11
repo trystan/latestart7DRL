@@ -30,6 +30,7 @@ public class Creature {
     public boolean isSlow;
     public boolean canWalkThroughWalls;
     public boolean canHeal;
+    public boolean canStealLife;
     public int healCountdown;
 
     public Item weapon;
@@ -279,6 +280,12 @@ public class Creature {
         int damage = Math.max(1, attack - other.defence);
         other.takeDamage(damage);
 
+        if (canStealLife){
+            hp += damage / 4;
+            if (hp > maxHp)
+                hp = maxHp;
+        }
+        
         if (other.target == null)
             other.target = this;
         

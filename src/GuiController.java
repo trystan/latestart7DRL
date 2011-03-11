@@ -45,13 +45,16 @@ public class GuiController implements KeyListener {
             world.placeInVillage(creatureFactory.Villager(), rand);
         }
 
+        for (int i = 0; i < 4; i++){
+            world.placeAnywhere(creatureFactory.Vampire(), rand);
+        }
         for (int i = 0; i < 6; i++){
             world.placeAnywhere(creatureFactory.Ghost(), rand);
         }
-        for (int i = 0; i < 32; i++){
+        for (int i = 0; i < 10; i++){
             world.placeAnywhere(creatureFactory.Zombie(), rand);
         }
-        for (int i = 0; i < 62; i++){
+        for (int i = 0; i < 50; i++){
             world.placeAnywhere(creatureFactory.Skeleton(), rand);
         }
 

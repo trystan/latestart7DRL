@@ -143,8 +143,22 @@ public class CreatureFactory {
         creature.hp = creature.maxHp;
         creature.attack = 1 + rand.nextInt(5);
         creature.defence = 100;
+        creature.vision = 50;
         creature.canWalkThroughWalls = true;
         creature.controller = new NonPlayerController(creature, pf);
+        return creature;
+    }
+
+    public Creature Vampire(){
+        Creature creature = new Creature(world, 0, 0, "", "vampire", 'v', AsciiPanel.brightBlack, "thirsty");
+        creature.maxHp = 50 + rand.nextInt(20);
+        creature.hp = creature.maxHp;
+        creature.attack = 5 + rand.nextInt(5);
+        creature.defence = 5 + rand.nextInt(5);
+        creature.controller = new NonPlayerController(creature, pf);
+        creature.canStealLife = true;
+        creature.equip(itemFactory.weapon());
+        creature.equip(itemFactory.armor());
         return creature;
     }
 }
