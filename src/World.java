@@ -73,12 +73,12 @@ public class World {
         }
         creatures.removeAll(died);
 
-        if (ticks % 120 == 0)
+        if (ticks % 60 == 0)
             spawnEnemies();
     }
 
     public void spawnEnemies(){
-        String message = "Zombies are attacking from the ";
+        String message = " are attacking from the ";
         int x = 0;
         int y = 0;
 
@@ -92,9 +92,29 @@ public class World {
         }
 
         ArrayList<Creature> group = new ArrayList();
-        for (int i = 0; i < rand.nextInt(10) + rand.nextInt(10); i++) {
-            group.add(factory.Zombie());
+        switch (rand.nextInt(4)){
+            case 0: message = "Skeletons" + message;
+                for (int i = 0; i < 20; i++) {
+                    group.add(factory.Skeleton());
+                }
+            break;
+            case 1: message = "Zombies" + message;
+                for (int i = 0; i < 10; i++) {
+                    group.add(factory.Zombie());
+                }
+            break;
+            case 2: message = "Ghosts" + message;
+                for (int i = 0; i < 8; i++) {
+                    group.add(factory.Ghost());
+                }
+            break;
+            case 3: message = "Vampires" + message;
+                for (int i = 0; i < 4; i++) {
+                    group.add(factory.Vampire());
+                }
+            break;
         }
+
 
         if (group.isEmpty())
             return;

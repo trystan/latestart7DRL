@@ -189,10 +189,23 @@ public class GuiController implements KeyListener {
     public void helpScreen() {
         panel.clear();
         panel.writeCenter("help", 1);
-        panel.write("@ = you or other heros", 3, 3);
-        panel.write("z = zombie", 3, 4);
-        panel.write("b = blob", 3, 5);
-        panel.write("hjklyubn or arrow keys or numpad to move", 3, 7);
+        panel.write("@ = you, another hero, or a villager", 3, 3);
+        panel.write("s = skeleton, easy", 3, 4);
+        panel.write("z = zombie, slow but they can turn humans into zombies", 3, 5);
+        panel.write("g = ghost, can move through walls", 3, 6);
+        panel.write("v = vampire, heals when they attack and can use weapons and armor", 3, 7);
+
+        panel.write("swords can decapitate weakened opponents", 3, 8);
+        panel.write("spears can counter attack opponents", 3, 9);
+        panel.write("maces can knock opponents back", 3, 10);
+
+        panel.write("Each hero has special abilities to help defent the village", 3, 12);
+        panel.write("from the undead hordes. The secret to staying alive is to ", 3, 13);
+        panel.write("find the right location, equipment, and allies.", 3, 14);
+
+        panel.write("[hjklyubn] or arrow keys or numpad to move", 3, 16);
+        panel.write("[g] or [,] to pickup or swap weapon or armor", 3, 17);
+
         panel.writeCenter("-- press space to continue --", panel.getHeightInCharacters() - 2);
     }
 
