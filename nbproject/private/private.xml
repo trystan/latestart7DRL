@@ -2,4 +2,28 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <data xmlns="http://www.netbeans.org/ns/profiler/1" version="0.9.1"/>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/GuiController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/World.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/CreatureFactory.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/AppletMain.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/NonPlayerController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/Item.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/Point.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/ItemFactory.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/PathFinder.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/WizardController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/HeroController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/CreatureController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/FighterController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/PriestController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/MonkController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/SamuraiController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/Creature.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/PlayerController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/VillagerController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/UndeadController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/SlayerController.java</file>
+        <file>file:/Users/Trystan/NetBeansProjects/latestart7DRL/src/AsciiPanel.java</file>
+    </open-files>
 </project-private>
