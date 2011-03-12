@@ -42,19 +42,19 @@ public class GuiController implements KeyListener {
         CreatureFactory creatureFactory = new CreatureFactory(world, itemFactory);
         world.factory = creatureFactory;
 
-        controller.target = creatureFactory.Player();
+        controller.target = creatureFactory.player();
         controller.target.personalName = input;
         world.placeInVillage(controller.target, rand);
 
-        world.placeInVillage(creatureFactory.HeroFighter(), rand);
-        world.placeInVillage(creatureFactory.HeroWizzard(), rand);
-        world.placeInVillage(creatureFactory.HeroMonk(), rand);
-        world.placeInVillage(creatureFactory.HeroPreist(), rand);
-        world.placeInVillage(creatureFactory.HeroSamuri(), rand);
-        world.placeInVillage(creatureFactory.HeroSlayer(), rand);
+        world.placeInVillage(creatureFactory.heroFighter(), rand);
+        world.placeInVillage(creatureFactory.heroWizzard(), rand);
+        world.placeInVillage(creatureFactory.heroMonk(), rand);
+        world.placeInVillage(creatureFactory.heroPreist(), rand);
+        world.placeInVillage(creatureFactory.heroSamuri(), rand);
+        world.placeInVillage(creatureFactory.heroSlayer(), rand);
 
         for (int i = 0; i < 30; i++){
-            world.placeInVillage(creatureFactory.Villager(), rand);
+            world.placeInVillage(creatureFactory.villager(), rand);
         }
 
         for (int i = 0; i < 4; i++){
@@ -147,7 +147,10 @@ public class GuiController implements KeyListener {
         panel.clear();
         panel.writeCenter("twelve hours, a 2011 7DRL", 1);
         panel.writeCenter("   by Trystan Spangler", 2);
-        panel.write("What is your name today? ", 3, 5);
+
+        panel.write("Can you and the other heroes save the villagers from the undead? ", 3, 6);
+
+        panel.write("What is your name today? ", 3, 20);
         panel.write(input);
         
         if (input.length() > 0)

@@ -77,13 +77,13 @@ public class CreatureFactory {
         return item;
     }
     
-    public Creature Player(){
+    public Creature player(){
         Creature creature = new Creature(world, 0, 0, "Trystan", "player", '@', AsciiPanel.brightWhite);
         creature.level = 1;
-        creature.maxHp = 60;
+        creature.maxHp = 80;
         creature.hp = creature.maxHp;
-        creature.attack = 5;
-        creature.defence = 5;
+        creature.attack = 15;
+        creature.defence = 15;
         creature.canSpeak = true;
         creature.controller = new PlayerController(creature);
         creature.equip(add(itemFactory.weapon()));
@@ -91,7 +91,7 @@ public class CreatureFactory {
         return creature;
     }
 
-    public Creature HeroFighter(){
+    public Creature heroFighter(){
         Creature creature = new Creature(world, 0, 0, shortName(), "fighter", '@', AsciiPanel.red);
         creature.level = 3;
         creature.maxHp = 60;
@@ -110,7 +110,7 @@ public class CreatureFactory {
         return creature;
     }
 
-    public Creature HeroSamuri(){
+    public Creature heroSamuri(){
         Creature creature = new Creature(world, 0, 0, shortName(), "samuri", '@', AsciiPanel.brightRed);
         creature.level = 3;
         creature.maxHp = 60;
@@ -125,7 +125,7 @@ public class CreatureFactory {
         return creature;
     }
 
-    public Creature HeroSlayer(){
+    public Creature heroSlayer(){
         Creature creature = new Creature(world, 0, 0, shortName(), "slayer", '@', AsciiPanel.cyan);
         creature.level = 2;
         creature.maxHp = 60;
@@ -140,7 +140,7 @@ public class CreatureFactory {
         return creature;
     }
 
-    public Creature HeroMonk(){
+    public Creature heroMonk(){
         Creature creature = new Creature(world, 0, 0, shortName(), "monk", '@', AsciiPanel.brightCyan);
         creature.level = 1;
         creature.maxHp = 60;
@@ -154,7 +154,7 @@ public class CreatureFactory {
         return creature;
     }
 
-    public Creature HeroPreist(){
+    public Creature heroPreist(){
         Creature creature = new Creature(world, 0, 0, shortName(), "priest", '@', AsciiPanel.magenta);
         creature.level = 4;
         creature.maxHp = 60;
@@ -169,7 +169,7 @@ public class CreatureFactory {
         return creature;
     }
 
-    public Creature HeroWizzard(){
+    public Creature heroWizzard(){
         Creature creature = new Creature(world, 0, 0, shortName(), "wizzard", '@', AsciiPanel.brightMagenta);
         creature.level = 1;
         creature.maxHp = 60;
@@ -183,7 +183,7 @@ public class CreatureFactory {
         return creature;
     }
 
-    public Creature Villager(){
+    public Creature villager(){
         Creature creature = new Creature(world, 0, 0, shortName(), "villager", '@', AsciiPanel.brightBlack);
         creature.level = 1;
         creature.maxHp = 50 + rand.nextInt(20);
@@ -199,7 +199,7 @@ public class CreatureFactory {
     public Creature skeleton(){
         Creature creature = new Creature(world, 0, 0, "", "skeleton", 's', AsciiPanel.white);
         creature.level = 1;
-        creature.maxHp = 10 + rand.nextInt(20);
+        creature.maxHp = 20 + rand.nextInt(20);
         creature.hp = creature.maxHp;
         creature.attack = 5 + rand.nextInt(16);
         creature.defence = 5 + rand.nextInt(16);
@@ -210,7 +210,7 @@ public class CreatureFactory {
     public Creature zombie(){
         Creature creature = new Creature(world, 0, 0, "", "zombie", 'z', AsciiPanel.white);
         creature.level = 2;
-        creature.maxHp = 40 + rand.nextInt(20);
+        creature.maxHp = 50 + rand.nextInt(20);
         creature.hp = creature.maxHp;
         creature.attack = 10 + rand.nextInt(6);
         creature.defence = 10 + rand.nextInt(6);
@@ -237,7 +237,7 @@ public class CreatureFactory {
     public Creature vampire(){
         Creature creature = new Creature(world, 0, 0, "", "vampire", 'v', AsciiPanel.white);
         creature.level = 5;
-        creature.maxHp = 40 + rand.nextInt(20);
+        creature.maxHp = 50 + rand.nextInt(20);
         creature.hp = creature.maxHp;
         creature.attack = 5 + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5);
@@ -272,7 +272,7 @@ public class CreatureFactory {
     }
 
     public Creature badGuy(){
-        switch (rand.nextInt(15)){
+        switch (rand.nextInt(14)){
             case 0: return lich();
             case 1:
             case 2: return vampire();
@@ -286,7 +286,6 @@ public class CreatureFactory {
             case 10:
             case 11:
             case 12:
-            case 13:
             default: return skeleton();
         }
     }

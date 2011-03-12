@@ -300,8 +300,8 @@ public class Creature {
         exp -= level * 5;
         level++;
         maxHp += 2;
-        attack += 2;
-        defence += 2;
+        attack += 1;
+        defence += 1;
 
         healDamage(level);
         

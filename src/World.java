@@ -90,7 +90,7 @@ public class World {
         if ((ticks / ticksPerMinute) % 60 == 30)
             spawnEnemies();
 
-        if (undeadCount < 50 && rand.nextDouble() < 0.5) {
+        if (undeadCount < 50 + waveNumber * 2 && rand.nextDouble() < 0.25) {
             placeAtEdge(factory.badGuy());
         }
     }
