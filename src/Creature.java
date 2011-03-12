@@ -37,6 +37,7 @@ public class Creature {
     public boolean canSwapArmor;
     public boolean canBeDecapitated;
     public boolean canNotGoIndoors;
+    public boolean likesIndoors;
     public boolean hasBlood;
     public boolean canFly;
 
@@ -142,6 +143,9 @@ public class Creature {
          || ty < 0 || ty >= world.height)
             return false;
 
+        if (likesIndoors && world.tiles[tx][ty] != World.insideFloor)
+            return false;
+        
         if (world.isImpassable(world.tiles[tx][ty], canFly, canWalkThroughWalls, canNotGoIndoors))
             return false;
 

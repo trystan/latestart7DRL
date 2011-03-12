@@ -41,7 +41,12 @@ public class PriestController extends HeroController {
     
     @Override
     public void regreet(Creature other){
-        target.tell(other, "Protect the village " + other.personalName + ".");
+        if (visibleUndead > 0)
+            target.tell(other, "Lookout " + other.personalName + "! The undead are everywhere.");
+        else if (target.world.villagerCount > 0)
+            target.tell(other, "Protect the villagers " + other.personalName + "!");
+        else
+            target.tell(other, "Protect the village " + other.personalName + "!");
     }
 
     @Override

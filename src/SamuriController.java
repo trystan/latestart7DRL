@@ -43,21 +43,22 @@ public class SamuriController extends HeroController {
 
     @Override
     public void regreet(Creature other){
-        target.tell(other, "Haven't been hiding, have you " + other.personalName + "?");
+        int tile = target.world.tiles[other.x][other.y];
+
+        if (tile == World.insideFloor)
+            target.tell(other, "Why are you hiding in there " + other.personalName + "?");
+        else
+            target.tell(other, "Haven't been hiding, have you " + other.personalName + "?");
     }
 
     @Override
     public void onTakeDamage(Creature other, int amount){
         if (rand.nextDouble() < 0.1)
             target.tellNearby("I've got a " + other.personalTitle + " over here!");
-        else {
-
-            if (other.weapon != null && rand.nextDouble() < 0.1)
-                target.tellNearby("Careful! This " + other.personalTitle + " is using a " + other.weapon.name + ".");
-
-            else if(other.armor != null && rand.nextDouble() < 0.1)
-                target.tellNearby("Careful! This " + other.personalTitle + " is wearing " + other.armor.name + ".");
-        }
+        else if (other.weapon != null && rand.nextDouble() < 0.1)
+            target.tellNearby("Careful! This " + other.personalTitle + " is using a " + other.weapon.name + ".");
+        else if(other.armor != null && rand.nextDouble() < 0.1)
+            target.tellNearby("Careful! This " + other.personalTitle + " is wearing " + other.armor.name + ".");
     }
 
     @Override
@@ -67,7 +68,6 @@ public class SamuriController extends HeroController {
 
     @Override
     public void onDied(){
-        target.tellNearby("Arghhhh!");
     }
 
     @Override

@@ -65,6 +65,9 @@ public class NonPlayerController extends CreatureController {
             if (other == target)
                 continue;
 
+            if (target.likesIndoors && target.world.tiles[other.x][other.y] != World.insideFloor)
+                continue;
+            
             int dist = target.distanceTo(other.x, other.y);
             if (dist > 64)
                 continue;

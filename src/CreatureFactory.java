@@ -191,6 +191,7 @@ public class CreatureFactory {
         creature.attack = 1 + rand.nextInt(5) + rand.nextInt(5);
         creature.defence = 1 + rand.nextInt(5) + rand.nextInt(5);
         creature.canSpeak = true;
+        creature.likesIndoors = rand.nextBoolean();
         creature.controller = new VillagerController(creature, pf);
         return creature;
     }

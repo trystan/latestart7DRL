@@ -21,7 +21,12 @@ public class WizzardController extends HeroController {
 
     @Override
     public void regreet(Creature other){
-        target.doAction("examines " + other.getName());
+        int tile = target.world.tiles[other.x][other.y];
+
+        if (tile == World.insideFloor)
+            target.tell(other, "I see you've decided to play it safe in there....");
+        else
+            target.doAction("examines " + other.getName());
     }
 
     @Override
@@ -47,7 +52,7 @@ public class WizzardController extends HeroController {
 
     @Override
     public void onKilled(Creature other){
-        if (rand.nextDouble() < 0.1)
+        if (rand.nextDouble() < 0.5)
             target.tellNearby("That's one less " + other.personalTitle + "....");
     }
 
@@ -71,7 +76,7 @@ public class WizzardController extends HeroController {
         switch (rand.nextInt(3)){
             case 0: target.doAction("looks annoyed"); break;
             case 1: target.doAction("looks unhappy"); break;
-            case 2: target.doAction("looks sad"); break;
+            case 2: target.doAction("looks grumpy"); break;
         }
     }
 
