@@ -1,0 +1,15 @@
+My 7DRL, initially called Late Start but now called Twelve Hours, is done. You and the other heroes must save the villagers from swarms of undead and survive twelve hours (720 turns). There's 3 different weapons with different properties, 5 different enemies with different abilities, and 6 other heroes with different abilities as well.
+
+Although it's technically complete, and can be entertaining to follow the other heros around, it it often possible to survive by hiding indoors and using villagers as meat-shields while the other heroes bust some undead skulls. That wasn't what I was going for, and you miss seeing what the heroes can do, but I guess that's what the other cowardly villagers are trying to do as well. I seemed to get the best score while hanging with the priest or the samurai.
+
+You can move (arrow keys, numpad, or vi keys) and swap your weapon or armor with what's on the ground ([g] or [,]). You should press [?] when you start to get a better idea of what's going on.
+
+The other heroes are:
+  The Fighter has a better weapon and can go into a rage.
+  The Monk can attack multiple times per turn and heal himself but doesn't use weapons.
+  The Priest can turn undead and heal others.
+  The Samurai has a katana and can do a circular attack that hits each adjacent opponent. The Samurai will also commit suicide rather than being turned into a zombie.
+  The Slayer starts with a wooden stake that instantly kills vampires and she heals twice as fast as other heroes.
+  The Wizard can teleport himself and attack others at a distance.
+
+It uses my previous project AsciiPanel (https://github.com/trystan/AsciiPanel) for the old-school graphics.
