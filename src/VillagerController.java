@@ -7,11 +7,11 @@ public class VillagerController extends NonPlayerController {
 
     @Override
     public void update(){
-        if (rand.nextDouble() < 0.01){
+        if (rand.nextDouble() < 0.005){
             if (target.likesIndoors)
                 target.tellNearby("Stay inside where it's safer.");
             else
-                target.tellNearby("Come outside and defend the village.");
+                target.tellNearby("Come on! defend the village!");
         }
 
         super.update();

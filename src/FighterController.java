@@ -19,7 +19,10 @@ public class FighterController extends HeroController {
 
     @Override
     public void regreet(Creature other){
-        target.tellNearby("Still alive " + other.personalName + "? Ha!");
+        if (rand.nextBoolean())
+            target.tellNearby("Still alive " + other.personalName + "? Ha!");
+        else
+            target.tellNearby("Glad you're not a zombie " + other.personalName + ".");
     }
 
     @Override

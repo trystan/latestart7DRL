@@ -16,12 +16,18 @@ public class MonkController extends HeroController {
     @Override
     public void greet(Creature other){
         if (rand.nextBoolean())
-            target.tell(other, "Hello.");
+            target.tell(other, "Hello " + other.personalName + ".");
     }
 
     @Override
     public void regreet(Creature other){
-        target.tellNearby("Glad you're not a zombie " + other.personalName + ".");
+        int percent = (int)(target.world.ticks / target.world.ticksPerMinute / 720);
+        if (percent > 50)
+            target.tellNearby("The night is young " + other.personalName + " so keep fighting.");
+        else if (percent > 10)
+            target.tellNearby("Keep fighting " + other.personalName + ". Don't give up!");
+        else if (percent <= 10)
+            target.tellNearby("The night almost over! We shall prevail " + other.personalName + ".");
     }
 
     @Override

@@ -9,6 +9,13 @@ public class PriestController extends HeroController {
 
     @Override
     public void update(){
+        int percent = (int)(target.world.ticks / target.world.ticksPerMinute / 720);
+        switch (percent){
+            case 1: target.tellNearby("The night is almost over!"); break;
+            case 15: target.tellNearby("The night is mostly over!"); break;
+            case 50: target.tellNearby("The night is half over!"); break;
+        }
+
         if (visibleUndead > rand.nextInt(100))
             turnUndead();
         
