@@ -18,7 +18,7 @@ public class ItemFactory {
     }
 
     public Item robes(){
-        Item armor = new Item(0,0,"wizzard robes",']',AsciiPanel.white);
+        Item armor = new Item(0,0,"wizard robes",']',AsciiPanel.white);
         armor.modDefence = 2;
         return armor;
     }

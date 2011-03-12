@@ -110,15 +110,15 @@ public class CreatureFactory {
         return creature;
     }
 
-    public Creature heroSamuri(){
-        Creature creature = new Creature(world, 0, 0, shortName(), "samuri", '@', AsciiPanel.brightRed);
+    public Creature heroSamurai(){
+        Creature creature = new Creature(world, 0, 0, shortName(), "samurai", '@', AsciiPanel.brightRed);
         creature.level = 3;
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
         creature.attack = 10 + rand.nextInt(5) + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5) + rand.nextInt(5);
         creature.canSpeak = true;
-        creature.controller = new SamuriController(creature, pf);
+        creature.controller = new SamuraiController(creature, pf);
         creature.canSwapWeapons = false;
         creature.equip(add(itemFactory.katana()));
         creature.equip(add(itemFactory.mediumArmor()));
@@ -169,15 +169,15 @@ public class CreatureFactory {
         return creature;
     }
 
-    public Creature heroWizzard(){
-        Creature creature = new Creature(world, 0, 0, shortName(), "wizzard", '@', AsciiPanel.brightMagenta);
+    public Creature heroWizard(){
+        Creature creature = new Creature(world, 0, 0, shortName(), "wizard", '@', AsciiPanel.brightMagenta);
         creature.level = 1;
         creature.maxHp = 60;
         creature.hp = creature.maxHp;
         creature.attack = 5 + rand.nextInt(5) + rand.nextInt(5);
         creature.defence = 5 + rand.nextInt(5) + rand.nextInt(5);
         creature.canSpeak = true;
-        creature.controller = new WizzardController(creature, pf);
+        creature.controller = new WizardController(creature, pf);
         creature.canSwapArmor = false;
         creature.equip(add(itemFactory.robes()));
         return creature;
