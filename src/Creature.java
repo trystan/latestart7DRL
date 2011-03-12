@@ -71,7 +71,7 @@ public class Creature {
         canSwapArmor = isHuman();
 
         canBeDecapitated = true;
-        healthRate = isHuman() ? 30 : 0;
+        healthRate = isHuman() ? 15 : 0;
         hasBlood = isHuman();
         
         messages = new ArrayList<String>();
@@ -86,10 +86,13 @@ public class Creature {
         personalTitle = "zobmie";
         glyph = 'z';
         // keep the same color so you know who it was
-        maxHp = (int)(maxHp * 0.8);
-        hp = maxHp;
+        hp = (int)(maxHp * 0.8);
         isSlow = true;
         canSpeak = false;
+        canSwapWeapons = false;
+        canSwapArmor = false;
+        hasBlood = false;
+        healthRate = 0;
     }
 
     public boolean isZombie(){
@@ -116,7 +119,7 @@ public class Creature {
         
         controller.update();
 
-        if (exp > level * 10)
+        if (exp > level * 5)
             gainLevel();
     }
     
@@ -290,16 +293,18 @@ public class Creature {
     }
 
     public void gainLevel(){
-        exp -= level * 10;
+        exp -= level * 5;
         level++;
-        maxHp += 1;
-        attack += 1;
-        defence += 1;
+        maxHp += 2;
+        attack += 2;
+        defence += 2;
 
         healDamage(level);
         
-        if (isHero())
-            tellAll(color, getName() + " is now level " + level + "!");
+        tellAll(color, getName() + " is now level " + level + "!");
+
+        if (!isHuman())
+            glyph = ("" + glyph).toUpperCase().charAt(0);
     }
 
     public void die(){
@@ -366,6 +371,7 @@ public class Creature {
                 && Math.random() < 0.5
                 && other.distanceTo(x, y) == 1){
             other.attack(this);
+            other.hear(other.color, "You counter attack the " + this.personalTitle + ".");
             other.controller.onCounterAttacked(this);
         }
 

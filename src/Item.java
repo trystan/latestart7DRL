@@ -52,6 +52,7 @@ public class Item {
                 && target.canBeDecapitated
                 && target.hp <= user.attack - target.defence){
             target.die();
+            user.hear(user.color, "You decapitate the " + target.personalTitle + ".");
             user.controller.onDecapitated(target);
         }
     }

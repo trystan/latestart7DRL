@@ -85,7 +85,7 @@ public class UndeadController extends NonPlayerController {
                     if (c.distanceTo(target.x, target.y) >= c.vision)
                         continue;
 
-                    c.hear(AsciiPanel.white, "You feel ill.");
+                    c.hear(AsciiPanel.white, "You feel a chill.");
                     target.attack(c, rand.nextInt(5) + rand.nextInt(5));
                 }
                 break;
@@ -108,7 +108,7 @@ public class UndeadController extends NonPlayerController {
                         if (occupied)
                             continue;
 
-                        Creature summoned = factory.Skeleton();
+                        Creature summoned = factory.skeleton();
                         if (summoned.canBeAt(target.x+ox, target.y+oy)){
                             summoned.x = target.x+ox;
                             summoned.y = target.y+oy;
@@ -126,6 +126,8 @@ public class UndeadController extends NonPlayerController {
                 } else {
                     target.attack += 1;
                     target.defence += 1;
+                    target.maxHp += 2;
+                    target.hp += 2;
                     target.doAction("glows for a second");
                 }
                 break;

@@ -58,16 +58,16 @@ public class GuiController implements KeyListener {
         }
 
         for (int i = 0; i < 4; i++){
-            world.placeAnywhere(creatureFactory.Vampire(), rand);
+            world.placeAnywhere(creatureFactory.vampire(), rand);
         }
         for (int i = 0; i < 2; i++){
-            world.placeAnywhere(creatureFactory.Ghost(), rand);
+            world.placeAnywhere(creatureFactory.ghost(), rand);
         }
         for (int i = 0; i < 20; i++){
-            world.placeAnywhere(creatureFactory.Zombie(), rand);
+            world.placeAnywhere(creatureFactory.zombie(), rand);
         }
         for (int i = 0; i < 20; i++){
-            world.placeAnywhere(creatureFactory.Skeleton(), rand);
+            world.placeAnywhere(creatureFactory.skeleton(), rand);
         }
 
         for (int i = 0; i < 5; i++){
@@ -145,7 +145,7 @@ public class GuiController implements KeyListener {
 
     public void startScreen() {
         panel.clear();
-        panel.writeCenter("late start, a 2011 7DRL", 1);
+        panel.writeCenter("twelve hours, a 2011 7DRL", 1);
         panel.writeCenter("   by Trystan Spangler", 2);
         panel.write("What is your name today? ", 3, 5);
         panel.write(input);
@@ -156,33 +156,37 @@ public class GuiController implements KeyListener {
 
     public void winScreen() {
         panel.clear();
-        panel.writeCenter("win", 1);
+        panel.writeCenter("You survived the night.", 1);
         showScore();
         panel.writeCenter("-- press enter to restart --", panel.getHeightInCharacters() - 2);
     }
 
     public void loseScreen() {
         panel.clear();
-        panel.writeCenter("lose", 1);
+        panel.writeCenter("You did not survive the night.", 1);
         showScore();
         panel.writeCenter("-- press enter to restart --", panel.getHeightInCharacters() - 2);
     }
 
     private void showScore(){
+        double mult = (double)world.ticks / world.ticksPerMinute / 720.0;
+
         int time = world.ticks / world.ticksPerMinute;
-        int timeScore = time * 2;
-        int levelScore = controller.target.level * 10;
-        int heroScore = world.heroCount * 20;
-        int villagerScore = world.villagerCount * 20;
+        int timeScore = time;
+        int levelScore = controller.target.level * 100;
+        int heroScore = (int)(world.heroCount * 50 * mult);
+        int villagerScore = (int)(world.villagerCount * 50 * mult);
         int undeadScore = world.undeadCount * -2;
         int total = timeScore + levelScore + heroScore + villagerScore + undeadScore;
 
-        panel.write(time + " minutes = " + timeScore, 20, 5);
-        panel.write("level " + controller.target.level + " = " + levelScore, 20, 6);
-        panel.write(world.heroCount + " heroes = " + heroScore, 20, 7);
-        panel.write(world.villagerCount + " villagers = " + villagerScore, 20, 8);
-        panel.write(world.undeadCount + " undead = " + undeadScore, 20, 9);
-        panel.write("Total score = " + total, 20, 10);
+        String format = "%1$20s = %2$4s";
+        panel.write(String.format(format, time + " minutes", timeScore), 20, 5);
+        panel.write(String.format(format, "level " + controller.target.level, levelScore), 20, 6);
+        panel.write(String.format(format, world.heroCount + " heroes", heroScore), 20, 7);
+        panel.write(String.format(format, world.villagerCount + " villagers", villagerScore), 20, 8);
+        panel.write(String.format(format, world.undeadCount + " undead", undeadScore), 20, 9);
+        panel.write("------------------", 29, 10);
+        panel.write(String.format(format, "Total score", total), 20, 11);
 
     }
 

@@ -102,7 +102,7 @@ public class ItemFactory {
 
     public Item sword(){
         Item weapon = new Item(0,0,"sword",')',AsciiPanel.white);
-        weapon.modAttack = 5 + rand.nextInt(11);
+        weapon.modAttack = 10 + rand.nextInt(11);
         weapon.modDefence = 5 + rand.nextInt(6);
         weapon.doesDecapitate = true;
         return weapon;
@@ -110,7 +110,7 @@ public class ItemFactory {
 
     public Item spear(){
         Item weapon = new Item(0,0,"spear",')',AsciiPanel.white);
-        weapon.modAttack = 5 + rand.nextInt(6);
+        weapon.modAttack = 10 + rand.nextInt(6);
         weapon.modDefence = 5 + rand.nextInt(11);
         weapon.doesDefensiveAttack = true;
         return weapon;
@@ -118,8 +118,8 @@ public class ItemFactory {
 
     public Item mace(){
         Item weapon = new Item(0,0,"mace",')',AsciiPanel.white);
-        weapon.modAttack = 10 + rand.nextInt(6);
-        weapon.modDefence = 5 + rand.nextInt(6);
+        weapon.modAttack = 15 + rand.nextInt(11);
+        weapon.modDefence = 1 + rand.nextInt(5);
         weapon.doesKnockback = true;
         return weapon;
     }

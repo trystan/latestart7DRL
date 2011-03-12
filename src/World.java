@@ -87,20 +87,37 @@ public class World {
         if (heroCount == 2 && !didDoOnlyTwoMessage)
             onlyTwoMessage();
 
-        if ((ticks / ticksPerMinute) % 45 == 0)
+        if ((ticks / ticksPerMinute) % 60 == 30)
             spawnEnemies();
 
-        if (undeadCount < 10 && rand.nextDouble() < 0.2) {
-            Creature badGuy = factory.Zombie();
-            badGuy.doAction("crawls up from the ground");
-            placeAnywhere(badGuy, factory.rand);
+        if (undeadCount < 50 && rand.nextDouble() < 0.5) {
+            placeAtEdge(factory.badGuy());
         }
-        
-        if (undeadCount < 50 && rand.nextDouble() < 0.1){
-            Creature badGuy = factory.Skeleton();
-            badGuy.doAction("crawls up from the ground");
-            placeAnywhere(badGuy, factory.rand);
-        }
+    }
+
+    public void placeAtEdge(Creature creature){
+        do
+        {
+            switch (rand.nextInt(4)){
+                case 0:
+                    creature.x = 0;
+                    creature.y = rand.nextInt(height);
+                    break;
+                case 1:
+                    creature.x = width - 1;
+                    creature.y = rand.nextInt(height);
+                    break;
+                case 2:
+                    creature.x = rand.nextInt(width);
+                    creature.y = 0;
+                    break;
+                case 3:
+                    creature.x = rand.nextInt(width);
+                    creature.y = height - 1;
+                    break;
+            }
+        } while (!creature.canEnter(creature.x, creature.y));
+        creatures.add(creature);
     }
 
     public void onlyTwoMessage(){
@@ -119,7 +136,7 @@ public class World {
         }
         
         if (other != null && player != null)
-            other.tell(other, "It's just you and me now, " + player.personalName + ".");
+            other.tell(player, "It's just you and me now, " + player.personalName + "....");
     }
 
     public void spawnEnemies(){
@@ -141,28 +158,28 @@ public class World {
         ArrayList<Creature> group = new ArrayList();
         switch (rand.nextInt(5)){
             case 0: message = "Skeletons" + message;
-                for (int i = 0; i < 10 + 6 * waveNumber; i++) {
-                    group.add(factory.Skeleton());
+                for (int i = 0; i < 10 + 4 * waveNumber; i++) {
+                    group.add(factory.skeleton());
                 }
             break;
             case 1: message = "Zombies" + message;
-                for (int i = 0; i < 10 + 3 * waveNumber; i++) {
-                    group.add(factory.Zombie());
+                for (int i = 0; i < 10 + 2 * waveNumber; i++) {
+                    group.add(factory.zombie());
                 }
             break;
             case 2: message = "Ghosts" + message;
-                for (int i = 0; i < 4 + waveNumber; i++) {
-                    group.add(factory.Ghost());
+                for (int i = 0; i < 1 + waveNumber; i++) {
+                    group.add(factory.ghost());
                 }
             break;
             case 3: message = "Vampires" + message;
-                for (int i = 0; i < 3 + waveNumber; i++) {
-                    group.add(factory.Vampire());
+                for (int i = 0; i < 1 + waveNumber; i++) {
+                    group.add(factory.vampire());
                 }
             break;
             case 4: message = "Lichs" + message;
-                for (int i = 0; i < 1 + waveNumber; i++) {
-                    group.add(factory.Lich());
+                for (int i = 0; i < 1 + waveNumber / 2; i++) {
+                    group.add(factory.lich());
                 }
             break;
         }
@@ -210,9 +227,9 @@ public class World {
             case grass: return AsciiPanel.green;
             case shrub: return AsciiPanel.green;
             case tree:  return AsciiPanel.green;
-            case insideFloor: return AsciiPanel.white;
+            case insideFloor: return AsciiPanel.brightBlack;
             case floor: return AsciiPanel.white;
-            case wall:  return AsciiPanel.white;
+            case wall:  return AsciiPanel.brightBlack;
             case openDoor:  return AsciiPanel.yellow;
             case closedDoor:  return AsciiPanel.yellow;
             default:    return AsciiPanel.black;

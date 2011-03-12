@@ -121,6 +121,6 @@ public class PriestController extends HeroController {
     private void healOther(Creature other){
         target.doAction("points at " + other.personalName + " and prays");
 
-        target.healDamage(5 + rand.nextInt(6));
+        other.healDamage(5 + rand.nextInt(6));
     }
 }

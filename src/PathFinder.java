@@ -58,7 +58,7 @@ public class PathFinder {
     private void reParent(Point child, Point parent){
         parents.put(child, parent);
         
-        cost[child.x][child.y] = costToGetHere(child) + costToGetToEnd(child);
+        cost[child.x][child.y] = 0;
     }
 
     public ArrayList<Point> findPath(Creature creature, int sx, int sy, int tx, int ty, int maxTries) {
