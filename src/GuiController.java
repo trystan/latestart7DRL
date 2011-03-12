@@ -179,13 +179,13 @@ public class GuiController implements KeyListener {
         int undeadScore = world.undeadCount * -2;
         int total = timeScore + levelScore + heroScore + villagerScore + undeadScore;
 
-        String format = "%1$20s = %2$4s";
+        String format = "%1$20s = %2$,5d points";
         panel.write(String.format(format, time + " minutes", timeScore), 20, 5);
         panel.write(String.format(format, "level " + controller.target.level, levelScore), 20, 6);
         panel.write(String.format(format, world.heroCount + " heroes", heroScore), 20, 7);
         panel.write(String.format(format, world.villagerCount + " villagers", villagerScore), 20, 8);
         panel.write(String.format(format, world.undeadCount + " undead", undeadScore), 20, 9);
-        panel.write("------------------", 29, 10);
+        panel.write("-------------------", 29, 10);
         panel.write(String.format(format, "Total score", total), 20, 11);
 
     }

@@ -13,7 +13,7 @@ public class VillagerController extends NonPlayerController {
             else
                 target.tellNearby("Come on! defend the village!");
         }
-
+        
         super.update();
     }
 
